@@ -23,6 +23,8 @@ export function PendingCard({ txn, mode = 'review', onDone }: Props) {
   const [category, setCategory] = useState<string | null>(txn.category);
   const [note, setNote] = useState(txn.note ?? '');
   const [remember, setRemember] = useState(txn.payee_kind !== 'person');
+  // Debits start collapsed (a compact row); credits only need Confirm/Ignore so stay open.
+  const [open, setOpen] = useState(mode === 'edit' || !isDebit);
 
   const createCategory = async () => {
     const name = newName.trim();
@@ -55,7 +57,11 @@ export function PendingCard({ txn, mode = 'review', onDone }: Props) {
 
   return (
     <View className="mb-3 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
-      <View className="flex-row items-start justify-between">
+      <Pressable
+        className="flex-row items-start justify-between"
+        disabled={mode === 'edit' || !isDebit}
+        onPress={() => setOpen((o) => !o)}
+      >
         <View className="flex-1 pr-3">
           <Text className="text-base font-semibold text-black dark:text-white" numberOfLines={1}>
             {txn.merchant ?? 'Unknown payee'}
@@ -65,13 +71,19 @@ export function PendingCard({ txn, mode = 'review', onDone }: Props) {
         <Text className={isDebit ? 'text-base font-semibold text-red-600' : 'text-base font-semibold text-green-600'}>
           {isDebit ? '-' : '+'}{rupees(txn.amount)}
         </Text>
-      </View>
+      </Pressable>
 
-      {isDebit && txn.payee_kind === 'person' && (
+      {isDebit && !open && (
+        <Text className="mt-2 text-sm text-gray-500">
+          {category ? `${category} · ` : ''}Tap to {category ? 'review' : 'categorise'}
+        </Text>
+      )}
+
+      {isDebit && open && txn.payee_kind === 'person' && (
         <Text className="mt-2 text-sm text-amber-600">Paid to a person. What was this for?</Text>
       )}
 
-      {isDebit && (
+      {isDebit && open && (
         <>
           <View className="mt-3 flex-row flex-wrap gap-2">
             {categories.map((c) => (
@@ -133,6 +145,7 @@ export function PendingCard({ txn, mode = 'review', onDone }: Props) {
         </>
       )}
 
+      {open && (
       <View className="mt-4 flex-row gap-3">
         <Pressable
           className="flex-1 items-center rounded-lg bg-blue-600 py-2"
@@ -149,6 +162,7 @@ export function PendingCard({ txn, mode = 'review', onDone }: Props) {
           <Text className="font-semibold text-black dark:text-white">{mode === 'edit' ? 'Cancel' : 'Ignore'}</Text>
         </Pressable>
       </View>
+      )}
       {review.error && <Text className="mt-2 text-red-600">{review.error.message}</Text>}
     </View>
   );

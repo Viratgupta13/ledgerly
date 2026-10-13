@@ -56,6 +56,8 @@ export default function InboxScreen() {
         renderItem={({ item }) => <PendingCard txn={item} />}
         ListEmptyComponent={!pending.isLoading ? <Text className="text-gray-500">Nothing to review.</Text> : null}
         keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}
+        windowSize={7}
       />
     </View>
   );

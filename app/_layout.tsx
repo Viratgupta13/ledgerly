@@ -1,8 +1,9 @@
 import '../global.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/auth';
 
@@ -31,10 +32,13 @@ function Routes() {
 
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
+  const scheme = useColorScheme();
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style="auto" />
-      <Routes />
+      <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style="auto" />
+        <Routes />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

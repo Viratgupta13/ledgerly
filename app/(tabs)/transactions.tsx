@@ -16,6 +16,8 @@ export default function TransactionsScreen() {
         data={data ?? []}
         keyExtractor={(t) => t.id}
         keyboardShouldPersistTaps="handled"
+        removeClippedSubviews={false}
+        windowSize={7}
         ListEmptyComponent={!isLoading ? <Text className="text-gray-500">No confirmed transactions yet.</Text> : null}
         renderItem={({ item }) =>
           editing === item.id ? (
