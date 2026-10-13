@@ -13,6 +13,8 @@ export const ParsedTxnSchema = z.object({
   merchant: z.string().min(1).nullable(),
   /** Stable, normalised identifier of the counterparty; the key for merchant_rules. */
   payeeKey: z.string().min(1).nullable(),
+  /** Hint only: 'person' payments are the ones the user usually needs to label. */
+  payeeKind: z.enum(['person', 'merchant', 'unknown']),
   bankRef: z.string().min(1).nullable(),
   occurredAt: z.iso.datetime(),
 });

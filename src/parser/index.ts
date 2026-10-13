@@ -1,5 +1,6 @@
 import { classifySms, isTransactionSms } from './classify';
 import {
+  classifyPayee,
   extractAmount,
   extractBankRef,
   extractMerchant,
@@ -30,6 +31,7 @@ export function parseSms(sms: RawSms): ParseResult {
     type,
     merchant,
     payeeKey: toPayeeKey(merchant),
+    payeeKind: classifyPayee(merchant, text),
     bankRef: extractBankRef(text),
     occurredAt: extractOccurredAt(text, sms.date),
   });

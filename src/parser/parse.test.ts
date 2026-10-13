@@ -96,6 +96,20 @@ describe('parseSms', () => {
   });
 });
 
+describe('payeeKind', () => {
+  it.each([
+    ['Sent Rs.100.00 From HDFC Bank A/C *1234 To UDIT SINGH On 12/10/24 Ref 428812345678', 'person'],
+    ['Rs 100.00 debited from A/c XX1234 on 12-10-24 to VPA 9876543210@ybl (UPI Ref No 428812345678).', 'person'],
+    ['Debit INR 100.00 A/c no. XX1234 12-10-24 10:20:30 UPI/P2A/428812345678/RAVI KUMAR SMS BLOCK', 'person'],
+    ['Debit INR 350.00 A/c no. XX1234 12-10-24 10:20:30 UPI/P2M/428812345678/BIGBASKET SMS BLOCK', 'merchant'],
+    ['Sent Rs.500.00 From HDFC Bank A/C *1234 To SWIGGY On 12/10/24 Ref 428812345678', 'merchant'],
+    ['Spent Rs.899 On HDFC Bank Card 1234 At LOCAL SHOP On 2024-10-12:10:20:30.', 'merchant'],
+    ['Rs 100.00 debited from A/c XX1234 on 12-10-24 to VPA abc@ybl (UPI Ref No 428812345678).', 'unknown'],
+  ] as const)('%s -> %s', (body, kind) => {
+    expect(ok(body).payeeKind).toBe(kind);
+  });
+});
+
 describe('extractors', () => {
   it('skips balance amounts when picking the transaction amount', () => {
     expect(extractAmount('Avl Bal Rs 9,999.00. Rs 45.50 debited')).toBe(45.5);

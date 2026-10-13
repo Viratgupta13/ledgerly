@@ -150,3 +150,32 @@ export function extractOccurredAt(text: string, smsDate: number): string {
   if (!found.hasTime && istDay(found.ms) === istDay(smsDate)) return new Date(smsDate).toISOString();
   return new Date(found.ms).toISOString();
 }
+
+export type PayeeKind = 'person' | 'merchant' | 'unknown';
+
+const BUSINESS_WORDS = new Set([
+  'ltd', 'limited', 'pvt', 'private', 'llp', 'inc', 'corp', 'store', 'stores', 'mart', 'supermarket', 'restaurant',
+  'cafe', 'hotel', 'pharmacy', 'medical', 'medicals', 'fuel', 'petrol', 'services', 'service', 'enterprises',
+  'traders', 'trading', 'foods', 'kitchen', 'bakery', 'sweets', 'cabs', 'travels', 'recharge', 'payments', 'bank',
+  'swiggy', 'zomato', 'amazon', 'flipkart', 'uber', 'ola', 'rapido', 'jio', 'airtel', 'bigbasket', 'blinkit',
+  'zepto', 'myntra', 'paytm', 'phonepe', 'irctc', 'netflix', 'spotify', 'google', 'apple', 'dominos', 'mcdonalds',
+]);
+
+/**
+ * Best-effort guess at who received the money. Only a hint: ambiguous cases return 'unknown'
+ * and the review screen asks the user either way for debits.
+ */
+export function classifyPayee(merchant: string | null, text: string): PayeeKind {
+  if (/\bUPI\/P2M\//i.test(text)) return 'merchant';
+  if (/\bUPI\/P2[AP]\//i.test(text)) return 'person';
+  if (!merchant) return 'unknown';
+  if (/\bat\s+\S+.*\bcard\b|\bcard\b.*\b(?:at|@)\s/i.test(text)) return 'merchant';
+
+  const vpa = merchant.match(/^([a-z0-9._-]+)@/i);
+  if (vpa) return /^\+?(?:91)?[6-9]\d{9}$/.test(vpa[1]) ? 'person' : 'unknown';
+
+  const words = merchant.toLowerCase().split(/\s+/).filter(Boolean);
+  if (words.some((w) => BUSINESS_WORDS.has(w.replace(/[^a-z]/g, '')))) return 'merchant';
+  if (words.length >= 2 && words.length <= 3 && words.every((w) => /^[a-z]+\.?$/.test(w))) return 'person';
+  return 'unknown';
+}
