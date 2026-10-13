@@ -1,5 +1,7 @@
-import { dedupeKey, type ParsedTxn, type RawSms } from '../parser';
+import { suggestCategory } from '../constants/brands';
+import type { ParsedTxn, RawSms } from '../parser';
 import { supabase } from '../lib/supabase';
+import { buildRows } from './rows';
 import type { CategoryRow, RuleRow, TxnRow, TxnStatus } from './types';
 
 const TXN_COLUMNS =
@@ -43,19 +45,7 @@ export async function importParsed(userId: string, items: { sms: RawSms; txn: Pa
   if (items.length === 0) return 0;
   const rules = new Map((await listRules()).map((r) => [r.payee_key, r.category]));
 
-  const rows = items.map(({ sms, txn }) => ({
-    user_id: userId,
-    amount: txn.amount,
-    type: txn.type,
-    merchant: txn.merchant,
-    payee_key: txn.payeeKey,
-    payee_kind: txn.payeeKind,
-    // A saved rule means the user already decided this payee: categorise and confirm it.
-    category: txn.type === 'debit' && txn.payeeKey ? (rules.get(txn.payeeKey) ?? null) : null,
-    bank_ref: dedupeKey(sms, txn),
-    occurred_at: txn.occurredAt,
-    status: txn.type === 'debit' && txn.payeeKey && rules.has(txn.payeeKey) ? ('confirmed' as const) : ('pending' as const),
-  }));
+  const rows = buildRows(userId, items, rules);
 
   let inserted = 0;
   for (let i = 0; i < rows.length; i += 100) {
@@ -104,4 +94,40 @@ export async function applyRule(payeeKey: string, category: string): Promise<voi
     .eq('type', 'debit')
     .or('status.eq.pending,and(status.eq.confirmed,category.is.null)');
   if (error) throw error;
+}
+
+/**
+ * Fills in a suggested category for pending debits that have none yet and whose payee is a
+ * well-known brand. Returns how many rows were updated. Never confirms anything.
+ */
+export async function applySuggestions(): Promise<number> {
+  const pending = await listTxns('pending');
+  const byCategory = new Map<string, string[]>();
+  for (const t of pending) {
+    if (t.type !== 'debit' || t.category) continue;
+    const category = suggestCategory(t.payee_key);
+    if (category) byCategory.set(category, [...(byCategory.get(category) ?? []), t.id]);
+  }
+  let updated = 0;
+  for (const [category, ids] of byCategory) {
+    for (let i = 0; i < ids.length; i += 100) {
+      const { error } = await supabase.from('transactions').update({ category }).in('id', ids.slice(i, i + 100));
+      if (error) throw error;
+      updated += Math.min(100, ids.length - i);
+    }
+  }
+  return updated;
+}
+
+/** Confirms every pending debit that already has a category. Returns how many were confirmed. */
+export async function confirmCategorised(): Promise<number> {
+  const { data, error } = await supabase
+    .from('transactions')
+    .update({ status: 'confirmed' })
+    .eq('status', 'pending')
+    .eq('type', 'debit')
+    .not('category', 'is', null)
+    .select('id');
+  if (error) throw error;
+  return data?.length ?? 0;
 }

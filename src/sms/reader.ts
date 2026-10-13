@@ -2,6 +2,10 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import SmsAndroid from 'react-native-get-sms-android';
 import type { RawSms } from '../parser';
 
+export async function hasSmsPermission(): Promise<boolean> {
+  return Platform.OS === 'android' && (await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS));
+}
+
 export async function requestSmsPermission(): Promise<boolean> {
   if (Platform.OS !== 'android') return false;
   const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS, {
@@ -16,7 +20,8 @@ export async function requestSmsPermission(): Promise<boolean> {
 type NativeSms = { address?: string; body?: string; date?: string | number };
 
 /** Reads inbox messages received in the last `days` days (newest first). */
-export function readInbox({ days = 30, maxCount = 1000 } = {}): Promise<RawSms[]> {
+export function readInbox({ days = 30 }: { days?: number } = {}): Promise<RawSms[]> {
+  const maxCount = days > 90 ? 5000 : 1000;
   const filter = { box: 'inbox', maxCount, minDate: Date.now() - days * 24 * 60 * 60 * 1000 };
   return new Promise((resolve, reject) => {
     SmsAndroid.list(

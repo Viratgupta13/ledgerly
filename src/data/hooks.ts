@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '../constants/categories';
-import { addCategory, applyRule, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
+import { addCategory, applyRule, confirmCategorised, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
 import { useAuthStore } from '../store/auth';
 import type { TxnStatus } from './types';
 
@@ -71,4 +71,12 @@ export function useNoteSuggestions(limit = 6): string[] {
     counts.set(text.toLowerCase(), entry);
   }
   return [...counts.values()].sort((a, b) => b.n - a.n).slice(0, limit).map((e) => e.text);
+}
+
+export function useConfirmCategorised() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: confirmCategorised,
+    onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
+  });
 }

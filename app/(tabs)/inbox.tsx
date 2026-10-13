@@ -1,41 +1,50 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { PendingCard } from '../../src/components/PendingCard';
-import { importParsed } from '../../src/data/api';
-import { useTxns } from '../../src/data/hooks';
-import { parseSms, type ParsedTxn, type RawSms } from '../../src/parser';
-import { readInbox, requestSmsPermission } from '../../src/sms/reader';
+import { useConfirmCategorised, useTxns } from '../../src/data/hooks';
+import { scanAndImport } from '../../src/sms/scan';
 import { useAuthStore } from '../../src/store/auth';
 
-async function scanAndImport(userId: string) {
-  if (!(await requestSmsPermission())) throw new Error('SMS permission was not granted.');
-  const messages = await readInbox({ days: 30 });
-  const items: { sms: RawSms; txn: ParsedTxn }[] = [];
-  for (const sms of messages) {
-    const result = parseSms(sms);
-    if (result.ok) items.push({ sms, txn: result.txn });
-  }
-  const added = await importParsed(userId, items);
-  return { scanned: messages.length, found: items.length, added };
-}
+const RANGES = [
+  { label: '30 days', days: 30 },
+  { label: '90 days', days: 90 },
+  { label: '1 year', days: 365 },
+];
 
 export default function InboxScreen() {
   const userId = useAuthStore((s) => s.session?.user.id);
   const qc = useQueryClient();
   const pending = useTxns('pending');
+  const confirmAll = useConfirmCategorised();
+  const [days, setDays] = useState(30);
+
   const scan = useMutation({
-    mutationFn: () => scanAndImport(userId as string),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['txns'] }),
+    mutationFn: () => scanAndImport(userId as string, days, { askPermission: true }),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
   });
 
+  const ready = (pending.data ?? []).filter((t) => t.type === 'debit' && t.category).length;
+
   return (
-    <View className="flex-1 bg-white px-4 pt-12 dark:bg-black">
+    <View className="flex-1 bg-white px-4 pt-4 dark:bg-black">
+      <View className="flex-row gap-2">
+        {RANGES.map((r) => (
+          <Pressable
+            key={r.days}
+            onPress={() => setDays(r.days)}
+            className={`rounded-full border px-3 py-1 ${days === r.days ? 'border-blue-600 bg-blue-600' : 'border-gray-300 dark:border-gray-700'}`}
+          >
+            <Text className={days === r.days ? 'text-white' : 'text-black dark:text-white'}>{r.label}</Text>
+          </Pressable>
+        ))}
+      </View>
       <Pressable
-        className="items-center rounded-lg bg-blue-600 py-3"
+        className="mt-3 items-center rounded-lg bg-blue-600 py-3"
         onPress={() => scan.mutate()}
         disabled={scan.isPending || !userId}
       >
-        <Text className="font-semibold text-white">{scan.isPending ? 'Scanning…' : 'Scan last 30 days of SMS'}</Text>
+        <Text className="font-semibold text-white">{scan.isPending ? 'Scanning…' : `Scan last ${RANGES.find((r) => r.days === days)?.label} of SMS`}</Text>
       </Pressable>
 
       {scan.error && <Text className="mt-3 text-red-600">{scan.error.message}</Text>}
@@ -45,9 +54,22 @@ export default function InboxScreen() {
         </Text>
       )}
 
+      {ready > 0 && (
+        <Pressable
+          className="mt-3 items-center rounded-lg border border-blue-600 py-3"
+          onPress={() => confirmAll.mutate()}
+          disabled={confirmAll.isPending}
+        >
+          <Text className="font-semibold text-blue-600">
+            {confirmAll.isPending ? 'Confirming…' : `Confirm all ${ready} with a category`}
+          </Text>
+        </Pressable>
+      )}
+      {confirmAll.error && <Text className="mt-2 text-red-600">{confirmAll.error.message}</Text>}
+
       {pending.isLoading && <ActivityIndicator className="mt-6" />}
       {pending.error && <Text className="mt-3 text-red-600">{pending.error.message}</Text>}
-      <Text className="mt-4 mb-2 text-lg font-semibold text-black dark:text-white">
+      <Text className="mb-2 mt-4 text-lg font-semibold text-black dark:text-white">
         To review ({pending.data?.length ?? 0})
       </Text>
       <FlatList
