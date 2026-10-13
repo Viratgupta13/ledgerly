@@ -1,59 +1,61 @@
-import { useMutation } from '@tanstack/react-query';
-import { FlatList, Pressable, Text, View } from 'react-native';
-import { parseSms, type ParsedTxn } from '../../src/parser';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { PendingCard } from '../../src/components/PendingCard';
+import { importParsed } from '../../src/data/api';
+import { useTxns } from '../../src/data/hooks';
+import { parseSms, type ParsedTxn, type RawSms } from '../../src/parser';
 import { readInbox, requestSmsPermission } from '../../src/sms/reader';
+import { useAuthStore } from '../../src/store/auth';
 
-type ScanResult = { scanned: number; txns: ParsedTxn[] };
-
-async function scan(): Promise<ScanResult> {
+async function scanAndImport(userId: string) {
   if (!(await requestSmsPermission())) throw new Error('SMS permission was not granted.');
   const messages = await readInbox({ days: 30 });
-  const txns: ParsedTxn[] = [];
+  const items: { sms: RawSms; txn: ParsedTxn }[] = [];
   for (const sms of messages) {
     const result = parseSms(sms);
-    if (result.ok) txns.push(result.txn);
+    if (result.ok) items.push({ sms, txn: result.txn });
   }
-  return { scanned: messages.length, txns };
+  const added = await importParsed(userId, items);
+  return { scanned: messages.length, found: items.length, added };
 }
 
-const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-
 export default function InboxScreen() {
-  const mutation = useMutation({ mutationFn: scan });
-  const data = mutation.data;
+  const userId = useAuthStore((s) => s.session?.user.id);
+  const qc = useQueryClient();
+  const pending = useTxns('pending');
+  const scan = useMutation({
+    mutationFn: () => scanAndImport(userId as string),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['txns'] }),
+  });
 
   return (
     <View className="flex-1 bg-white px-4 pt-12 dark:bg-black">
       <Pressable
         className="items-center rounded-lg bg-blue-600 py-3"
-        onPress={() => mutation.mutate()}
-        disabled={mutation.isPending}
+        onPress={() => scan.mutate()}
+        disabled={scan.isPending || !userId}
       >
-        <Text className="font-semibold text-white">{mutation.isPending ? 'Scanning…' : 'Scan last 30 days of SMS'}</Text>
+        <Text className="font-semibold text-white">{scan.isPending ? 'Scanning…' : 'Scan last 30 days of SMS'}</Text>
       </Pressable>
 
-      {mutation.error && <Text className="mt-3 text-red-600">{mutation.error.message}</Text>}
-      {data && (
+      {scan.error && <Text className="mt-3 text-red-600">{scan.error.message}</Text>}
+      {scan.data && (
         <Text className="mt-3 text-gray-600 dark:text-gray-300">
-          Read {data.scanned} SMS, found {data.txns.length} transactions.
+          Read {scan.data.scanned} SMS, found {scan.data.found} transactions, {scan.data.added} new.
         </Text>
       )}
 
+      {pending.isLoading && <ActivityIndicator className="mt-6" />}
+      {pending.error && <Text className="mt-3 text-red-600">{pending.error.message}</Text>}
+      <Text className="mt-4 mb-2 text-lg font-semibold text-black dark:text-white">
+        To review ({pending.data?.length ?? 0})
+      </Text>
       <FlatList
-        className="mt-3"
-        data={data?.txns ?? []}
-        keyExtractor={(t, i) => `${t.bankRef ?? t.occurredAt}-${i}`}
-        renderItem={({ item }) => (
-          <View className="flex-row items-center justify-between border-b border-gray-200 py-3 dark:border-gray-800">
-            <View className="flex-1 pr-3">
-              <Text className="text-black dark:text-white" numberOfLines={1}>{item.merchant ?? 'Unknown'}</Text>
-              <Text className="text-xs text-gray-500">{new Date(item.occurredAt).toLocaleString('en-IN')}</Text>
-            </View>
-            <Text className={item.type === 'debit' ? 'font-semibold text-red-600' : 'font-semibold text-green-600'}>
-              {item.type === 'debit' ? '-' : '+'}{rupees(item.amount)}
-            </Text>
-          </View>
-        )}
+        data={pending.data ?? []}
+        keyExtractor={(t) => t.id}
+        renderItem={({ item }) => <PendingCard txn={item} />}
+        ListEmptyComponent={!pending.isLoading ? <Text className="text-gray-500">Nothing to review.</Text> : null}
+        keyboardShouldPersistTaps="handled"
       />
     </View>
   );
