@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '../constants/categories';
-import { addCategory, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
+import { addCategory, applyRule, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
 import { useAuthStore } from '../store/auth';
 import type { TxnStatus } from './types';
 
@@ -16,9 +16,13 @@ export function useReview() {
     mutationFn: async (input: Parameters<typeof reviewTxn>[0] & { remember?: { payeeKey: string } }) => {
       const { remember, ...review } = input;
       await reviewTxn(review);
-      if (remember && userId && review.category) await saveRule(userId, remember.payeeKey, review.category);
+      if (remember && userId && review.category) {
+        await saveRule(userId, remember.payeeKey, review.category);
+        await applyRule(remember.payeeKey, review.category);
+      }
     },
-    onSuccess: () => {
+    // onSettled, not onSuccess: the review itself is saved even if the rule step fails.
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['txns'] });
       qc.invalidateQueries({ queryKey: ['rules'] });
     },
@@ -53,4 +57,18 @@ export function useAddCategory() {
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categories'] }),
   });
+}
+
+/** The notes the user has used most, for one-tap tagging ("Rapido ride"). */
+export function useNoteSuggestions(limit = 6): string[] {
+  const { data } = useTxns('confirmed');
+  const counts = new Map<string, { text: string; n: number }>();
+  for (const t of data ?? []) {
+    const text = t.note?.trim();
+    if (!text) continue;
+    const entry = counts.get(text.toLowerCase()) ?? { text, n: 0 };
+    entry.n += 1;
+    counts.set(text.toLowerCase(), entry);
+  }
+  return [...counts.values()].sort((a, b) => b.n - a.n).slice(0, limit).map((e) => e.text);
 }

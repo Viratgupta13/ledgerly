@@ -1,11 +1,15 @@
-import { breakdownForMonth, UNCATEGORISED } from './breakdown';
+import { breakdown, breakdownForMonth, UNCATEGORISED } from './breakdown';
 
-const tx = (over: Partial<Parameters<typeof breakdownForMonth>[0][number]>) => ({
+let n = 0;
+const tx = (over: Partial<Parameters<typeof breakdownForMonth>[0][number]> = {}) => ({
+  id: `t${n++}`,
   amount: 100,
   type: 'debit' as const,
   merchant: 'ZOMATO',
   payee_key: 'zomato',
+  payee_kind: 'merchant' as const,
   category: 'Food',
+  note: null,
   occurred_at: '2024-10-15T06:30:00.000Z',
   ...over,
 });
@@ -47,5 +51,48 @@ describe('breakdownForMonth', () => {
   it('avoids floating point drift', () => {
     const r = breakdownForMonth([tx({ amount: 0.1 }), tx({ amount: 0.2 })], 2024, 9);
     expect(r.total).toBe(0.3);
+  });
+});
+
+describe('person payments', () => {
+  const driver = (merchant: string, note: string | null, amount: number) =>
+    tx({
+      category: 'Transport',
+      merchant,
+      payee_key: merchant.toLowerCase(),
+      payee_kind: 'person',
+      note,
+      amount,
+    });
+
+  it('groups different drivers under one note and keeps who was paid', () => {
+    const r = breakdownForMonth(
+      [driver('RINKU', 'Rapido ride', 80), driver('AMAN SINGH', 'rapido ride', 60), driver('UDIT', 'Ola ride', 120)],
+      2024,
+      9,
+    );
+    const groups = r.categories[0].merchants;
+    expect(groups.map((g) => [g.label, g.total])).toEqual([
+      ['Rapido ride', 140],
+      ['Ola ride', 120],
+    ]);
+    expect(groups[0].items.map((i) => i.who).sort()).toEqual(['AMAN SINGH', 'RINKU']);
+  });
+
+  it('falls back to the person name when there is no note', () => {
+    const r = breakdownForMonth([driver('RINKU', null, 80), driver('RINKU', null, 20)], 2024, 9);
+    expect(r.categories[0].merchants).toMatchObject([{ label: 'RINKU', total: 100, count: 2 }]);
+  });
+
+  it('keeps merchants grouped by shop even if a note is set', () => {
+    const r = breakdownForMonth([tx({ note: 'dinner' }), tx({ note: 'lunch' })], 2024, 9);
+    expect(r.categories[0].merchants).toMatchObject([{ label: 'ZOMATO', count: 2 }]);
+  });
+});
+
+describe('all-time period', () => {
+  it('includes every month', () => {
+    const r = breakdown([tx({ amount: 10 }), tx({ amount: 5, occurred_at: '2024-08-01T06:30:00.000Z' })], 'all');
+    expect(r.total).toBe(15);
   });
 });

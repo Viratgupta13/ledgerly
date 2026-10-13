@@ -50,10 +50,11 @@ export async function importParsed(userId: string, items: { sms: RawSms; txn: Pa
     merchant: txn.merchant,
     payee_key: txn.payeeKey,
     payee_kind: txn.payeeKind,
+    // A saved rule means the user already decided this payee: categorise and confirm it.
     category: txn.type === 'debit' && txn.payeeKey ? (rules.get(txn.payeeKey) ?? null) : null,
     bank_ref: dedupeKey(sms, txn),
     occurred_at: txn.occurredAt,
-    status: 'pending' as const,
+    status: txn.type === 'debit' && txn.payeeKey && rules.has(txn.payeeKey) ? ('confirmed' as const) : ('pending' as const),
   }));
 
   let inserted = 0;
@@ -87,5 +88,20 @@ export async function listCategories(): Promise<CategoryRow[]> {
 
 export async function addCategory(userId: string, name: string): Promise<void> {
   const { error } = await supabase.from('categories').insert({ user_id: userId, name: name.trim() });
+  if (error) throw error;
+}
+
+/**
+ * Applies a payee rule to transactions that already exist: pending debits get the category and
+ * are confirmed; confirmed debits with no category get the category. Anything the user has
+ * already categorised or ignored is left alone.
+ */
+export async function applyRule(payeeKey: string, category: string): Promise<void> {
+  const { error } = await supabase
+    .from('transactions')
+    .update({ category, status: 'confirmed' })
+    .eq('payee_key', payeeKey)
+    .eq('type', 'debit')
+    .or('status.eq.pending,and(status.eq.confirmed,category.is.null)');
   if (error) throw error;
 }

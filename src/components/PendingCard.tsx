@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { Pressable, Switch, Text, TextInput, View } from 'react-native';
-import { useAddCategory, useCategoryNames, useReview } from '../data/hooks';
+import { useAddCategory, useCategoryNames, useNoteSuggestions, useReview } from '../data/hooks';
 import type { TxnRow } from '../data/types';
 
 export const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 
-export function PendingCard({ txn }: { txn: TxnRow }) {
+type Props = {
+  txn: TxnRow;
+  /** 'review' for new SMS, 'edit' to change an already-confirmed transaction. */
+  mode?: 'review' | 'edit';
+  onDone?: () => void;
+};
+
+export function PendingCard({ txn, mode = 'review', onDone }: Props) {
   const review = useReview();
   const categories = useCategoryNames();
+  const suggestions = useNoteSuggestions();
   const addCategory = useAddCategory();
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
   const isDebit = txn.type === 'debit';
   const [category, setCategory] = useState<string | null>(txn.category);
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState(txn.note ?? '');
   const [remember, setRemember] = useState(txn.payee_kind !== 'person');
 
   const createCategory = async () => {
@@ -31,13 +39,19 @@ export function PendingCard({ txn }: { txn: TxnRow }) {
   };
 
   const submit = (status: 'confirmed' | 'ignored') =>
-    review.mutate({
-      id: txn.id,
-      status,
-      category: isDebit ? category : null,
-      note: note.trim() || null,
-      remember: status === 'confirmed' && isDebit && remember && category && txn.payee_key ? { payeeKey: txn.payee_key } : undefined,
-    });
+    review.mutate(
+      {
+        id: txn.id,
+        status,
+        category: isDebit ? category : null,
+        note: note.trim() || null,
+        remember:
+          status === 'confirmed' && isDebit && remember && category && txn.payee_key
+            ? { payeeKey: txn.payee_key }
+            : undefined,
+      },
+      { onSuccess: onDone },
+    );
 
   return (
     <View className="mb-3 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
@@ -91,6 +105,16 @@ export function PendingCard({ txn }: { txn: TxnRow }) {
             </View>
           )}
           {addCategory.error && <Text className="mt-2 text-red-600">{addCategory.error.message}</Text>}
+
+          {suggestions.length > 0 && (
+            <View className="mt-3 flex-row flex-wrap gap-2">
+              {suggestions.map((s) => (
+                <Pressable key={s} onPress={() => setNote(s)} className="rounded-full bg-gray-100 px-3 py-1 dark:bg-gray-800">
+                  <Text className="text-sm text-black dark:text-white">{s}</Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
           <TextInput
             className="mt-3 rounded-lg border border-gray-300 px-3 py-2 text-black dark:border-gray-700 dark:text-white"
             placeholder="Note (e.g. Rapido ride)"
@@ -115,14 +139,14 @@ export function PendingCard({ txn }: { txn: TxnRow }) {
           onPress={() => submit('confirmed')}
           disabled={review.isPending}
         >
-          <Text className="font-semibold text-white">Confirm</Text>
+          <Text className="font-semibold text-white">{mode === 'edit' ? 'Save' : 'Confirm'}</Text>
         </Pressable>
         <Pressable
           className="flex-1 items-center rounded-lg border border-gray-300 py-2 dark:border-gray-700"
-          onPress={() => submit('ignored')}
+          onPress={() => (mode === 'edit' ? onDone?.() : submit('ignored'))}
           disabled={review.isPending}
         >
-          <Text className="font-semibold text-black dark:text-white">Ignore</Text>
+          <Text className="font-semibold text-black dark:text-white">{mode === 'edit' ? 'Cancel' : 'Ignore'}</Text>
         </Pressable>
       </View>
       {review.error && <Text className="mt-2 text-red-600">{review.error.message}</Text>}
