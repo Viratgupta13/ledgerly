@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '../constants/categories';
-import { addCategory, applyRule, confirmBatch, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
+import { addCategory, applyPredefined, confirmBatch, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
 import { useAuthStore } from '../store/auth';
 import type { TxnStatus } from './types';
 
@@ -18,8 +18,9 @@ export function useReview() {
       await reviewTxn(review);
       if (remember && userId && review.category) {
         await saveRule(userId, remember.payeeKey, review.category);
-        await applyRule(remember.payeeKey, review.category);
       }
+      // What was just confirmed now teaches the app: other pending rows of this payee get pre-filled.
+      await applyPredefined().catch(() => undefined);
     },
     // onSettled, not onSuccess: the review itself is saved even if the rule step fails.
     onSettled: () => {

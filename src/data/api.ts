@@ -1,7 +1,6 @@
-import { suggestCategory } from '../constants/brands';
 import type { ParsedTxn, RawSms } from '../parser';
 import { supabase } from '../lib/supabase';
-import { buildRows } from './rows';
+import { buildHistory, buildRows, predefinedCategory } from './rows';
 import type { CategoryRow, RuleRow, TxnRow, TxnStatus } from './types';
 
 const TXN_COLUMNS =
@@ -43,9 +42,11 @@ export async function saveRule(userId: string, payeeKey: string, category: strin
  */
 export async function importParsed(userId: string, items: { sms: RawSms; txn: ParsedTxn }[]): Promise<number> {
   if (items.length === 0) return 0;
-  const rules = new Map((await listRules()).map((r) => [r.payee_key, r.category]));
+  const [ruleRows, confirmed] = await Promise.all([listRules(), listTxns('confirmed')]);
+  const rules = new Map(ruleRows.map((r) => [r.payee_key, r.category]));
+  const history = buildHistory(confirmed);
 
-  const rows = buildRows(userId, items, rules);
+  const rows = buildRows(userId, items, rules, history);
 
   let inserted = 0;
   for (let i = 0; i < rows.length; i += 100) {
@@ -82,30 +83,18 @@ export async function addCategory(userId: string, name: string): Promise<void> {
 }
 
 /**
- * Applies a payee rule to transactions that already exist: pending debits get the category and
- * are confirmed; confirmed debits with no category get the category. Anything the user has
- * already categorised or ignored is left alone.
+ * Pre-fills a category on pending debits that have none, using explicit rules, what the user
+ * confirmed before, and well-known brands. Never confirms anything. Returns rows updated.
  */
-export async function applyRule(payeeKey: string, category: string): Promise<void> {
-  const { error } = await supabase
-    .from('transactions')
-    .update({ category, status: 'confirmed' })
-    .eq('payee_key', payeeKey)
-    .eq('type', 'debit')
-    .or('status.eq.pending,and(status.eq.confirmed,category.is.null)');
-  if (error) throw error;
-}
+export async function applyPredefined(): Promise<number> {
+  const [pending, confirmed, ruleRows] = await Promise.all([listTxns('pending'), listTxns('confirmed'), listRules()]);
+  const rules = new Map(ruleRows.map((r) => [r.payee_key, r.category]));
+  const history = buildHistory(confirmed);
 
-/**
- * Fills in a suggested category for pending debits that have none yet and whose payee is a
- * well-known brand. Returns how many rows were updated. Never confirms anything.
- */
-export async function applySuggestions(): Promise<number> {
-  const pending = await listTxns('pending');
   const byCategory = new Map<string, string[]>();
   for (const t of pending) {
     if (t.type !== 'debit' || t.category) continue;
-    const category = suggestCategory(t.payee_key);
+    const category = predefinedCategory(t.payee_key, rules, history);
     if (category) byCategory.set(category, [...(byCategory.get(category) ?? []), t.id]);
   }
   let updated = 0;

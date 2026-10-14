@@ -57,7 +57,7 @@ export default function InboxScreen() {
 
       {ready.length > 0 && (
         <Pressable className="mt-3 items-center rounded-lg border border-blue-600 py-3" onPress={() => setPreviewing(true)}>
-          <Text className="font-semibold text-blue-600">Review & confirm {ready.length} with a category</Text>
+          <Text className="font-semibold text-blue-600">Review & confirm {ready.length} pre-sorted payments</Text>
         </Pressable>
       )}
       <ConfirmBatchModal visible={previewing} txns={ready} onClose={() => setPreviewing(false)} />

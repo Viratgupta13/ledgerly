@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { applySuggestions, importParsed } from '../data/api';
+import { applyPredefined, importParsed } from '../data/api';
 import { parseSms, type ParsedTxn, type RawSms } from '../parser';
 import { hasSmsPermission, readInbox, requestSmsPermission } from './reader';
 
@@ -27,7 +27,7 @@ export async function scanAndImport(
     if (result.ok) items.push({ sms, txn: result.txn });
   }
   const added = await importParsed(userId, items);
-  await applySuggestions();
+  await applyPredefined();
   await AsyncStorage.setItem(LAST_SCAN_KEY, String(Date.now())).catch(() => undefined);
   return { scanned: messages.length, found: items.length, added };
 }
