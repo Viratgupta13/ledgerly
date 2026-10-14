@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ledgerly",
     "slug": "ledgerly",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,8 @@
       "package": "com.ledgerly.app",
       "permissions": [
         "android.permission.READ_SMS"
-      ]
+      ],
+      "versionCode": 2
     },
     "plugins": [
       "expo-router",
