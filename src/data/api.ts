@@ -119,15 +119,23 @@ export async function applySuggestions(): Promise<number> {
   return updated;
 }
 
-/** Confirms every pending debit that already has a category. Returns how many were confirmed. */
-export async function confirmCategorised(): Promise<number> {
-  const { data, error } = await supabase
-    .from('transactions')
-    .update({ status: 'confirmed' })
-    .eq('status', 'pending')
-    .eq('type', 'debit')
-    .not('category', 'is', null)
-    .select('id');
-  if (error) throw error;
-  return data?.length ?? 0;
+/** Confirms the given pending payments, each with its final category. Returns how many were saved. */
+export async function confirmBatch(updates: { id: string; category: string }[]): Promise<number> {
+  const byCategory = new Map<string, string[]>();
+  for (const u of updates) byCategory.set(u.category, [...(byCategory.get(u.category) ?? []), u.id]);
+
+  let saved = 0;
+  for (const [category, ids] of byCategory) {
+    for (let i = 0; i < ids.length; i += 100) {
+      const chunk = ids.slice(i, i + 100);
+      const { error } = await supabase
+        .from('transactions')
+        .update({ status: 'confirmed', category })
+        .in('id', chunk)
+        .eq('status', 'pending');
+      if (error) throw error;
+      saved += chunk.length;
+    }
+  }
+  return saved;
 }

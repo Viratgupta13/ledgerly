@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { ConfirmBatchModal } from '../../src/components/ConfirmBatchModal';
 import { PendingCard } from '../../src/components/PendingCard';
-import { useConfirmCategorised, useTxns } from '../../src/data/hooks';
+import { useTxns } from '../../src/data/hooks';
 import { scanAndImport } from '../../src/sms/scan';
 import { useAuthStore } from '../../src/store/auth';
 
@@ -16,7 +17,7 @@ export default function InboxScreen() {
   const userId = useAuthStore((s) => s.session?.user.id);
   const qc = useQueryClient();
   const pending = useTxns('pending');
-  const confirmAll = useConfirmCategorised();
+  const [previewing, setPreviewing] = useState(false);
   const [days, setDays] = useState(30);
 
   const scan = useMutation({
@@ -24,7 +25,7 @@ export default function InboxScreen() {
     onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
   });
 
-  const ready = (pending.data ?? []).filter((t) => t.type === 'debit' && t.category).length;
+  const ready = (pending.data ?? []).filter((t) => t.type === 'debit' && t.category);
 
   return (
     <View className="flex-1 bg-white px-4 pt-4 dark:bg-black">
@@ -54,18 +55,12 @@ export default function InboxScreen() {
         </Text>
       )}
 
-      {ready > 0 && (
-        <Pressable
-          className="mt-3 items-center rounded-lg border border-blue-600 py-3"
-          onPress={() => confirmAll.mutate()}
-          disabled={confirmAll.isPending}
-        >
-          <Text className="font-semibold text-blue-600">
-            {confirmAll.isPending ? 'Confirming…' : `Confirm all ${ready} with a category`}
-          </Text>
+      {ready.length > 0 && (
+        <Pressable className="mt-3 items-center rounded-lg border border-blue-600 py-3" onPress={() => setPreviewing(true)}>
+          <Text className="font-semibold text-blue-600">Review & confirm {ready.length} with a category</Text>
         </Pressable>
       )}
-      {confirmAll.error && <Text className="mt-2 text-red-600">{confirmAll.error.message}</Text>}
+      <ConfirmBatchModal visible={previewing} txns={ready} onClose={() => setPreviewing(false)} />
 
       {pending.isLoading && <ActivityIndicator className="mt-6" />}
       {pending.error && <Text className="mt-3 text-red-600">{pending.error.message}</Text>}
