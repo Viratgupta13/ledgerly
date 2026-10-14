@@ -7,6 +7,8 @@
 
 **Your bank SMS, turned into a clean expense log.**
 
+🌐 **[Live site](https://ledgerly-virat12.vercel.app)** · ⬇ **[Download the APK](https://github.com/Viratgupta13/ledgerly/releases/latest)**
+
 Ledgerly is an Android app that reads bank and UPI SMS **on the phone**, turns each one into a transaction, pre-sorts it into the category you have used for that payee before, and asks you to review it once. It is built for how people in India actually pay: UPI to shops, UPI to *people* (auto drivers, landlords), ₹ amounts with lakh grouping.
 
 > **Privacy:** SMS are parsed on the device. Only the extracted amount, payee, date, category and note are saved to your account. The SMS text is never uploaded.
