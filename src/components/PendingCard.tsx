@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useAddCategory, useReview } from '../data/hooks';
 import type { TxnRow } from '../data/types';
-import { Amount, Button, Chip, Icon, Input, NewChip, Pill, SectionLabel, SHADOW_SM, Text, Toggle, ink, muted } from '../ui/components';
+import { Amount, Button, Chip, Icon, Input, LinkButton, NewChip, Pill, SectionLabel, SHADOW_SM, Text, Toggle, ink, muted } from '../ui/components';
 import { categoryMeta } from '../ui/theme';
 
 export { rupees } from '../ui/components';
@@ -44,7 +44,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
     }
   };
 
-  const submit = (status: 'confirmed' | 'ignored') => {
+  const submit = (status: 'confirmed' | 'ignored' | 'pending') => {
     review.mutate({
       id: txn.id,
       status,
@@ -177,6 +177,11 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
               onPress={() => submit('confirmed')}
             />
           </View>
+          {mode === 'edit' ? (
+            <View className="items-center">
+              <LinkButton label="Move back to Inbox" onPress={() => submit('pending')} />
+            </View>
+          ) : null}
         </View>
       </View>
     );

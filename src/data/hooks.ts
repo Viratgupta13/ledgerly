@@ -32,10 +32,15 @@ export function useReview() {
     onMutate: async (input) => {
       await qc.cancelQueries({ queryKey: ['txns'] });
       const previous = qc.getQueriesData<TxnRow[]>({ queryKey: ['txns'] });
-      qc.setQueryData<TxnRow[]>(['txns', 'pending'], (old) => old?.filter((t) => t.id !== input.id));
-      qc.setQueryData<TxnRow[]>(['txns', 'confirmed'], (old) =>
-        old?.map((t) => (t.id === input.id ? { ...t, category: input.category, note: input.note } : t)),
-      );
+      if (input.status === 'pending') {
+        // Undo: the payment leaves the confirmed list and returns to the Inbox.
+        qc.setQueryData<TxnRow[]>(['txns', 'confirmed'], (old) => old?.filter((t) => t.id !== input.id));
+      } else {
+        qc.setQueryData<TxnRow[]>(['txns', 'pending'], (old) => old?.filter((t) => t.id !== input.id));
+        qc.setQueryData<TxnRow[]>(['txns', 'confirmed'], (old) =>
+          old?.map((t) => (t.id === input.id ? { ...t, category: input.category, note: input.note } : t)),
+        );
+      }
       return { previous };
     },
     onError: (error, _input, context) => {

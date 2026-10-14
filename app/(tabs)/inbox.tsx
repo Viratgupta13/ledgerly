@@ -83,10 +83,10 @@ export default function InboxScreen() {
             <View className="flex-1 gap-0.5">
               <View className="flex-row items-center gap-1.5">
                 <Icon name="auto-fix-high" size={18} color="#3525cd" />
-                <Text className="font-inter-sb text-label-md uppercase tracking-wide text-primary dark:text-dk-primary">Pre-sorted for you</Text>
+                <Text className="font-inter-sb text-label-md uppercase tracking-wide text-primary dark:text-dk-primary">Smart Auto-Match</Text>
               </View>
               <Text className={`font-inter-sb text-title-md ${ink}`}>Review {ready.length} pre-sorted</Text>
-              <Text className={`text-body-sm ${muted}`}>Categorised from your past choices. Check once, confirm together.</Text>
+              <Text className={`text-body-sm ${muted}`}>Categorized automatically from your past choices.</Text>
             </View>
             <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-fixed dark:bg-dk-low">
               <Icon name="done-all" size={20} color="#3525cd" />

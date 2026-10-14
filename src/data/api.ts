@@ -67,7 +67,7 @@ export async function importParsed(
 
 export async function reviewTxn(input: {
   id: string;
-  status: Exclude<TxnStatus, 'pending'>;
+  status: TxnStatus;
   category: string | null;
   note: string | null;
 }): Promise<void> {

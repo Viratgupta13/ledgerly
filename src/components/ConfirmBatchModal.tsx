@@ -147,7 +147,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
             </View>
             <View className="flex-1">
               <View className="flex-row items-center gap-2">
-                <Text className="font-inter-sb text-label-md text-primary dark:text-dk-primary">Pre-sorted for you</Text>
+                <Text className="font-inter-sb text-label-md text-primary dark:text-dk-primary">Smart Auto-Match</Text>
                 <View className="h-1.5 w-1.5 rounded-full bg-secondary" />
                 <Text className={`text-body-sm ${muted}`}>From your past choices</Text>
               </View>
