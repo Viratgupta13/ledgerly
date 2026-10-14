@@ -102,7 +102,7 @@ export default function InboxScreen() {
   );
 
   return (
-    <Screen>
+    <Screen tab={1}>
       <FlatList
         data={all}
         keyExtractor={(t) => t.id}

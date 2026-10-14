@@ -151,7 +151,7 @@ export default function TransactionsScreen() {
   );
 
   return (
-    <Screen>
+    <Screen tab={2}>
       {error && <Text className="mb-2 text-error">{error.message}</Text>}
       <FlatList
         data={days}

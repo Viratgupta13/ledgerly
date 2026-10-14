@@ -2,7 +2,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
-import { AppState, useColorScheme } from 'react-native';
+import { AppState } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { syncBackgroundTask } from '../../src/background/task';
 import { useTxns } from '../../src/data/hooks';
 import { loadSettings } from '../../src/notifications/settings';
@@ -21,7 +22,7 @@ const screens: { name: string; title: string; icon: IconName }[] = [
 export default function TabsLayout() {
   const userId = useAuthStore((s) => s.session?.user.id);
   const qc = useQueryClient();
-  const dark = useColorScheme() === 'dark';
+  const insets = useSafeAreaInsets();
   const pendingCount = useTxns('pending').data?.length ?? 0;
 
   // Make sure the periodic check is registered whenever a notification is switched on.
@@ -47,10 +48,17 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: dark ? '#a5a1ff' : '#3525cd',
-        tabBarInactiveTintColor: dark ? '#a8adc9' : '#464555',
-        tabBarStyle: { backgroundColor: dark ? '#0c1021' : '#faf8ff', borderTopWidth: 0, elevation: 8, height: 64 },
-        tabBarLabelStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 10, marginTop: -2 },
+        tabBarActiveTintColor: '#3525cd',
+        tabBarInactiveTintColor: '#464555',
+        tabBarStyle: {
+          backgroundColor: '#faf8ff',
+          borderTopWidth: 0,
+          elevation: 8,
+          height: 62 + insets.bottom,
+          paddingTop: 8,
+          paddingBottom: insets.bottom + 6,
+        },
+        tabBarLabelStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 11, marginTop: 2 },
         tabBarBadgeStyle: { backgroundColor: '#950029', color: '#ffffff', fontFamily: 'Inter_700Bold', fontSize: 9, minWidth: 18, height: 16 },
       }}
     >

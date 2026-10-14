@@ -57,7 +57,7 @@ export default function HomeScreen() {
   const pct = (n: number) => (report.total > 0 ? Math.round((n / report.total) * 100) : 0);
 
   return (
-    <Screen headerTitle="Home">
+    <Screen headerTitle="Home" tab={0}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24, gap: 24 }}>
         {/* Month + scope */}
         <View className="flex-row items-center justify-between">

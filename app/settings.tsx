@@ -11,7 +11,6 @@ import { requestNotificationPermission, showNotification } from '../src/notifica
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type NotifySettings } from '../src/notifications/settings';
 import { hasSmsPermission } from '../src/sms/reader';
 import { useAuthStore } from '../src/store/auth';
-import { loadThemeMode, saveThemeMode, type ThemeMode } from '../src/ui/appearance';
 import { Icon, SHADOW_SM, Text, Toggle, ink, muted, useInitials, type IconName } from '../src/ui/components';
 
 const HOURS = [
@@ -84,12 +83,10 @@ export default function SettingsScreen() {
   const [smsAllowed, setSmsAllowed] = useState<boolean | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
-  const [theme, setTheme] = useState<ThemeMode>('system');
 
   useEffect(() => {
     loadSettings().then(setSettings);
     hasSmsPermission().then(setSmsAllowed);
-    loadThemeMode().then(setTheme);
   }, []);
 
   const update = async (patch: Partial<NotifySettings>) => {
@@ -177,21 +174,6 @@ export default function SettingsScreen() {
               ) : null}
             </Row>
             <Row icon="visibility-off" title="Hide amounts on lock screen" sub="Notifications show only a count" right={<Toggle value={settings.hideDetails} onChange={(v) => update({ hideDetails: v })} />} />
-          </Group>
-        </View>
-
-        <View>
-          <SectionTitle>Appearance</SectionTitle>
-          <Group>
-            <Row icon="palette" title="Theme" sub="System follows your phone's dark mode">
-              <View className="pb-4 pl-[72px] pr-4">
-                <Segmented
-                  options={[{ label: 'System', value: 'system' as ThemeMode }, { label: 'Light', value: 'light' as ThemeMode }, { label: 'Dark', value: 'dark' as ThemeMode }]}
-                  value={theme}
-                  onChange={(m) => { setTheme(m); saveThemeMode(m); }}
-                />
-              </View>
-            </Row>
           </Group>
         </View>
 

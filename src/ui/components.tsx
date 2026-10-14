@@ -1,8 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import {
   ActivityIndicator,
+  PanResponder,
   Pressable,
   Text as RNText,
   TextInput,
@@ -73,6 +75,28 @@ export function AppHeader({ title = 'Ledgerly' }: { title?: string }) {
   );
 }
 
+const TAB_ROUTES = ['/', '/inbox', '/transactions', '/rules'] as const;
+
+/** Swiping left/right on a tab screen jumps to the next/previous tab. */
+function useTabSwipe(tab: number | undefined) {
+  const router = useRouter();
+  return useMemo(
+    () =>
+      tab === undefined
+        ? null
+        : PanResponder.create({
+            // Only claim clearly horizontal drags so vertical scrolling and chip rows keep working.
+            onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 24 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
+            onPanResponderTerminationRequest: () => true,
+            onPanResponderRelease: (_, g) => {
+              if (g.dx < -60 && tab < TAB_ROUTES.length - 1) router.navigate(TAB_ROUTES[tab + 1]);
+              else if (g.dx > 60 && tab > 0) router.navigate(TAB_ROUTES[tab - 1]);
+            },
+          }),
+    [tab, router],
+  );
+}
+
 /** Page wrapper: safe area, app header, 16px side margins and an optional page title. */
 export function Screen({
   title,
@@ -80,6 +104,7 @@ export function Screen({
   right,
   headerTitle,
   header = true,
+  tab,
   children,
 }: {
   title?: string;
@@ -87,11 +112,14 @@ export function Screen({
   right?: ReactNode;
   headerTitle?: string;
   header?: boolean;
+  /** Position in the tab bar (0 Home, 1 Inbox, 2 Transactions, 3 Rules); enables swiping between tabs. */
+  tab?: number;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
+  const swipe = useTabSwipe(tab);
   return (
-    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }} {...(swipe?.panHandlers ?? {})}>
       {header && <AppHeader title={headerTitle} />}
       <View className="flex-1 px-4">
         {title ? (
