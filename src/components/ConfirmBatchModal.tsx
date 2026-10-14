@@ -15,9 +15,9 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
   const [changing, setChanging] = useState<string | null>(null);
 
-  const groups = useMemo(() => groupBatch(txns, overrides, excluded), [txns, overrides, excluded]);
+  const { groups, missing } = useMemo(() => groupBatch(txns, overrides, excluded), [txns, overrides, excluded]);
   const count = groups.reduce((n, g) => n + g.items.length, 0);
-  const total = groups.reduce((n, g) => n + g.total, 0);
+  const total = groups.reduce((n, g) => n + g.total, 0) + missing.reduce((n, i) => n + i.amount, 0);
 
   const close = () => {
     setOverrides(new Map());
@@ -39,10 +39,46 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
         <View className="px-4 pb-3">
           <Text className="text-xl font-bold text-black dark:text-white">Confirm {count} payments</Text>
           <Text className="text-gray-500">{rupees(total)} in total. Check each one before saving.</Text>
+          {missing.length > 0 && (
+            <Text className="mt-1 text-amber-600">{missing.length} have no category yet. Pick one below, or they stay in your Inbox.</Text>
+          )}
         </View>
 
         <ScrollView className="flex-1 px-4" keyboardShouldPersistTaps="handled">
-          {groups.length === 0 && <Text className="mt-6 text-gray-500">Nothing left to confirm.</Text>}
+          {groups.length === 0 && missing.length === 0 && <Text className="mt-6 text-gray-500">Nothing left to confirm.</Text>}
+          {missing.length > 0 && (
+            <View className="mb-4 rounded-xl border border-amber-500">
+              <View className="flex-row items-center justify-between px-4 py-3">
+                <Text className="text-base font-semibold text-amber-600">Needs a category</Text>
+                <Text className="text-amber-600">{missing.length}</Text>
+              </View>
+              {missing.map((i) => (
+                <View key={i.id} className="border-t border-gray-200 px-4 py-3 dark:border-gray-800">
+                  <View className="flex-row items-center justify-between">
+                    <View className="flex-1 pr-3">
+                      <Text className="text-black dark:text-white" numberOfLines={1}>{i.merchant ?? 'Unknown'}</Text>
+                      <Text className="text-xs text-gray-500">{new Date(i.occurred_at).toLocaleDateString('en-IN')}</Text>
+                    </View>
+                    <Text className="text-gray-700 dark:text-gray-200">{rupees(i.amount)}</Text>
+                  </View>
+                  <View className="mt-2 flex-row flex-wrap gap-2">
+                    {categories.map((c) => (
+                      <Pressable
+                        key={c}
+                        onPress={() => setOverrides(new Map(overrides).set(i.id, c))}
+                        className="rounded-full border border-gray-300 px-3 py-1 dark:border-gray-700"
+                      >
+                        <Text className="text-black dark:text-white">{c}</Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                  <Pressable className="mt-2" onPress={() => setExcluded(new Set(excluded).add(i.id))}>
+                    <Text className="text-sm text-red-600">Remove</Text>
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          )}
           {groups.map((g) => (
             <View key={g.category} className="mb-4 rounded-xl border border-gray-200 dark:border-gray-800">
               <View className="flex-row items-center justify-between px-4 py-3">
