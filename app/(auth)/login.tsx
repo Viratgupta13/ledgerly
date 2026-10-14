@@ -54,7 +54,7 @@ export default function Login() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-surface dark:bg-dk-surface">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-surface">
       <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingTop: insets.top + 24, paddingBottom: insets.bottom + 32 }}>
         {notice && (
           <View style={SHADOW_SM} className="mb-4 flex-row items-start gap-2 rounded-xl bg-secondary-container p-4">
@@ -79,15 +79,15 @@ export default function Login() {
         )}
 
         <View className="mb-6 mt-1 items-center">
-          <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.12, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4 }} className="mb-3 h-14 w-14 items-center justify-center rounded-xl bg-surface-container-lowest p-1.5 dark:bg-dk-lowest">
+          <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.12, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4 }} className="mb-3 h-14 w-14 items-center justify-center rounded-xl bg-surface-container-lowest p-1.5">
             <View className="h-full w-full items-center justify-center rounded-lg bg-primary">
               <Text className="font-inter-b text-headline-md text-on-primary">₹</Text>
             </View>
           </View>
           {signup && (
-            <View className="mb-1 flex-row items-center gap-1.5 rounded-full bg-surface-container px-2 py-0.5 dark:bg-dk-container">
+            <View className="mb-1 flex-row items-center gap-1.5 rounded-full bg-surface-container px-2 py-0.5">
               <View className="h-1.5 w-1.5 rounded-full bg-primary" />
-              <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">Ledgerly</Text>
+              <Text className="font-inter-sb text-label-sm text-primary">Ledgerly</Text>
             </View>
           )}
           <Text className={`font-inter-b text-headline-lg ${ink}`}>{signup ? 'Create your account' : 'Ledgerly'}</Text>
@@ -97,9 +97,9 @@ export default function Login() {
         </View>
 
         {!signup && (
-          <View className="mb-4 flex-row items-center gap-1.5 self-center rounded-full bg-surface-container-low px-3 py-1 dark:bg-dk-low">
+          <View className="mb-4 flex-row items-center gap-1.5 self-center rounded-full bg-surface-container-low px-3 py-1">
             <Icon name="verified-user" size={16} color="#006c49" />
-            <Text className="font-inter-md text-label-sm text-secondary dark:text-dk-secondary">SMS are read and sorted on this phone</Text>
+            <Text className="font-inter-md text-label-sm text-secondary">SMS are read and sorted on this phone</Text>
           </View>
         )}
 
@@ -144,7 +144,7 @@ export default function Login() {
                 </View>
                 <View className="flex-row items-center gap-1">
                   {[0, 1, 2].map((i) => (
-                    <View key={i} className={`h-1 w-4 rounded-full ${i < bars ? 'bg-primary-container' : 'bg-surface-container-high dark:bg-dk-container'}`} />
+                    <View key={i} className={`h-1 w-4 rounded-full ${i < bars ? 'bg-primary-container' : 'bg-surface-container-high'}`} />
                   ))}
                 </View>
               </View>
@@ -152,9 +152,9 @@ export default function Login() {
           </View>
 
           {signup && (
-            <View style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container p-4 dark:bg-dk-container">
+            <View style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container p-4">
               <View className="flex-row items-start gap-4">
-                <View style={SHADOW_SM} className="h-10 w-10 items-center justify-center rounded-xl bg-surface-container-lowest dark:bg-dk-lowest">
+                <View style={SHADOW_SM} className="h-10 w-10 items-center justify-center rounded-xl bg-surface-container-lowest">
                   <Icon name="security" size={24} color="#006c49" />
                 </View>
                 <View className="flex-1">
@@ -181,7 +181,7 @@ export default function Login() {
         <View className="mt-6 flex-row items-center justify-center">
           <Text className={`text-body-md ${muted}`}>{signup ? 'Have an account?' : 'New here?'}</Text>
           <Pressable onPress={switchMode} hitSlop={10} className="ml-1 min-h-11 flex-row items-center justify-center">
-            <Text className="font-inter-b text-label-lg text-primary dark:text-dk-primary">{signup ? 'Sign in' : 'Create an account'}</Text>
+            <Text className="font-inter-b text-label-lg text-primary">{signup ? 'Sign in' : 'Create an account'}</Text>
           </Pressable>
         </View>
 

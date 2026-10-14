@@ -70,7 +70,7 @@ export default function HomeScreen() {
               <Icon name="chevron-right" size={22} color={allTime ? '#c7c4d8' : '#131b2e'} />
             </Pressable>
           </View>
-          <View className="flex-row rounded-full bg-surface-container p-1 dark:bg-dk-container">
+          <View className="flex-row rounded-full bg-surface-container p-1">
             {(['month', 'all'] as const).map((k) => {
               const active = (k === 'all') === allTime;
               return (
@@ -143,7 +143,7 @@ export default function HomeScreen() {
               <Text className={`font-inter-sb text-title-md ${ink}`}>Spending Distribution</Text>
               <Text className={`font-inter-sb text-label-sm ${muted}`}>{report.categories.length} Categories</Text>
             </View>
-            <View className="h-3 flex-row gap-0.5 overflow-hidden rounded-full bg-surface-container p-0.5 dark:bg-dk-container">
+            <View className="h-3 flex-row gap-0.5 overflow-hidden rounded-full bg-surface-container p-0.5">
               {top.map((c) => (
                 <View key={c.name} className="h-full rounded-full" style={{ flex: c.total, backgroundColor: categoryMeta(c.name).color }} />
               ))}
@@ -204,10 +204,10 @@ export default function HomeScreen() {
                         const expanded = openGroup === id;
                         const letter = m.label.trim().charAt(0).toUpperCase();
                         return (
-                          <View key={m.key} className="overflow-hidden rounded-xl bg-surface-container-low dark:bg-dk-low">
+                          <View key={m.key} className="overflow-hidden rounded-xl bg-surface-container-low">
                             <Pressable className="flex-row items-center justify-between p-3 active:opacity-70" onPress={() => setOpenGroup(expanded ? null : id)}>
                               <View className="flex-1 flex-row items-center gap-2.5">
-                                <View className="h-7 w-7 items-center justify-center rounded-lg bg-surface-container-lowest dark:bg-dk-lowest">
+                                <View className="h-7 w-7 items-center justify-center rounded-lg bg-surface-container-lowest">
                                   <Text className="font-inter-b text-label-md" style={{ color: avatarColor(letter) }}>{letter}</Text>
                                 </View>
                                 <View className="flex-1">
@@ -223,7 +223,7 @@ export default function HomeScreen() {
                             {expanded ? (
                               <View className="gap-1.5 px-3 pb-3 pt-1">
                                 {m.items.map((i) => (
-                                  <View key={i.id} className="flex-row items-center justify-between rounded-lg bg-surface-container-lowest p-2 dark:bg-dk-lowest">
+                                  <View key={i.id} className="flex-row items-center justify-between rounded-lg bg-surface-container-lowest p-2">
                                     <View className="flex-1 pr-3">
                                       <Text className={`font-inter-md text-body-md ${ink}`} numberOfLines={1}>{i.who}</Text>
                                       <Text className={`text-body-sm ${muted}`} numberOfLines={1}>

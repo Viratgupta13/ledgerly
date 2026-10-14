@@ -1,15 +1,15 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useRef } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import {
   ActivityIndicator,
-  PanResponder,
   Pressable,
   Text as RNText,
   TextInput,
   View,
   type TextInputProps,
+  type GestureResponderEvent,
   type TextProps,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,8 +18,8 @@ import { categoryMeta, tint } from './theme';
 
 export type IconName = ComponentProps<typeof MaterialIcons>['name'];
 
-export const INK = 'text-on-surface dark:text-dk-on-surface';
-export const MUTED = 'text-on-surface-variant dark:text-dk-on-surface-variant';
+export const INK = 'text-on-surface';
+export const MUTED = 'text-on-surface-variant';
 export const ink = INK;
 export const muted = MUTED;
 
@@ -42,7 +42,7 @@ const SHADOW_MD = { shadowColor: '#3525cd', shadowOpacity: 0.22, shadowRadius: 1
 /** White surface, 16px radius, soft shadow, no border. */
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <View style={SHADOW_SM} className={`rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest ${className}`}>
+    <View style={SHADOW_SM} className={`rounded-2xl bg-surface-container-lowest ${className}`}>
       {children}
     </View>
   );
@@ -63,7 +63,7 @@ export function Avatar({ onPress }: { onPress?: () => void }) {
 /** Top bar: 36px "E" tile, bold title and the profile avatar. */
 export function AppHeader({ title = 'Ledgerly' }: { title?: string }) {
   return (
-    <View style={{ shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 1 }, elevation: 1 }} className="h-16 flex-row items-center justify-between bg-surface px-4 dark:bg-dk-surface">
+    <View style={{ shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 1 }, elevation: 1 }} className="h-16 flex-row items-center justify-between bg-surface px-4">
       <View className="flex-row items-center gap-2">
         <View style={SHADOW_SM} className="h-9 w-9 items-center justify-center rounded-xl bg-primary">
           <Text className="font-inter-b text-headline-sm text-on-primary">₹</Text>
@@ -77,24 +77,41 @@ export function AppHeader({ title = 'Ledgerly' }: { title?: string }) {
 
 const TAB_ROUTES = ['/', '/inbox', '/transactions', '/rules'] as const;
 
-/** Swiping left/right on a tab screen jumps to the next/previous tab. */
+// Horizontal scrollers (chip rows) mark their touches so scrolling them never changes the tab.
+let swipeBlocked = false;
+export function NoSwipe({ children }: { children: ReactNode }) {
+  return <View onTouchStart={() => { swipeBlocked = true; }}>{children}</View>;
+}
+
+/**
+ * Swiping left/right on a tab screen jumps to the next/previous tab. Uses plain touch events,
+ * which every ancestor receives, so it never fights scroll views or buttons for the gesture.
+ */
 function useTabSwipe(tab: number | undefined) {
   const router = useRouter();
-  return useMemo(
-    () =>
-      tab === undefined
-        ? null
-        : PanResponder.create({
-            // Only claim clearly horizontal drags so vertical scrolling and chip rows keep working.
-            onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 24 && Math.abs(g.dx) > Math.abs(g.dy) * 2,
-            onPanResponderTerminationRequest: () => true,
-            onPanResponderRelease: (_, g) => {
-              if (g.dx < -60 && tab < TAB_ROUTES.length - 1) router.navigate(TAB_ROUTES[tab + 1]);
-              else if (g.dx > 60 && tab > 0) router.navigate(TAB_ROUTES[tab - 1]);
-            },
-          }),
-    [tab, router],
-  );
+  const start = useRef<{ x: number; y: number } | null>(null);
+  if (tab === undefined) return {};
+  return {
+    onTouchStart: (e: GestureResponderEvent) => {
+      start.current = { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY };
+    },
+    onTouchCancel: () => {
+      start.current = null;
+      swipeBlocked = false;
+    },
+    onTouchEnd: (e: GestureResponderEvent) => {
+      const s = start.current;
+      const blocked = swipeBlocked;
+      start.current = null;
+      swipeBlocked = false;
+      if (!s || blocked) return;
+      const dx = e.nativeEvent.pageX - s.x;
+      const dy = e.nativeEvent.pageY - s.y;
+      if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 2.5) return;
+      if (dx < 0 && tab < TAB_ROUTES.length - 1) router.navigate(TAB_ROUTES[tab + 1]);
+      else if (dx > 0 && tab > 0) router.navigate(TAB_ROUTES[tab - 1]);
+    },
+  };
 }
 
 /** Page wrapper: safe area, app header, 16px side margins and an optional page title. */
@@ -119,7 +136,7 @@ export function Screen({
   const insets = useSafeAreaInsets();
   const swipe = useTabSwipe(tab);
   return (
-    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }} {...(swipe?.panHandlers ?? {})}>
+    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }} {...swipe}>
       {header && <AppHeader title={headerTitle} />}
       <View className="flex-1 px-4">
         {title ? (
@@ -154,9 +171,9 @@ type ButtonProps = {
 const BUTTON = {
   primary: { box: 'bg-primary', text: 'text-on-primary', icon: '#ffffff' },
   success: { box: 'bg-secondary', text: 'text-on-secondary', icon: '#ffffff' },
-  secondary: { box: 'bg-surface-container-high dark:bg-dk-container', text: INK, icon: '#131b2e' },
-  soft: { box: 'bg-surface-container dark:bg-dk-container', text: 'text-primary dark:text-dk-primary', icon: '#3525cd' },
-  danger: { box: 'bg-error-container dark:bg-dk-error-container', text: 'text-error', icon: '#ba1a1a' },
+  secondary: { box: 'bg-surface-container-high', text: INK, icon: '#131b2e' },
+  soft: { box: 'bg-surface-container', text: 'text-primary', icon: '#3525cd' },
+  danger: { box: 'bg-error-container', text: 'text-error', icon: '#ba1a1a' },
 } as const;
 const HEIGHT = { lg: 'h-[52px]', md: 'h-12', sm: 'h-11' } as const;
 
@@ -184,7 +201,7 @@ export function Button({ label, onPress, variant = 'primary', size = 'md', loadi
 export function LinkButton({ label, onPress, tone = 'brand' }: { label: string; onPress: () => void; tone?: 'brand' | 'danger' }) {
   return (
     <Pressable onPress={onPress} hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }} className="min-h-9 justify-center active:opacity-50">
-      <Text className={`font-inter-md text-label-lg ${tone === 'danger' ? 'text-error' : 'text-primary dark:text-dk-primary'}`}>{label}</Text>
+      <Text className={`font-inter-md text-label-lg ${tone === 'danger' ? 'text-error' : 'text-primary'}`}>{label}</Text>
     </Pressable>
   );
 }
@@ -212,7 +229,7 @@ export function Chip({
   tone?: 'range' | 'category';
   small?: boolean;
 }) {
-  const idle = tone === 'category' ? 'bg-surface-container-low dark:bg-dk-container' : 'bg-surface-container dark:bg-dk-container';
+  const idle = tone === 'category' ? 'bg-surface-container-low' : 'bg-surface-container';
   return (
     <Pressable
       onPress={onPress}
@@ -232,9 +249,9 @@ export function Chip({
 /** "+ New" chip: lavender with a primary plus. */
 export function NewChip({ onPress }: { onPress: () => void }) {
   return (
-    <Pressable onPress={onPress} hitSlop={4} className="h-9 flex-row items-center gap-1 rounded-full bg-surface-container px-3 active:opacity-60 dark:bg-dk-container">
+    <Pressable onPress={onPress} hitSlop={4} className="h-9 flex-row items-center gap-1 rounded-full bg-surface-container px-3 active:opacity-60">
       <Icon name="add" size={16} color="#3525cd" />
-      <Text className="font-inter-md text-label-md text-primary dark:text-dk-primary">New</Text>
+      <Text className="font-inter-md text-label-md text-primary">New</Text>
     </Pressable>
   );
 }
@@ -257,7 +274,7 @@ export function Input({
       {label ? <Text className={`mb-1.5 font-inter-md text-label-lg ${INK}`}>{label}</Text> : null}
       <View
         style={auth ? SHADOW_SM : undefined}
-        className={`${auth ? 'h-[52px] bg-surface-container-lowest dark:bg-dk-lowest' : 'h-12 bg-surface-container-low dark:bg-dk-low'} flex-row items-center gap-3 rounded-xl px-3 ${className}`}
+        className={`${auth ? 'h-[52px] bg-surface-container-lowest' : 'h-12 bg-surface-container-low'} flex-row items-center gap-3 rounded-xl px-3 ${className}`}
       >
         {icon ? <Icon name={icon} size={20} color={auth ? '#464555' : '#c7c4d8'} /> : null}
         <TextInput placeholderTextColor="#777587" {...props} className={`font-inter flex-1 py-0 text-body-lg ${INK}`} />
@@ -270,7 +287,7 @@ export function Input({
 /** Material-3 switch: 48x32 track, 24px thumb with a check when on. */
 export function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <Pressable onPress={() => onChange(!value)} hitSlop={10} className={`h-8 w-12 justify-center rounded-full p-1 ${value ? 'bg-primary' : 'bg-surface-container-highest dark:bg-dk-high'}`}>
+    <Pressable onPress={() => onChange(!value)} hitSlop={10} className={`h-8 w-12 justify-center rounded-full p-1 ${value ? 'bg-primary' : 'bg-surface-container-highest'}`}>
       <View style={SHADOW_SM} className={`h-6 w-6 items-center justify-center rounded-full ${value ? 'self-end bg-on-primary' : 'self-start bg-surface-container-lowest'}`}>
         {value ? <Icon name="check" size={14} color="#3525cd" /> : null}
       </View>
@@ -280,7 +297,7 @@ export function Toggle({ value, onChange }: { value: boolean; onChange: (v: bool
 
 /** Debit amounts are tertiary crimson in lists; `plain` uses on-surface; credits are secondary green. */
 export function Amount({ value, type, plain, className = '' }: { value: number; type: 'debit' | 'credit'; plain?: boolean; className?: string }) {
-  const tone = type === 'credit' ? 'text-secondary dark:text-dk-secondary' : plain ? INK : 'text-tertiary dark:text-dk-tertiary';
+  const tone = type === 'credit' ? 'text-secondary' : plain ? INK : 'text-tertiary';
   return (
     <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-b text-title-md ${tone} ${className}`}>
       {type === 'debit' ? '-' : '+'}{rupees(value)}
@@ -299,13 +316,13 @@ export function CategoryTile({ category, size = 40 }: { category: string | null 
 }
 
 const PILL = {
-  brand: ['bg-primary-fixed dark:bg-dk-container', 'text-on-primary-fixed dark:text-dk-primary'],
-  rose: ['bg-error-container dark:bg-dk-error-container', 'text-on-error-container dark:text-dk-tertiary'],
-  tertiary: ['bg-tertiary-fixed dark:bg-dk-error-container', 'text-on-tertiary-fixed dark:text-dk-tertiary'],
-  emerald: ['bg-secondary-container dark:bg-dk-container', 'text-on-secondary-container dark:text-dk-secondary'],
-  success: ['bg-secondary-fixed dark:bg-dk-container', 'text-on-secondary-fixed-variant dark:text-dk-secondary'],
-  slate: ['bg-surface-container dark:bg-dk-container', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
-  highest: ['bg-surface-container-highest dark:bg-dk-high', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
+  brand: ['bg-primary-fixed', 'text-on-primary-fixed'],
+  rose: ['bg-error-container', 'text-on-error-container'],
+  tertiary: ['bg-tertiary-fixed', 'text-on-tertiary-fixed'],
+  emerald: ['bg-secondary-container', 'text-on-secondary-container'],
+  success: ['bg-secondary-fixed', 'text-on-secondary-fixed-variant'],
+  slate: ['bg-surface-container', 'text-on-surface-variant'],
+  highest: ['bg-surface-container-highest', 'text-on-surface-variant'],
 } as const;
 
 export function Pill({ label, tone = 'brand', icon, className = '' }: { label: string; tone?: keyof typeof PILL; icon?: IconName; className?: string }) {
@@ -321,7 +338,7 @@ export function Pill({ label, tone = 'brand', icon, className = '' }: { label: s
 
 export function ProgressBar({ share, color, height = 4 }: { share: number; color: string; height?: number }) {
   return (
-    <View className="overflow-hidden rounded-full bg-surface-container dark:bg-dk-container" style={{ height }}>
+    <View className="overflow-hidden rounded-full bg-surface-container" style={{ height }}>
       <View className="rounded-full" style={{ height, width: `${Math.min(1, Math.max(0, share)) * 100}%`, backgroundColor: color }} />
     </View>
   );
@@ -333,8 +350,8 @@ export function SectionLabel({ children }: { children: ReactNode }) {
 
 export function Empty({ icon, title, hint }: { icon: IconName; title: string; hint?: string }) {
   return (
-    <View className="items-center rounded-3xl bg-surface-container-lowest px-6 py-10 dark:bg-dk-lowest" style={SHADOW_SM}>
-      <View className="h-20 w-20 items-center justify-center rounded-full bg-surface-container dark:bg-dk-container">
+    <View className="items-center rounded-3xl bg-surface-container-lowest px-6 py-10" style={SHADOW_SM}>
+      <View className="h-20 w-20 items-center justify-center rounded-full bg-surface-container">
         <Icon name={icon} size={44} color="#4f46e5" />
       </View>
       <Text className={`mt-4 font-inter-b text-headline-sm ${INK}`}>{title}</Text>

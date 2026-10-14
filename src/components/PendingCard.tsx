@@ -57,14 +57,14 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
 
   const meta = categoryMeta(category);
   const tileIcon = isDebit ? (category ? meta.icon : isPerson ? 'two-wheeler' : 'help-outline') : 'payments';
-  const tileBox = !isDebit ? 'bg-secondary-container' : category ? 'bg-surface-container-high dark:bg-dk-container' : 'bg-surface-container-highest dark:bg-dk-high';
+  const tileBox = !isDebit ? 'bg-secondary-container' : category ? 'bg-surface-container-high' : 'bg-surface-container-highest';
   const tileIconColor = !isDebit ? '#00714d' : category ? '#3525cd' : '#464555';
 
   // Expanded card: tinted header, divider and a form drawer (variants 3-5 of the design).
   if (open || mode === 'edit') {
-    const headerBox = !isDebit ? 'bg-secondary-fixed/30' : 'bg-surface-container-low dark:bg-dk-low';
+    const headerBox = !isDebit ? 'bg-secondary-fixed/30' : 'bg-surface-container-low';
     return (
-      <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 3 }} className="overflow-hidden rounded-xl bg-surface-container-lowest dark:bg-dk-lowest">
+      <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 3 }} className="overflow-hidden rounded-xl bg-surface-container-lowest">
         <Pressable disabled={mode === 'edit' || !isDebit} onPress={() => setOpen(false)} className={`flex-row items-center justify-between p-4 ${headerBox}`}>
           <View className="flex-1 flex-row items-center gap-2">
             <View className={`h-11 w-11 items-center justify-center rounded-xl ${!isDebit ? 'bg-secondary' : isPerson ? 'bg-secondary-fixed' : 'bg-tertiary-fixed'}`}>
@@ -80,12 +80,12 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
             {!isDebit ? <Pill label="INFLOW" tone="success" className="py-0.5" /> : null}
           </View>
         </Pressable>
-        <View className="h-px w-full bg-surface-container-high dark:bg-dk-container" />
+        <View className="h-px w-full bg-surface-container-high" />
 
-        <View className="gap-4 bg-surface-container-lowest p-4 dark:bg-dk-lowest">
+        <View className="gap-4 bg-surface-container-lowest p-4">
           {!isDebit ? (
-            <View className="flex-row items-center gap-3 rounded-xl bg-surface-container-low p-3 dark:bg-dk-low">
-              <View className="h-8 w-8 items-center justify-center rounded-lg bg-surface-container-high dark:bg-dk-container">
+            <View className="flex-row items-center gap-3 rounded-xl bg-surface-container-low p-3">
+              <View className="h-8 w-8 items-center justify-center rounded-lg bg-surface-container-high">
                 <Icon name="verified-user" size={18} color="#006c49" />
               </View>
               <View className="flex-1">
@@ -96,7 +96,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
           ) : (
             <>
               {isPerson && (
-                <View className="flex-row items-start gap-2.5 rounded-xl bg-surface-container-high p-3 dark:bg-dk-container">
+                <View className="flex-row items-start gap-2.5 rounded-xl bg-surface-container-high p-3">
                   <Icon name="contact-support" size={20} color="#3525cd" />
                   <View className="flex-1">
                     <Text className={`font-inter-sb text-title-md ${ink}`}>Paid to a person. What was this for?</Text>
@@ -117,7 +117,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
                   <NewChip onPress={() => setAdding(!adding)} />
                 </View>
                 {adding && (
-                  <View className="mt-1 flex-row items-center gap-2 rounded-xl bg-surface-container-low p-2 dark:bg-dk-low">
+                  <View className="mt-1 flex-row items-center gap-2 rounded-xl bg-surface-container-low p-2">
                     <View className="flex-1">
                       <Input variant="field" className="h-10 bg-surface-container-lowest" placeholder="New category name (e.g. Pet Care)" value={newName} onChangeText={setNewName} maxLength={30} autoFocus onSubmitEditing={createCategory} />
                     </View>
@@ -147,9 +147,9 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
               </View>
 
               {txn.payee_key && category && (
-                <View className="flex-row items-center justify-between gap-3 rounded-xl bg-surface-container-low p-3 dark:bg-dk-low">
+                <View className="flex-row items-center justify-between gap-3 rounded-xl bg-surface-container-low p-3">
                   <View className="flex-1 flex-row items-center gap-2.5">
-                    <View className="h-8 w-8 items-center justify-center rounded-lg bg-surface-container-high dark:bg-dk-container">
+                    <View className="h-8 w-8 items-center justify-center rounded-lg bg-surface-container-high">
                       <Icon name={isPerson ? 'lock-reset' : 'auto-mode'} size={18} color={isPerson ? '#777587' : '#3525cd'} />
                     </View>
                     <View className="flex-1">
@@ -190,7 +190,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
   // Collapsed row.
   const needs = isDebit && !category;
   return (
-    <Pressable onPress={() => (isDebit ? setOpen(true) : setOpen(true))} style={SHADOW_SM} className="rounded-2xl bg-surface-container-lowest p-3.5 active:opacity-80 dark:bg-dk-lowest">
+    <Pressable onPress={() => (isDebit ? setOpen(true) : setOpen(true))} style={SHADOW_SM} className="rounded-2xl bg-surface-container-lowest p-3.5 active:opacity-80">
       <View className="flex-row items-center justify-between">
         <View className="flex-1 flex-row items-center gap-3">
           <View className={`h-11 w-11 items-center justify-center rounded-xl ${tileBox}`}>
@@ -206,7 +206,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
               {category ? (
                 <>
                   <View className="h-1 w-1 rounded-full bg-outline-variant" />
-                  <Text className="font-inter-md text-label-md text-primary dark:text-dk-primary">{category}</Text>
+                  <Text className="font-inter-md text-label-md text-primary">{category}</Text>
                 </>
               ) : null}
             </View>
@@ -215,16 +215,16 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
         <View className="flex-row items-center gap-2 pl-2">
           <View className="items-end">
             <Amount value={txn.amount} type={txn.type} className="tracking-tight" />
-            {!needs ? <Text className="text-[11px] text-secondary dark:text-dk-secondary">{isDebit ? 'Pre-sorted' : 'Bank Credit'}</Text> : null}
+            {!needs ? <Text className="text-[11px] text-secondary">{isDebit ? 'Pre-sorted' : 'Bank Credit'}</Text> : null}
           </View>
           <Icon name="chevron-right" size={20} color="#c7c4d8" />
         </View>
       </View>
       {needs ? (
-        <View className="mt-2.5 flex-row items-center justify-between border-t border-surface-container-low pt-2 dark:border-dk-container">
+        <View className="mt-2.5 flex-row items-center justify-between border-t border-surface-container-low pt-2">
           <Pill label="Needs category" tone="rose" icon="help" />
           <View className="flex-row items-center gap-1">
-            <Text className="font-inter-md text-label-md text-primary dark:text-dk-primary">Assign category</Text>
+            <Text className="font-inter-md text-label-md text-primary">Assign category</Text>
             <Icon name="arrow-forward" size={16} color="#3525cd" />
           </View>
         </View>

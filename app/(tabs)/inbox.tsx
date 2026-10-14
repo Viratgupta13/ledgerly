@@ -50,9 +50,9 @@ export default function InboxScreen() {
         {all.length > 0 && <Pill tone="tertiary" icon="notifications-active" label={`${all.length} new`} />}
       </View>
 
-      <View style={SHADOW_SM} className="gap-4 rounded-[20px] bg-surface-container-lowest p-4 dark:bg-dk-lowest">
+      <View style={SHADOW_SM} className="gap-4 rounded-[20px] bg-surface-container-lowest p-4">
         <View className="flex-row items-center gap-2">
-          <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary-fixed dark:bg-dk-container">
+          <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary-fixed">
             <Icon name="sms" size={22} color="#3525cd" />
           </View>
           <View className="flex-1">
@@ -68,7 +68,7 @@ export default function InboxScreen() {
         <Button icon="play-circle-outline" label={scan.isPending ? 'Scanning…' : 'Scan SMS Inbox'} loading={scan.isPending} disabled={!userId} onPress={startScan} />
         {scan.error && <Text className="text-error">{scan.error.message}</Text>}
         {scan.data && (
-          <View className="flex-row items-center gap-2.5 rounded-xl bg-surface-container-low px-3 py-2.5 dark:bg-dk-low">
+          <View className="flex-row items-center gap-2.5 rounded-xl bg-surface-container-low px-3 py-2.5">
             <Icon name="check-circle" size={18} color="#006c49" />
             <Text className={`flex-1 text-body-sm ${ink}`}>
               Read <Text className="font-inter-sb">{scan.data.scanned} SMS</Text>, found <Text className="font-inter-sb">{scan.data.found} payments</Text> (<Text className="font-inter-sb text-primary">{scan.data.added} new</Text>).
@@ -78,17 +78,17 @@ export default function InboxScreen() {
       </View>
 
       {ready.length > 0 && (
-        <View style={SHADOW_SM} className="gap-3 overflow-hidden rounded-2xl bg-surface-container-high p-4 dark:bg-dk-container">
+        <View style={SHADOW_SM} className="gap-3 overflow-hidden rounded-2xl bg-surface-container-high p-4">
           <View className="flex-row items-start justify-between">
             <View className="flex-1 gap-0.5">
               <View className="flex-row items-center gap-1.5">
                 <Icon name="auto-fix-high" size={18} color="#3525cd" />
-                <Text className="font-inter-sb text-label-md uppercase tracking-wide text-primary dark:text-dk-primary">Smart Auto-Match</Text>
+                <Text className="font-inter-sb text-label-md uppercase tracking-wide text-primary">Smart Auto-Match</Text>
               </View>
               <Text className={`font-inter-sb text-title-md ${ink}`}>Review {ready.length} pre-sorted</Text>
               <Text className={`text-body-sm ${muted}`}>Categorized automatically from your past choices.</Text>
             </View>
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-fixed dark:bg-dk-low">
+            <View className="h-10 w-10 items-center justify-center rounded-full bg-primary-fixed">
               <Icon name="done-all" size={20} color="#3525cd" />
             </View>
           </View>

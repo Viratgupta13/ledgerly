@@ -12,7 +12,7 @@ type Props = { visible: boolean; txns: TxnRow[]; categories: string[]; onClose: 
 function Checkbox({ checked, onPress }: { checked: boolean; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} className="-ml-2 h-11 w-11 items-center justify-center rounded-full active:opacity-60">
-      <View className={`h-5 w-5 items-center justify-center rounded-md ${checked ? 'bg-primary-container' : 'bg-surface-container dark:bg-dk-container'}`}>
+      <View className={`h-5 w-5 items-center justify-center rounded-md ${checked ? 'bg-primary-container' : 'bg-surface-container'}`}>
         {checked ? <Icon name="check" size={16} color="#ffffff" /> : null}
       </View>
     </Pressable>
@@ -78,7 +78,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
         <View className="flex-row items-center gap-2 p-4">
           <Checkbox checked={on} onPress={() => toggle(ids, !on)} />
           <Pressable onPress={() => setExpanded(open ? null : id)} className="flex-1 flex-row items-center gap-2 active:opacity-70">
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-surface-container dark:bg-dk-container">
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-surface-container">
               <Text className={`font-inter-sb text-title-md ${muted}`}>{letter}</Text>
             </View>
             <View className="flex-1">
@@ -107,7 +107,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
         )}
 
         {open && p.items.map((i) => (
-          <View key={i.id} className="flex-row items-center gap-2 bg-surface-container-low py-2 pl-14 pr-4 dark:bg-dk-low">
+          <View key={i.id} className="flex-row items-center gap-2 bg-surface-container-low py-2 pl-14 pr-4">
             <Checkbox checked={!unchecked.has(i.id)} onPress={() => toggle([i.id], unchecked.has(i.id))} />
             <Text className={`flex-1 text-body-md ${ink}`}>{new Date(i.occurred_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</Text>
             <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb text-body-md ${ink}`}>-{rupees(i.amount)}</Text>
@@ -115,20 +115,20 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
           </View>
         ))}
         {open && p.items.map((i) => changing === `i:${i.id}` ? (
-          <View key={`c-${i.id}`} className="flex-row flex-wrap gap-1.5 bg-surface-container-low px-4 pb-3 pl-16 dark:bg-dk-low">
+          <View key={`c-${i.id}`} className="flex-row flex-wrap gap-1.5 bg-surface-container-low px-4 pb-3 pl-16">
             {categories.map((c) => (
               <Chip key={c} tone="category" label={c} dot={categoryMeta(c).color} check selected={c === category} onPress={() => setCategory([i.id], c)} />
             ))}
           </View>
         ) : null)}
-        {!last && <View className="ml-16 mr-4 h-px bg-surface-container dark:bg-dk-container" />}
+        {!last && <View className="ml-16 mr-4 h-px bg-surface-container" />}
       </View>
     );
   };
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
+      <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
         <View className="items-center pb-1 pt-2">
           <View className="h-1 w-9 rounded-full bg-outline-variant/60" />
         </View>
@@ -141,13 +141,13 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
         </View>
 
         <ScrollView className="flex-1 px-4" keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 16, paddingBottom: 24 }}>
-          <View style={SHADOW_SM} className="flex-row items-start gap-2 rounded-xl bg-surface-container-high p-4 dark:bg-dk-container">
+          <View style={SHADOW_SM} className="flex-row items-start gap-2 rounded-xl bg-surface-container-high p-4">
             <View className="h-9 w-9 items-center justify-center rounded-lg" style={{ backgroundColor: tint('#3525cd', 0.1) }}>
               <Icon name="auto-awesome" size={20} color="#3525cd" />
             </View>
             <View className="flex-1">
               <View className="flex-row items-center gap-2">
-                <Text className="font-inter-sb text-label-md text-primary dark:text-dk-primary">Smart Auto-Match</Text>
+                <Text className="font-inter-sb text-label-md text-primary">Smart Auto-Match</Text>
                 <View className="h-1.5 w-1.5 rounded-full bg-secondary" />
                 <Text className={`text-body-sm ${muted}`}>From your past choices</Text>
               </View>
@@ -157,9 +157,9 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
 
           <View className="flex-row items-center justify-between">
             <Text className={`text-body-sm ${muted}`}>{count} of {txns.length} selected</Text>
-            <Pressable onPress={() => setUnchecked(allChecked ? new Set(txns.map((t) => t.id)) : new Set())} className="h-8 flex-row items-center gap-1 rounded-lg bg-surface-container-low px-2.5 active:opacity-60 dark:bg-dk-container">
+            <Pressable onPress={() => setUnchecked(allChecked ? new Set(txns.map((t) => t.id)) : new Set())} className="h-8 flex-row items-center gap-1 rounded-lg bg-surface-container-low px-2.5 active:opacity-60">
               <Icon name="done-all" size={16} color="#3525cd" />
-              <Text className="font-inter-md text-label-md text-primary dark:text-dk-primary">{allChecked ? 'Deselect all' : 'Select all'}</Text>
+              <Text className="font-inter-md text-label-md text-primary">{allChecked ? 'Deselect all' : 'Select all'}</Text>
             </Pressable>
           </View>
 
@@ -169,13 +169,13 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
             const isCollapsed = collapsed.has(g.category);
             const sub = g.payees.flatMap((p) => p.items).filter((i) => !unchecked.has(i.id)).reduce((n, i) => n + i.amount, 0);
             return (
-              <View key={g.category} style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest">
+              <View key={g.category} style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container-lowest">
                 <Pressable
                   onPress={() => setCollapsed((s) => { const n = new Set(s); n.has(g.category) ? n.delete(g.category) : n.add(g.category); return n; })}
-                  className="flex-row items-center justify-between bg-surface-container-low px-4 py-3.5 active:opacity-70 dark:bg-dk-low"
+                  className="flex-row items-center justify-between bg-surface-container-low px-4 py-3.5 active:opacity-70"
                 >
                   <View className="flex-1 flex-row items-center gap-2">
-                    <View className="h-9 w-9 items-center justify-center rounded-xl bg-primary-fixed dark:bg-dk-container">
+                    <View className="h-9 w-9 items-center justify-center rounded-xl bg-primary-fixed">
                       <Icon name={meta.icon} size={20} color="#3525cd" />
                     </View>
                     <View className="flex-1">
@@ -194,7 +194,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
           })}
         </ScrollView>
 
-        <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: -6 }, elevation: 8, paddingBottom: insets.bottom + 12 }} className="gap-1 rounded-t-3xl bg-surface-container-lowest px-4 pt-4 dark:bg-dk-lowest">
+        <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.08, shadowRadius: 12, shadowOffset: { width: 0, height: -6 }, elevation: 8, paddingBottom: insets.bottom + 12 }} className="gap-1 rounded-t-3xl bg-surface-container-lowest px-4 pt-4">
           <Button size="lg" label={`Confirm all ${count} • ${rupees(total)}`} iconRight="arrow-forward" disabled={count === 0} onPress={submit} />
           <View className="items-center">
             <LinkButton label="Cancel" onPress={close} />

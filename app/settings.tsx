@@ -33,9 +33,9 @@ function SectionTitle({ children, right }: { children: ReactNode; right?: ReactN
 function Group({ children }: { children: ReactNode }) {
   const rows = Array.isArray(children) ? children : [children];
   return (
-    <View style={SHADOW_SM} className="overflow-hidden rounded-xl bg-surface-container-lowest dark:bg-dk-lowest">
+    <View style={SHADOW_SM} className="overflow-hidden rounded-xl bg-surface-container-lowest">
       {rows.filter(Boolean).map((c, i) => (
-        <View key={i} className={i > 0 ? 'border-t border-surface-container dark:border-dk-container' : ''}>{c}</View>
+        <View key={i} className={i > 0 ? 'border-t border-surface-container' : ''}>{c}</View>
       ))}
     </View>
   );
@@ -46,7 +46,7 @@ function Row({ icon, tint = 'muted', title, sub, right, onPress, children }: { i
     <View>
       <Pressable disabled={!onPress} onPress={onPress} className="min-h-14 flex-row items-center justify-between gap-2 p-4 active:bg-surface-container-low">
         <View className="flex-1 flex-row items-center gap-4">
-          <View className={`h-10 w-10 items-center justify-center rounded-lg ${tint === 'brand' ? 'bg-primary-fixed dark:bg-dk-container' : 'bg-surface-container dark:bg-dk-container'}`}>
+          <View className={`h-10 w-10 items-center justify-center rounded-lg ${tint === 'brand' ? 'bg-primary-fixed' : 'bg-surface-container'}`}>
             <Icon name={icon} size={20} color={tint === 'brand' ? '#0f0069' : '#464555'} />
           </View>
           <View className="flex-1">
@@ -63,7 +63,7 @@ function Row({ icon, tint = 'muted', title, sub, right, onPress, children }: { i
 
 function Segmented<T extends string | number>({ options, value, onChange }: { options: { label: string; value: T }[]; value: T; onChange: (v: T) => void }) {
   return (
-    <View className="flex-row rounded-full bg-surface-container p-1 dark:bg-dk-container">
+    <View className="flex-row rounded-full bg-surface-container p-1">
       {options.map((o) => (
         <Pressable key={String(o.value)} onPress={() => onChange(o.value)} className={`rounded-full px-3 py-1.5 ${o.value === value ? 'bg-primary' : ''}`}>
           <Text className={`font-inter-sb text-label-sm ${o.value === value ? 'text-on-primary' : muted}`}>{o.label}</Text>
@@ -131,7 +131,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
       <View className="h-16 flex-row items-center gap-1 px-2">
         <Pressable onPress={() => router.back()} hitSlop={8} className="h-11 w-11 items-center justify-center rounded-full active:bg-surface-container">
           <Icon name="arrow-back" size={24} color="#464555" />
@@ -140,23 +140,23 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView className="px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 32, gap: 24 }}>
-        <View style={SHADOW_SM} className="gap-4 rounded-xl bg-surface-container-lowest p-4 dark:bg-dk-lowest">
+        <View style={SHADOW_SM} className="gap-4 rounded-xl bg-surface-container-lowest p-4">
           <View className="flex-row items-center gap-4">
-            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-fixed dark:bg-dk-container">
-              <Text className="font-inter-sb text-headline-md text-on-primary-fixed dark:text-dk-primary">{initials}</Text>
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-fixed">
+              <Text className="font-inter-sb text-headline-md text-on-primary-fixed">{initials}</Text>
             </View>
             <View className="flex-1">
               <Text className={`font-inter-sb text-headline-sm ${ink}`} numberOfLines={1}>{(email ?? '').split('@')[0] || 'Your account'}</Text>
               <Text className={`text-body-sm ${muted}`} numberOfLines={1}>{email ?? '—'}</Text>
             </View>
           </View>
-          <View className="flex-row items-center justify-between rounded-lg bg-surface-container-low p-2 dark:bg-dk-low">
+          <View className="flex-row items-center justify-between rounded-lg bg-surface-container-low p-2">
             <View className="flex-row items-center gap-1 pl-1">
               <View className={`h-2 w-2 rounded-full ${smsAllowed ? 'bg-secondary' : 'bg-outline'}`} />
               <Text className={`font-inter-sb text-label-sm uppercase tracking-wider ${smsAllowed ? 'text-secondary' : muted}`}>{smsAllowed ? 'SMS access on' : 'SMS access off'}</Text>
             </View>
             <Pressable onPress={() => Linking.openSettings()} hitSlop={8} className="flex-row items-center pr-1">
-              <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">Manage</Text>
+              <Text className="font-inter-sb text-label-sm text-primary">Manage</Text>
               <Icon name="chevron-right" size={14} color="#3525cd" />
             </Pressable>
           </View>
@@ -186,7 +186,7 @@ export default function SettingsScreen() {
           {status ? <Text className={`mt-2 px-1 text-body-sm ${muted}`}>{status}</Text> : null}
         </View>
 
-        <Pressable onPress={signOut} className="h-14 flex-row items-center justify-center gap-2 rounded-xl bg-error-container active:opacity-70 dark:bg-dk-error-container">
+        <Pressable onPress={signOut} className="h-14 flex-row items-center justify-center gap-2 rounded-xl bg-error-container active:opacity-70">
           <Icon name="logout" size={20} color="#ba1a1a" />
           <Text className="font-inter-sb text-label-lg text-error">Sign out</Text>
         </Pressable>

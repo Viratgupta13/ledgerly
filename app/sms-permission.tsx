@@ -38,18 +38,18 @@ export default function SmsPermission() {
   };
 
   return (
-    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top + 16 }}>
+    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top + 16 }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }} showsVerticalScrollIndicator={false}>
         <View className="pb-2">
-          <View className="flex-row items-center gap-1.5 self-start rounded-full bg-surface-container-low px-3 py-1 dark:bg-dk-low">
+          <View className="flex-row items-center gap-1.5 self-start rounded-full bg-surface-container-low px-3 py-1">
             <View className="h-1.5 w-1.5 rounded-full bg-primary" />
-            <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary dark:text-dk-primary">Setup • SMS access</Text>
+            <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary">Setup • SMS access</Text>
           </View>
         </View>
 
-        <View style={SHADOW_SM} className="my-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-low p-4 dark:bg-dk-low">
+        <View style={SHADOW_SM} className="my-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-low p-4">
           <View className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-primary opacity-10" />
-          <View style={{ transform: [{ rotate: '-1deg' }] }} className="rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+          <View style={{ transform: [{ rotate: '-1deg' }] }} className="rounded-xl bg-surface-container-lowest p-3">
             <View className="mb-1.5 flex-row items-center justify-between">
               <View className="flex-row items-center gap-1.5">
                 <View className="h-5 w-5 items-center justify-center rounded-md bg-surface-container-high">
@@ -65,13 +65,13 @@ export default function SmsPermission() {
           </View>
           <View className="flex-row items-center justify-center gap-2 py-0.5">
             <View className="h-1.5 w-1.5 rounded-full bg-primary/40" />
-            <View className="flex-row items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-0.5 dark:bg-dk-container">
+            <View className="flex-row items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-0.5">
               <Icon name="auto-awesome" size={14} color="#3525cd" />
-              <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary dark:text-dk-primary">Auto-parsed</Text>
+              <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary">Auto-parsed</Text>
             </View>
             <View className="h-1.5 w-1.5 rounded-full bg-primary/40" />
           </View>
-          <View style={{ transform: [{ rotate: '1deg' }] }} className="flex-row items-center justify-between rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+          <View style={{ transform: [{ rotate: '1deg' }] }} className="flex-row items-center justify-between rounded-xl bg-surface-container-lowest p-3">
             <View className="flex-1 flex-row items-center gap-2.5">
               <View className="h-9 w-9 items-center justify-center rounded-lg bg-secondary-container">
                 <Icon name="shopping-basket" size={18} color="#00714d" />
@@ -98,7 +98,7 @@ export default function SmsPermission() {
 
         <View className="mb-4 gap-2.5">
           {POINTS.map((p) => (
-            <View key={p.title} style={SHADOW_SM} className="flex-row items-start gap-3 rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+            <View key={p.title} style={SHADOW_SM} className="flex-row items-start gap-3 rounded-xl bg-surface-container-lowest p-3">
               <View className={`mt-0.5 h-9 w-9 items-center justify-center rounded-lg ${p.box}`}>
                 <Icon name={p.icon} size={20} color={p.color} />
               </View>
@@ -110,7 +110,7 @@ export default function SmsPermission() {
           ))}
         </View>
 
-        <View className="mb-2 flex-row items-center justify-center gap-2 rounded-full bg-surface-container px-3 py-2 dark:bg-dk-container">
+        <View className="mb-2 flex-row items-center justify-center gap-2 rounded-full bg-surface-container px-3 py-2">
           <Icon name="lock" size={16} color="#3525cd" />
           <Text className={`font-inter-sb text-label-md ${ink}`}>SMS are processed on this phone, not uploaded</Text>
         </View>

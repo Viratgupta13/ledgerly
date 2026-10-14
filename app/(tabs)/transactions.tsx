@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, TextInput, View } from 'react-n
 import { PendingCard } from '../../src/components/PendingCard';
 import { useCategoryNames, useNoteSuggestions, useTxns } from '../../src/data/hooks';
 import type { TxnRow } from '../../src/data/types';
-import { Empty, Icon, Pill, SHADOW_SM, Screen, Text, ink, muted, rupees } from '../../src/ui/components';
+import { Empty, Icon, NoSwipe, Pill, SHADOW_SM, Screen, Text, ink, muted, rupees } from '../../src/ui/components';
 import { categoryMeta, tint } from '../../src/ui/theme';
 
 type Range = 'month' | 'last' | 'all';
@@ -78,12 +78,12 @@ export default function TransactionsScreen() {
     <View className="gap-2 pb-4">
       <View className="flex-row items-center gap-2 pb-1">
         <Text className={`font-inter-sb text-headline-md ${ink}`}>Transactions</Text>
-        <View className="rounded-full bg-surface-container-high px-2.5 py-0.5 dark:bg-dk-container">
-          <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">{(data ?? []).length} verified</Text>
+        <View className="rounded-full bg-surface-container-high px-2.5 py-0.5">
+          <Text className="font-inter-sb text-label-sm text-primary">{(data ?? []).length} verified</Text>
         </View>
       </View>
 
-      <View style={SHADOW_SM} className="h-11 flex-row items-center gap-2 rounded-xl bg-surface-container-lowest px-3.5 dark:bg-dk-lowest">
+      <View style={SHADOW_SM} className="h-11 flex-row items-center gap-2 rounded-xl bg-surface-container-lowest px-3.5">
         <Icon name="search" size={20} color="#777587" />
         <TextInput value={query} onChangeText={setQuery} placeholder="Search payee, note, or amount..." placeholderTextColor="#777587" className={`font-inter flex-1 py-0 text-body-md ${ink}`} />
         {query ? (
@@ -93,6 +93,7 @@ export default function TransactionsScreen() {
         ) : null}
       </View>
 
+      <NoSwipe>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -100,7 +101,7 @@ export default function TransactionsScreen() {
         keyExtractor={(c) => c}
         contentContainerStyle={{ gap: 8, paddingVertical: 2, alignItems: 'center' }}
         ListHeaderComponent={
-          <Pressable onPress={() => setRange(nextRange[range])} style={SHADOW_SM} className="mr-2 h-9 flex-row items-center gap-1.5 rounded-full bg-surface-container-high px-3.5 active:opacity-70 dark:bg-dk-container">
+          <Pressable onPress={() => setRange(nextRange[range])} style={SHADOW_SM} className="mr-2 h-9 flex-row items-center gap-1.5 rounded-full bg-surface-container-high px-3.5 active:opacity-70">
             <Icon name="calendar-month" size={18} color="#3525cd" />
             <Text className={`font-inter-md text-label-md ${ink}`}>{rangeLabel}</Text>
             <Icon name="arrow-drop-down" size={16} color="#777587" />
@@ -108,19 +109,20 @@ export default function TransactionsScreen() {
         }
         renderItem={({ item }) =>
           item === '__all' ? (
-            <Pressable onPress={() => setCategory(null)} style={SHADOW_SM} className={`h-9 items-center justify-center rounded-full px-4 ${!category ? 'bg-primary' : 'bg-surface-container-lowest dark:bg-dk-lowest'}`}>
+            <Pressable onPress={() => setCategory(null)} style={SHADOW_SM} className={`h-9 items-center justify-center rounded-full px-4 ${!category ? 'bg-primary' : 'bg-surface-container-lowest'}`}>
               <Text className={`font-inter-sb text-label-md ${!category ? 'text-on-primary' : ink}`}>All</Text>
             </Pressable>
           ) : (
-            <Pressable onPress={() => setCategory(category === item ? null : item)} style={SHADOW_SM} className={`h-9 flex-row items-center gap-2 rounded-full px-3.5 ${category === item ? 'bg-primary' : 'bg-surface-container-lowest dark:bg-dk-lowest'}`}>
+            <Pressable onPress={() => setCategory(category === item ? null : item)} style={SHADOW_SM} className={`h-9 flex-row items-center gap-2 rounded-full px-3.5 ${category === item ? 'bg-primary' : 'bg-surface-container-lowest'}`}>
               <View className="h-2 w-2 rounded-full" style={{ backgroundColor: category === item ? '#6cf8bb' : categoryMeta(item).color }} />
               <Text className={`font-inter-md text-label-md ${category === item ? 'text-on-primary' : ink}`}>{item}</Text>
             </Pressable>
           )
         }
       />
+      </NoSwipe>
 
-      <View style={SHADOW_SM} className="mt-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-lowest p-4 dark:bg-dk-lowest">
+      <View style={SHADOW_SM} className="mt-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-lowest p-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
             <Icon name="account-balance-wallet" size={18} color="#3525cd" />
@@ -134,14 +136,14 @@ export default function TransactionsScreen() {
             <Text className="pt-0.5 text-body-sm text-outline">{count} transactions</Text>
           </View>
           <View className="items-end">
-            <Text style={{ fontVariant: ['tabular-nums'] }} className="font-inter-b text-headline-sm text-secondary dark:text-dk-secondary">+{rupees(inflow)}</Text>
+            <Text style={{ fontVariant: ['tabular-nums'] }} className="font-inter-b text-headline-sm text-secondary">+{rupees(inflow)}</Text>
             <View className="flex-row items-center gap-1 pt-0.5">
               <Icon name="trending-up" size={14} color="#006c49" />
-              <Text className="font-inter-md text-body-sm text-secondary dark:text-dk-secondary">Total inflow</Text>
+              <Text className="font-inter-md text-body-sm text-secondary">Total inflow</Text>
             </View>
           </View>
         </View>
-        <View className="mt-1 h-1.5 flex-row gap-0.5 overflow-hidden rounded-full bg-surface-container-high dark:bg-dk-container">
+        <View className="mt-1 h-1.5 flex-row gap-0.5 overflow-hidden rounded-full bg-surface-container-high">
           {shares.map(([name, total]) => (
             <View key={name} className="h-full rounded-full" style={{ flex: total, backgroundColor: categoryMeta(name).color }} />
           ))}
@@ -170,7 +172,7 @@ export default function TransactionsScreen() {
               <Text className={`font-inter-sb text-label-md ${ink}`}>{day.label}</Text>
               {day.subtotal > 0 && <Text className="font-inter-md text-label-sm text-outline">Subtotal: -{rupees(day.subtotal)}</Text>}
             </View>
-            <View style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest">
+            <View style={SHADOW_SM} className="overflow-hidden rounded-2xl bg-surface-container-lowest">
               {day.txns.map((t, idx) => {
                 const isDebit = t.type === 'debit';
                 const meta = categoryMeta(t.category);
@@ -183,7 +185,7 @@ export default function TransactionsScreen() {
                 }
                 return (
                   <View key={t.id}>
-                    {idx > 0 && <View className="ml-16 mr-3.5 h-px bg-surface-container-low dark:bg-dk-container" />}
+                    {idx > 0 && <View className="ml-16 mr-3.5 h-px bg-surface-container-low" />}
                     <Pressable disabled={!isDebit} onPress={() => setEditing(t.id)} className="flex-row items-center justify-between p-3.5 active:bg-surface-container-low">
                       <View className="flex-1 flex-row items-center gap-3">
                         <View className="h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: isDebit ? tint(meta.color, 0.1) : '#6cf8bb' }}>
@@ -201,12 +203,12 @@ export default function TransactionsScreen() {
                         </View>
                       </View>
                       <View className="items-end pl-2">
-                        <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-b text-title-md tracking-tight ${isDebit ? ink : 'text-secondary dark:text-dk-secondary'}`}>
+                        <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-b text-title-md tracking-tight ${isDebit ? ink : 'text-secondary'}`}>
                           {isDebit ? '-' : '+'}{rupees(t.amount)}
                         </Text>
                         <View className="flex-row items-center gap-1">
                           <Icon name="check-circle" size={13} color="#006c49" />
-                          <Text className="font-inter-md text-[11px] text-secondary dark:text-dk-secondary">{isDebit ? (t.category ? 'Categorized' : 'Confirmed') : 'Deposited'}</Text>
+                          <Text className="font-inter-md text-[11px] text-secondary">{isDebit ? (t.category ? 'Categorized' : 'Confirmed') : 'Deposited'}</Text>
                         </View>
                       </View>
                     </Pressable>
