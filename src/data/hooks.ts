@@ -2,27 +2,52 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '../constants/categories';
 import { addCategory, applyPredefined, confirmBatch, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
 import { useAuthStore } from '../store/auth';
-import type { TxnStatus } from './types';
+import { Alert } from 'react-native';
+import type { TxnRow, TxnStatus } from './types';
 
 export const useTxns = (status: TxnStatus) =>
   useQuery({ queryKey: ['txns', status], queryFn: () => listTxns(status) });
 
 export const useRules = () => useQuery({ queryKey: ['rules'], queryFn: listRules });
 
+type ReviewInput = Parameters<typeof reviewTxn>[0] & { remember?: { payeeKey: string } };
+
+function reportFailure(title: string, error: unknown) {
+  Alert.alert(title, error instanceof Error ? error.message : 'Something went wrong. Please try again.');
+}
+
+/**
+ * Saves a review. The row leaves the Inbox immediately (optimistic) and comes back with an
+ * alert if the save fails, so a tap always gives instant feedback.
+ */
 export function useReview() {
   const qc = useQueryClient();
   const userId = useAuthStore((s) => s.session?.user.id);
   return useMutation({
-    mutationFn: async (input: Parameters<typeof reviewTxn>[0] & { remember?: { payeeKey: string } }) => {
+    mutationFn: async (input: ReviewInput) => {
       const { remember, ...review } = input;
       await reviewTxn(review);
-      if (remember && userId && review.category) {
-        await saveRule(userId, remember.payeeKey, review.category);
-      }
-      // What was just confirmed now teaches the app: other pending rows of this payee get pre-filled.
-      await applyPredefined().catch(() => undefined);
+      if (remember && userId && review.category) await saveRule(userId, remember.payeeKey, review.category);
     },
-    // onSettled, not onSuccess: the review itself is saved even if the rule step fails.
+    onMutate: async (input) => {
+      await qc.cancelQueries({ queryKey: ['txns'] });
+      const previous = qc.getQueriesData<TxnRow[]>({ queryKey: ['txns'] });
+      qc.setQueryData<TxnRow[]>(['txns', 'pending'], (old) => old?.filter((t) => t.id !== input.id));
+      qc.setQueryData<TxnRow[]>(['txns', 'confirmed'], (old) =>
+        old?.map((t) => (t.id === input.id ? { ...t, category: input.category, note: input.note } : t)),
+      );
+      return { previous };
+    },
+    onError: (error, _input, context) => {
+      context?.previous.forEach(([key, data]) => qc.setQueryData(key, data));
+      reportFailure('Could not save', error);
+    },
+    onSuccess: () => {
+      // What was just confirmed now teaches the app: other pending rows of this payee get pre-filled.
+      applyPredefined()
+        .catch(() => undefined)
+        .finally(() => qc.invalidateQueries({ queryKey: ['txns'] }));
+    },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['txns'] });
       qc.invalidateQueries({ queryKey: ['rules'] });
@@ -78,6 +103,17 @@ export function useConfirmBatch() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: confirmBatch,
+    onMutate: async (updates) => {
+      await qc.cancelQueries({ queryKey: ['txns'] });
+      const previous = qc.getQueriesData<TxnRow[]>({ queryKey: ['txns'] });
+      const done = new Set(updates.map((u) => u.id));
+      qc.setQueryData<TxnRow[]>(['txns', 'pending'], (old) => old?.filter((t) => !done.has(t.id)));
+      return { previous };
+    },
+    onError: (error, _updates, context) => {
+      context?.previous.forEach(([key, data]) => qc.setQueryData(key, data));
+      reportFailure('Could not confirm', error);
+    },
     onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
   });
 }

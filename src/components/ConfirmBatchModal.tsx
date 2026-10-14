@@ -1,23 +1,19 @@
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { groupBatch, type PayeeGroup } from '../data/batch';
-import { useCategoryNames, useConfirmBatch } from '../data/hooks';
+import { useConfirmBatch } from '../data/hooks';
 import type { TxnRow } from '../data/types';
-import { rupees } from './PendingCard';
+import { Button, Card, Chip, LinkButton, ink, muted, rupees } from '../ui/components';
+import { categoryColor } from '../ui/theme';
 
-type Props = { visible: boolean; txns: TxnRow[]; onClose: () => void };
+type Props = { visible: boolean; txns: TxnRow[]; categories: string[]; onClose: () => void };
 
 function CategoryChips({ categories, current, onPick }: { categories: string[]; current: string; onPick: (c: string) => void }) {
   return (
     <View className="mt-2 flex-row flex-wrap gap-2">
       {categories.map((c) => (
-        <Pressable
-          key={c}
-          onPress={() => onPick(c)}
-          className={`rounded-full border px-3 py-1 ${c === current ? 'border-blue-600 bg-blue-600' : 'border-gray-300 dark:border-gray-700'}`}
-        >
-          <Text className={c === current ? 'text-white' : 'text-black dark:text-white'}>{c}</Text>
-        </Pressable>
+        <Chip key={c} label={c} dot={categoryColor(c)} selected={c === current} onPress={() => onPick(c)} />
       ))}
     </View>
   );
@@ -28,8 +24,8 @@ function CategoryChips({ categories, current, onPick }: { categories: string[]; 
  * ("Blinkit · 12 payments"), expandable to the individual payments. Categories can be changed
  * and payments removed for a whole payee or one payment at a time.
  */
-export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
-  const categories = useCategoryNames();
+export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props) {
+  const insets = useSafeAreaInsets();
   const confirm = useConfirmBatch();
   const [overrides, setOverrides] = useState<Map<string, string>>(new Map());
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
@@ -45,7 +41,6 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
     setExcluded(new Set());
     setExpanded(null);
     setChanging(null);
-    confirm.reset();
     onClose();
   };
 
@@ -57,37 +52,32 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
   };
   const remove = (ids: string[]) => setExcluded(new Set([...excluded, ...ids]));
 
-  const submit = () =>
-    confirm.mutate(
-      groups.flatMap((g) => g.payees.flatMap((p) => p.items.map((i) => ({ id: i.id, category: g.category })))),
-      { onSuccess: close },
-    );
+  // The list updates optimistically, so close right away instead of waiting on the network.
+  const submit = () => {
+    confirm.mutate(groups.flatMap((g) => g.payees.flatMap((p) => p.items.map((i) => ({ id: i.id, category: g.category })))));
+    close();
+  };
 
   const renderPayee = (category: string, p: PayeeGroup) => {
     const id = `${category}:${p.key}`;
     const ids = p.items.map((i) => i.id);
     const open = expanded === id;
+    const many = p.items.length > 1;
     return (
-      <View key={id} className="border-t border-gray-200 dark:border-gray-800">
-        <Pressable className="px-4 py-3" onPress={() => setExpanded(open ? null : id)}>
+      <View key={id} className="border-t border-slate-200 dark:border-slate-800">
+        <Pressable className="px-4 py-3 active:opacity-60" onPress={() => setExpanded(open ? null : id)}>
           <View className="flex-row items-center justify-between">
             <View className="flex-1 pr-3">
-              <Text className="text-black dark:text-white" numberOfLines={1}>{p.label}</Text>
-              <Text className="text-xs text-gray-500">
-                {p.items.length} {p.items.length === 1 ? 'payment' : 'payments'} · {open ? 'tap to hide' : 'tap to see each'}
-              </Text>
+              <Text className={`font-medium ${ink}`} numberOfLines={1}>{p.label}</Text>
+              <Text className={`text-xs ${muted}`}>{p.items.length} {many ? 'payments' : 'payment'} · tap to {open ? 'hide' : 'see each'}</Text>
             </View>
-            <Text className="text-gray-700 dark:text-gray-200">{rupees(p.total)}</Text>
-          </View>
-          <View className="mt-2 flex-row gap-4">
-            <Pressable onPress={() => setChanging(changing === `p:${id}` ? null : `p:${id}`)}>
-              <Text className="text-sm text-blue-600">Change category{p.items.length > 1 ? ' (all)' : ''}</Text>
-            </Pressable>
-            <Pressable onPress={() => remove(ids)}>
-              <Text className="text-sm text-red-600">Remove{p.items.length > 1 ? ' all' : ''}</Text>
-            </Pressable>
+            <Text className={ink}>{rupees(p.total)}</Text>
           </View>
         </Pressable>
+        <View className="flex-row gap-5 px-4 pb-1">
+          <LinkButton label={`Change category${many ? ' (all)' : ''}`} onPress={() => setChanging(changing === `p:${id}` ? null : `p:${id}`)} />
+          <LinkButton tone="danger" label={`Remove${many ? ' all' : ''}`} onPress={() => remove(ids)} />
+        </View>
         {changing === `p:${id}` && (
           <View className="px-4 pb-3">
             <CategoryChips categories={categories} current={category} onPick={(c) => setCategory(ids, c)} />
@@ -95,22 +85,16 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
         )}
 
         {open && p.items.map((i) => (
-          <View key={i.id} className="bg-gray-50 px-6 py-2 dark:bg-gray-900">
+          <View key={i.id} className="bg-slate-50 px-6 py-2 dark:bg-slate-950">
             <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-black dark:text-white">{new Date(i.occurred_at).toLocaleDateString('en-IN')}</Text>
-              <Text className="text-sm text-gray-700 dark:text-gray-200">{rupees(i.amount)}</Text>
+              <Text className={`text-sm ${ink}`}>{new Date(i.occurred_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</Text>
+              <Text className={`text-sm ${ink}`}>{rupees(i.amount)}</Text>
             </View>
-            <View className="mt-1 flex-row gap-4">
-              <Pressable onPress={() => setChanging(changing === `i:${i.id}` ? null : `i:${i.id}`)}>
-                <Text className="text-sm text-blue-600">Change category</Text>
-              </Pressable>
-              <Pressable onPress={() => remove([i.id])}>
-                <Text className="text-sm text-red-600">Remove</Text>
-              </Pressable>
+            <View className="flex-row gap-5">
+              <LinkButton label="Change category" onPress={() => setChanging(changing === `i:${i.id}` ? null : `i:${i.id}`)} />
+              <LinkButton tone="danger" label="Remove" onPress={() => remove([i.id])} />
             </View>
-            {changing === `i:${i.id}` && (
-              <CategoryChips categories={categories} current={category} onPick={(c) => setCategory([i.id], c)} />
-            )}
+            {changing === `i:${i.id}` && <CategoryChips categories={categories} current={category} onPick={(c) => setCategory([i.id], c)} />}
           </View>
         ))}
       </View>
@@ -119,40 +103,34 @@ export function ConfirmBatchModal({ visible, txns, onClose }: Props) {
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 bg-white pt-10 dark:bg-black">
+      <View className="flex-1 bg-slate-50 dark:bg-slate-950" style={{ paddingTop: insets.top + 12 }}>
         <View className="px-4 pb-3">
-          <Text className="text-xl font-bold text-black dark:text-white">Confirm {count} payments</Text>
-          <Text className="text-gray-500">{rupees(total)} in total. Check the sorting, fix anything wrong, then confirm.</Text>
+          <Text className={`text-2xl font-bold ${ink}`}>Confirm {count} payments</Text>
+          <Text className={muted}>{rupees(total)} in total. Check the sorting, fix anything wrong, then confirm.</Text>
         </View>
 
         <ScrollView className="flex-1 px-4" keyboardShouldPersistTaps="handled">
-          {groups.length === 0 && <Text className="mt-6 text-gray-500">Nothing left to confirm.</Text>}
+          {groups.length === 0 && <Text className={`mt-6 ${muted}`}>Nothing left to confirm.</Text>}
           {groups.map((g) => (
-            <View key={g.category} className="mb-4 rounded-xl border border-gray-200 dark:border-gray-800">
+            <Card key={g.category} className="mb-4 overflow-hidden">
               <View className="flex-row items-center justify-between px-4 py-3">
-                <View>
-                  <Text className="text-base font-semibold text-black dark:text-white">{g.category}</Text>
-                  <Text className="text-xs text-gray-500">{g.count} payments · {g.payees.length} payees</Text>
+                <View className="flex-row items-center gap-3">
+                  <View className="h-3 w-3 rounded-full" style={{ backgroundColor: categoryColor(g.category) }} />
+                  <View>
+                    <Text className={`text-base font-semibold ${ink}`}>{g.category}</Text>
+                    <Text className={`text-xs ${muted}`}>{g.count} payments · {g.payees.length} payees</Text>
+                  </View>
                 </View>
-                <Text className="font-semibold text-black dark:text-white">{rupees(g.total)}</Text>
+                <Text className={`font-semibold ${ink}`}>{rupees(g.total)}</Text>
               </View>
               {g.payees.map((p) => renderPayee(g.category, p))}
-            </View>
+            </Card>
           ))}
         </ScrollView>
 
-        {confirm.error && <Text className="px-4 pb-2 text-red-600">{confirm.error.message}</Text>}
-        <View className="flex-row gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-800">
-          <Pressable
-            className={`flex-1 items-center rounded-lg py-3 ${count === 0 || confirm.isPending ? 'bg-blue-300' : 'bg-blue-600'}`}
-            onPress={submit}
-            disabled={count === 0 || confirm.isPending}
-          >
-            <Text className="font-semibold text-white">{confirm.isPending ? 'Saving…' : `Confirm ${count}`}</Text>
-          </Pressable>
-          <Pressable className="flex-1 items-center rounded-lg border border-gray-300 py-3 dark:border-gray-700" onPress={close}>
-            <Text className="font-semibold text-black dark:text-white">Cancel</Text>
-          </Pressable>
+        <View className="flex-row gap-3 border-t border-slate-200 bg-white px-4 pt-3 dark:border-slate-800 dark:bg-slate-900" style={{ paddingBottom: insets.bottom + 12 }}>
+          <Button className="flex-1" label={`Confirm ${count}`} disabled={count === 0} onPress={submit} />
+          <Button className="flex-1" variant="secondary" label="Cancel" onPress={close} />
         </View>
       </View>
     </Modal>

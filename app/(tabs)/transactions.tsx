@@ -1,46 +1,48 @@
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import { PendingCard, rupees } from '../../src/components/PendingCard';
-import { useTxns } from '../../src/data/hooks';
+import { PendingCard } from '../../src/components/PendingCard';
+import { useCategoryNames, useNoteSuggestions, useTxns } from '../../src/data/hooks';
+import { Amount, Card, Empty, Screen, ink, muted } from '../../src/ui/components';
+import { categoryColor } from '../../src/ui/theme';
 
 export default function TransactionsScreen() {
   const { data, isLoading, error } = useTxns('confirmed');
+  const categories = useCategoryNames();
+  const suggestions = useNoteSuggestions();
   const [editing, setEditing] = useState<string | null>(null);
 
   return (
-    <View className="flex-1 bg-white px-4 pt-12 dark:bg-black">
-      {isLoading && <ActivityIndicator />}
-      {error && <Text className="text-red-600">{error.message}</Text>}
-      <Text className="mb-2 text-xs text-gray-500">Tap a payment to change its category or note.</Text>
+    <Screen title="Transactions" subtitle="Tap a payment to change its category or note">
+      {error && <Text className="mb-2 text-rose-600">{error.message}</Text>}
       <FlatList
         data={data ?? []}
         keyExtractor={(t) => t.id}
         keyboardShouldPersistTaps="handled"
         removeClippedSubviews={false}
-        windowSize={7}
-        ListEmptyComponent={!isLoading ? <Text className="text-gray-500">No confirmed transactions yet.</Text> : null}
+        initialNumToRender={12}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        ListEmptyComponent={isLoading ? <ActivityIndicator className="mt-8" /> : <Empty icon="receipt-outline" title="Nothing confirmed yet" hint="Confirmed payments show up here." />}
         renderItem={({ item }) =>
           editing === item.id ? (
-            <PendingCard txn={item} mode="edit" onDone={() => setEditing(null)} />
+            <PendingCard txn={item} categories={categories} suggestions={suggestions} mode="edit" onDone={() => setEditing(null)} />
           ) : (
-            <Pressable
-              disabled={item.type !== 'debit'}
-              onPress={() => setEditing(item.id)}
-              className="flex-row items-center justify-between border-b border-gray-200 py-3 dark:border-gray-800"
-            >
-              <View className="flex-1 pr-3">
-                <Text className="text-black dark:text-white" numberOfLines={1}>{item.merchant ?? 'Unknown'}</Text>
-                <Text className="text-xs text-gray-500" numberOfLines={1}>
-                  {[item.category, item.note, new Date(item.occurred_at).toLocaleDateString('en-IN')].filter(Boolean).join(' · ')}
-                </Text>
-              </View>
-              <Text className={item.type === 'debit' ? 'font-semibold text-red-600' : 'font-semibold text-green-600'}>
-                {item.type === 'debit' ? '-' : '+'}{rupees(item.amount)}
-              </Text>
+            <Pressable disabled={item.type !== 'debit'} onPress={() => setEditing(item.id)} className="mb-2 active:opacity-60">
+              <Card className="flex-row items-center justify-between p-4">
+                <View className="flex-1 pr-3">
+                  <Text className={`font-semibold ${ink}`} numberOfLines={1}>{item.merchant ?? 'Unknown'}</Text>
+                  <View className="mt-1 flex-row items-center gap-2">
+                    {item.category && <View className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: categoryColor(item.category) }} />}
+                    <Text className={`flex-1 text-xs ${muted}`} numberOfLines={1}>
+                      {[item.category, item.note, new Date(item.occurred_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })].filter(Boolean).join(' · ')}
+                    </Text>
+                  </View>
+                </View>
+                <Amount value={item.amount} type={item.type} />
+              </Card>
             </Pressable>
           )
         }
       />
-    </View>
+    </Screen>
   );
 }

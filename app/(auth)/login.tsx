@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { z } from 'zod';
 import { supabase } from '../../src/lib/supabase';
+import { Button, Input, LinkButton, ink, muted } from '../../src/ui/components';
 
 const credentials = z.object({
   email: z.string().email('Enter a valid email'),
@@ -26,46 +27,32 @@ export default function Login() {
     }
     setBusy(true);
     const { data, error: authError } =
-      mode === 'signin'
-        ? await supabase.auth.signInWithPassword(parsed.data)
-        : await supabase.auth.signUp(parsed.data);
+      mode === 'signin' ? await supabase.auth.signInWithPassword(parsed.data) : await supabase.auth.signUp(parsed.data);
     setBusy(false);
     if (authError) setError(authError.message);
     else if (mode === 'signup' && !data.session) setNotice('Check your email to confirm your account.');
   }
 
   return (
-    <View className="flex-1 justify-center gap-4 bg-white px-6 dark:bg-black">
-      <Text className="text-3xl font-bold text-black dark:text-white">Expensefy</Text>
-      <TextInput
-        className="rounded-lg border border-gray-300 px-4 py-3 text-black dark:text-white"
-        placeholder="Email"
-        placeholderTextColor="#9ca3af"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 px-4 py-3 text-black dark:text-white"
-        placeholder="Password"
-        placeholderTextColor="#9ca3af"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      {error && <Text className="text-red-600">{error}</Text>}
-      {notice && <Text className="text-green-600">{notice}</Text>}
-      <Pressable className="items-center rounded-lg bg-blue-600 py-3" onPress={submit} disabled={busy}>
-        {busy ? <ActivityIndicator color="white" /> : (
-          <Text className="font-semibold text-white">{mode === 'signin' ? 'Sign in' : 'Create account'}</Text>
-        )}
-      </Pressable>
-      <Pressable onPress={() => setMode(mode === 'signin' ? 'signup' : 'signin')}>
-        <Text className="text-center text-blue-600">
-          {mode === 'signin' ? 'New here? Create an account' : 'Have an account? Sign in'}
-        </Text>
-      </Pressable>
-    </View>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 justify-center bg-slate-50 px-6 dark:bg-slate-950">
+      <View className="mb-8">
+        <View className="mb-4 h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600">
+          <Text className="text-3xl font-bold text-white">₹</Text>
+        </View>
+        <Text className={`text-3xl font-bold ${ink}`}>Expensefy</Text>
+        <Text className={`mt-1 ${muted}`}>Your bank SMS, turned into a clean expense log.</Text>
+      </View>
+
+      <View className="gap-3">
+        <Input placeholder="Email" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
+        <Input placeholder="Password" secureTextEntry value={password} onChangeText={setPassword} />
+        {error && <Text className="text-rose-600">{error}</Text>}
+        {notice && <Text className="text-emerald-600">{notice}</Text>}
+        <Button label={mode === 'signin' ? 'Sign in' : 'Create account'} loading={busy} onPress={submit} />
+        <View className="items-center">
+          <LinkButton label={mode === 'signin' ? 'New here? Create an account' : 'Have an account? Sign in'} onPress={() => setMode(mode === 'signin' ? 'signup' : 'signin')} />
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
