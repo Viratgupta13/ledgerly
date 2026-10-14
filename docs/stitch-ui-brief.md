@@ -1,4 +1,4 @@
-# Expensefy — UI design brief (for Google Stitch)
+# Ledgerly — UI design brief (for Google Stitch)
 
 How to use: paste **Part 1** first so Stitch knows the product and style. Then paste **one screen from Part 2 at a time** (Stitch gives better results screen by screen). Ask it to keep the same style for every screen.
 
@@ -6,7 +6,7 @@ How to use: paste **Part 1** first so Stitch knows the product and style. Then p
 
 ## Part 1 — Master prompt (paste this first)
 
-Design a mobile app called **Expensefy**: an Android expense tracker for people in India. It reads bank and UPI SMS on the phone, turns them into transactions automatically, and asks the user to quickly review and categorise them. The goal of the whole design is **minimum effort for the user**: most payments should already be sorted, and the user only glances, fixes mistakes, and confirms.
+Design a mobile app called **Ledgerly**: an Android expense tracker for people in India. It reads bank and UPI SMS on the phone, turns them into transactions automatically, and asks the user to quickly review and categorise them. The goal of the whole design is **minimum effort for the user**: most payments should already be sorted, and the user only glances, fixes mistakes, and confirms.
 
 **Platform:** Android phone, portrait, 360×800 dp. Material-3-style, thumb-friendly. Bottom tab bar with 4 tabs. Every tappable element is at least 48dp tall.
 
@@ -31,7 +31,7 @@ Design a mobile app called **Expensefy**: an Android expense tracker for people 
 ## Part 2 — Screens (paste one at a time)
 
 ### Screen 1 — Sign in
-- App logo (a rupee mark in a rounded square), name "Expensefy", one-line tagline: "Your bank SMS, turned into a clean expense log."
+- App logo (a rupee mark in a rounded square), name "Ledgerly", one-line tagline: "Your bank SMS, turned into a clean expense log."
 - Fields: **Email**, **Password** (with show/hide eye).
 - Primary button: **Sign in**.
 - Text link: "New here? Create an account".
@@ -46,7 +46,7 @@ Design a mobile app called **Expensefy**: an Android expense tracker for people 
 
 ### Screen 3 — SMS permission (a new, friendly pre-permission screen, shown once before the Android system dialog)
 - Illustration or icon of a message turning into a receipt.
-- Title: "Let Expensefy read your bank SMS".
+- Title: "Let Ledgerly read your bank SMS".
 - 3 short bullets: "We only look for payment messages", "OTPs and promos are ignored", "Nothing but the amount, payee and date is saved".
 - Primary button: **Allow SMS access**. Secondary link: "Not now".
 

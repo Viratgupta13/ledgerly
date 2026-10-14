@@ -3,7 +3,7 @@ import * as TaskManager from 'expo-task-manager';
 import type { NotifySettings } from '../notifications/settings';
 import { checkForNewPayments } from './check';
 
-export const TASK_NAME = 'expensefy-check-payments';
+export const TASK_NAME = 'ledgerly-check-payments';
 
 // Must run at app start (it is imported from the root layout) so Android can also run it headless.
 TaskManager.defineTask(TASK_NAME, async () => {

@@ -59,12 +59,12 @@ export function Avatar({ onPress }: { onPress?: () => void }) {
 }
 
 /** Top bar: 36px "E" tile, bold title and the profile avatar. */
-export function AppHeader({ title = 'Expensefy' }: { title?: string }) {
+export function AppHeader({ title = 'Ledgerly' }: { title?: string }) {
   return (
     <View style={{ shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 1 }, elevation: 1 }} className="h-16 flex-row items-center justify-between bg-surface px-4 dark:bg-dk-surface">
       <View className="flex-row items-center gap-2">
         <View style={SHADOW_SM} className="h-9 w-9 items-center justify-center rounded-xl bg-primary">
-          <Text className="font-inter-b text-headline-sm text-on-primary">E</Text>
+          <Text className="font-inter-b text-headline-sm text-on-primary">₹</Text>
         </View>
         <Text className={`font-inter-b text-headline-sm ${INK}`}>{title}</Text>
       </View>

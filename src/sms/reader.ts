@@ -10,7 +10,7 @@ export async function requestSmsPermission(): Promise<boolean> {
   if (Platform.OS !== 'android') return false;
   const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS, {
     title: 'Read your SMS',
-    message: 'Expensefy reads bank and UPI SMS on this phone to create your transactions. SMS never leave your device.',
+    message: 'Ledgerly reads bank and UPI SMS on this phone to create your transactions. SMS never leave your device.',
     buttonPositive: 'Allow',
     buttonNegative: 'Not now',
   });

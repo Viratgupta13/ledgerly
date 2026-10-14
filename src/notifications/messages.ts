@@ -37,7 +37,7 @@ export function newPaymentsMessage(payments: NewPayment[], hideDetails: boolean)
 export function reminderMessage(pending: number, hideDetails: boolean): Message {
   return {
     title: 'Payments waiting for review',
-    body: hideDetails ? 'Open Expensefy to review them.' : `${plural(pending, 'payment')} need a quick look.`,
+    body: hideDetails ? 'Open Ledgerly to review them.' : `${plural(pending, 'payment')} need a quick look.`,
   };
 }
 

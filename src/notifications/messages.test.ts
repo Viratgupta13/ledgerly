@@ -42,7 +42,7 @@ describe('newPaymentsMessage', () => {
 
 describe('reminderMessage', () => {
   it('hides the count when asked', () => {
-    expect(reminderMessage(12, true).body).toBe('Open Expensefy to review them.');
+    expect(reminderMessage(12, true).body).toBe('Open Ledgerly to review them.');
     expect(reminderMessage(12, false).body).toBe('12 payments need a quick look.');
   });
 });

@@ -3,7 +3,7 @@ import { applyPredefined, importParsed, type NewPayment } from '../data/api';
 import { parseSms, type ParsedTxn, type RawSms } from '../parser';
 import { hasSmsPermission, readInbox, requestSmsPermission } from './reader';
 
-const LAST_SCAN_KEY = 'expensefy:lastScanAt';
+const LAST_SCAN_KEY = 'ledgerly:lastScanAt';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export type ScanSummary = { scanned: number; found: number; added: number; payments: NewPayment[] };

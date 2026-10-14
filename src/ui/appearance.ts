@@ -3,7 +3,7 @@ import { Appearance } from 'react-native';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-const KEY = 'expensefy:themeMode';
+const KEY = 'ledgerly:themeMode';
 
 export async function loadThemeMode(): Promise<ThemeMode> {
   try {

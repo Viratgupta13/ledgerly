@@ -96,7 +96,7 @@ export default function SettingsScreen() {
     const next = { ...settings, ...patch };
     // Turning a notification on needs the Android permission first.
     if ((patch.newPayments || patch.dailyReminder) && !(await requestNotificationPermission())) {
-      Alert.alert('Notifications are off', 'Allow notifications for Expensefy in your phone settings to turn this on.');
+      Alert.alert('Notifications are off', 'Allow notifications for Ledgerly in your phone settings to turn this on.');
       return;
     }
     setSettings(next);
@@ -122,7 +122,7 @@ export default function SettingsScreen() {
 
   const testNotification = async () => {
     if (!(await requestNotificationPermission())) {
-      Alert.alert('Notifications are off', 'Allow notifications for Expensefy in your phone settings.');
+      Alert.alert('Notifications are off', 'Allow notifications for Ledgerly in your phone settings.');
       return;
     }
     await showNotification({ title: 'Notifications are working', body: 'You will see new payments here.' });
@@ -208,7 +208,7 @@ export default function SettingsScreen() {
           <Icon name="logout" size={20} color="#ba1a1a" />
           <Text className="font-inter-sb text-label-lg text-error">Sign out</Text>
         </Pressable>
-        <Text className="text-center text-label-sm text-outline">Expensefy • your SMS stay on your phone</Text>
+        <Text className="text-center text-label-sm text-outline">Ledgerly • your SMS stay on your phone</Text>
       </ScrollView>
     </View>
   );

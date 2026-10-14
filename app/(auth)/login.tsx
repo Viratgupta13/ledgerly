@@ -80,17 +80,17 @@ export default function Login() {
 
         <View className="mb-6 mt-1 items-center">
           <View style={{ shadowColor: '#0f172a', shadowOpacity: 0.12, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4 }} className="mb-3 h-14 w-14 items-center justify-center rounded-xl bg-surface-container-lowest p-1.5 dark:bg-dk-lowest">
-            <View className="h-full w-full items-center justify-center rounded-lg bg-primary-container">
+            <View className="h-full w-full items-center justify-center rounded-lg bg-primary">
               <Text className="font-inter-b text-headline-md text-on-primary">₹</Text>
             </View>
           </View>
           {signup && (
             <View className="mb-1 flex-row items-center gap-1.5 rounded-full bg-surface-container px-2 py-0.5 dark:bg-dk-container">
               <View className="h-1.5 w-1.5 rounded-full bg-primary" />
-              <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">Expensefy</Text>
+              <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">Ledgerly</Text>
             </View>
           )}
-          <Text className={`font-inter-b text-headline-lg ${ink}`}>{signup ? 'Create your account' : 'Expensefy'}</Text>
+          <Text className={`font-inter-b text-headline-lg ${ink}`}>{signup ? 'Create your account' : 'Ledgerly'}</Text>
           <Text className={`mt-1 max-w-[280px] text-center text-body-md ${muted}`}>
             {signup ? 'Start tracking bank & UPI payments effortlessly.' : 'Your bank SMS, turned into a clean expense log.'}
           </Text>

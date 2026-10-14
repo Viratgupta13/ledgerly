@@ -10,8 +10,8 @@ export type NotifySettings = {
 
 export const DEFAULT_SETTINGS: NotifySettings = { newPayments: true, dailyReminder: false, reminderHour: 21, hideDetails: true };
 
-const KEY = 'expensefy:notifySettings';
-const LAST_REMINDER_KEY = 'expensefy:lastReminderDay';
+const KEY = 'ledgerly:notifySettings';
+const LAST_REMINDER_KEY = 'ledgerly:lastReminderDay';
 
 export async function loadSettings(): Promise<NotifySettings> {
   try {

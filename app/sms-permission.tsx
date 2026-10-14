@@ -92,8 +92,8 @@ export default function SmsPermission() {
         </View>
 
         <View className="mb-4 mt-2">
-          <Text className={`font-inter-sb text-headline-lg ${ink}`}>Let Expensefy read your bank SMS</Text>
-          <Text className={`mt-1.5 text-body-md ${muted}`}>To track your expenses with almost no typing, Expensefy needs SMS read access.</Text>
+          <Text className={`font-inter-sb text-headline-lg ${ink}`}>Let Ledgerly read your bank SMS</Text>
+          <Text className={`mt-1.5 text-body-md ${muted}`}>To track your expenses with almost no typing, Ledgerly needs SMS read access.</Text>
         </View>
 
         <View className="mb-4 gap-2.5">

@@ -1,4 +1,4 @@
--- Expensefy initial schema: transactions + merchant_rules, both private per user via RLS.
+-- Ledgerly initial schema: transactions + merchant_rules, both private per user via RLS.
 
 create type public.txn_type as enum ('debit', 'credit');
 create type public.txn_status as enum ('pending', 'confirmed', 'ignored');
