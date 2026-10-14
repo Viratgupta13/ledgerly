@@ -11,6 +11,9 @@ type Step = 'signin' | 'signup' | 'verify' | 'forgot' | 'reset';
 const emailSchema = z.string().email('Enter a valid email');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
 const RESEND_SECONDS = 30;
+// Supabase sends 6- or 8-digit codes depending on the project setting; accept both.
+const CODE_LENGTH = 8;
+const MIN_CODE = 6;
 
 /** 0-3 filled bars for the password strength meter on the sign-up form. */
 function strength(p: string): number {
@@ -82,7 +85,7 @@ export default function Login() {
   }
 
   async function verifySignup() {
-    if (code.length !== 6) return fail('Enter the 6-digit code');
+    if (code.length < MIN_CODE) return fail('Enter the code from your email');
     setBusy(true);
     setError(null);
     const { error: err } = await supabase.auth.verifyOtp({ email: email.trim(), token: code, type: 'signup' });
@@ -104,7 +107,7 @@ export default function Login() {
 
   async function resetPassword() {
     setError(null);
-    if (code.length !== 6) return fail('Enter the 6-digit code');
+    if (code.length < MIN_CODE) return fail('Enter the code from your email');
     const p = passwordSchema.safeParse(password);
     if (!p.success) return fail(p.error.issues[0].message);
     setBusy(true);
@@ -138,9 +141,9 @@ export default function Login() {
   const titles: Record<Step, { title: string; sub: string }> = {
     signin: { title: 'Ledgerly', sub: 'Your bank SMS, turned into a clean expense log.' },
     signup: { title: 'Create your account', sub: 'Start tracking bank & UPI payments effortlessly.' },
-    verify: { title: 'Check your email', sub: `We sent a 6-digit code to ${email.trim()}. Enter it to verify your account.` },
-    forgot: { title: 'Reset your password', sub: "Enter your email and we'll send you a 6-digit code." },
-    reset: { title: 'Enter the code', sub: `We sent a 6-digit code to ${email.trim()}. Enter it with your new password.` },
+    verify: { title: 'Check your email', sub: `We sent a code to ${email.trim()}. Enter it to verify your account.` },
+    forgot: { title: 'Reset your password', sub: "Enter your email and we'll send you a code." },
+    reset: { title: 'Enter the code', sub: `We sent a code to ${email.trim()}. Enter it with your new password.` },
   };
 
   const emailField = (
@@ -264,8 +267,8 @@ export default function Login() {
 
         {step === 'verify' ? (
           <View className="gap-4">
-            <CodeInput value={code} onChange={setCode} />
-            <Button size="lg" className="bg-primary-container" label="Verify" iconRight="arrow-forward" loading={busy} disabled={code.length !== 6} onPress={verifySignup} />
+            <CodeInput value={code} onChange={setCode} length={CODE_LENGTH} />
+            <Button size="lg" className="bg-primary-container" label="Verify" iconRight="arrow-forward" loading={busy} disabled={code.length < MIN_CODE} onPress={verifySignup} />
             {resendRow}
             <Pressable onPress={() => go('signup')} hitSlop={10} className="min-h-11 items-center justify-center">
               <Text className={`text-body-md ${muted}`}>Wrong email? <Text className="font-inter-sb text-primary">Change it</Text></Text>
@@ -285,9 +288,9 @@ export default function Login() {
 
         {step === 'reset' ? (
           <View className="gap-4">
-            <CodeInput value={code} onChange={setCode} />
+            <CodeInput value={code} onChange={setCode} length={CODE_LENGTH} />
             {passwordField('New password', 'Choose a new password')}
-            <Button size="lg" className="bg-primary-container" label="Set new password" iconRight="arrow-forward" loading={busy} disabled={code.length !== 6 || password.length < 6} onPress={resetPassword} />
+            <Button size="lg" className="bg-primary-container" label="Set new password" iconRight="arrow-forward" loading={busy} disabled={code.length < MIN_CODE || password.length < 6} onPress={resetPassword} />
             {resendRow}
           </View>
         ) : null}

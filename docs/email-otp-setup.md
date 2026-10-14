@@ -1,6 +1,6 @@
 # Email OTP setup (Supabase + Gmail)
 
-The app sends a 6-digit code to the user's email on sign-up and on "Forgot password". This needs three things in Supabase. No domain is required.
+The app sends a code to the user's email on sign-up and on "Forgot password". This needs three things in Supabase. No domain is required.
 
 ## 1. A Gmail account just for sending
 1. Create a new Gmail, e.g. `ledgerly.noreply@gmail.com` (do not use your personal one).
@@ -24,7 +24,7 @@ Save. (Gmail allows about 500 emails per day, plenty to start. Move to a domain 
 ## 3. Turn on email confirmation
 **Authentication → Sign In / Providers → Email** → turn **Confirm email** ON.
 
-## 4. Make the emails carry the 6-digit code
+## 4. Make the emails carry the code
 **Authentication → Emails → Templates**. Edit two templates and replace the body so it shows `{{ .Token }}` (the code), not a link.
 
 **Confirm signup** — subject `Your Ledgerly verification code`:

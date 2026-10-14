@@ -323,19 +323,19 @@ export function useInitials(): string {
   return ((parts[0]?.[0] ?? 'E') + (parts[1]?.[0] ?? '')).toUpperCase();
 }
 
-/** Six boxes for a one-time code; one hidden numeric input does the typing. */
+/** Boxes for a one-time code; one hidden numeric input does the typing. */
 export function CodeInput({ value, onChange, length = 6 }: { value: string; onChange: (v: string) => void; length?: number }) {
   const ref = useRef<TextInput>(null);
   return (
     <Pressable onPress={() => ref.current?.focus()}>
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-1.5">
         {Array.from({ length }).map((_, i) => (
           <View
             key={i}
             style={SHADOW_SM}
-            className={`h-14 flex-1 items-center justify-center rounded-xl bg-surface-container-lowest ${value.length === i ? 'border-2 border-primary' : ''}`}
+            className={`h-14 flex-1 items-center justify-center rounded-lg bg-surface-container-lowest ${value.length === i ? 'border-2 border-primary' : ''}`}
           >
-            <Text className={`font-inter-b text-headline-md ${INK}`}>{value[i] ?? ''}</Text>
+            <Text className={`font-inter-b text-headline-sm ${INK}`}>{value[i] ?? ''}</Text>
           </View>
         ))}
       </View>
