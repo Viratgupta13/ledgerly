@@ -12,7 +12,7 @@ import { lockLightMode } from '../src/ui/appearance';
 import { useAuthStore } from '../src/store/auth';
 
 function Routes() {
-  const { session, initialized, recovering, setSession } = useAuthStore();
+  const { session, initialized, recovering, demo, setSession } = useAuthStore();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -23,20 +23,20 @@ function Routes() {
   // Tapping a notification opens the Inbox.
   const response = Notifications.useLastNotificationResponse();
   useEffect(() => {
-    if (!initialized || !session) return;
+    if (!initialized || (!session && !demo)) return;
     if (response?.notification.request.content.data?.screen === 'inbox') useTabStore.getState().go(TAB.inbox);
-  }, [response, initialized, session]);
+  }, [response, initialized, session, demo]);
 
   if (!initialized) return null;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!!session && !recovering}>
+      <Stack.Protected guard={(!!session || demo) && !recovering}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="settings" />
         <Stack.Screen name="sms-permission" options={{ presentation: 'modal' }} />
       </Stack.Protected>
-      <Stack.Protected guard={!session || recovering}>
+      <Stack.Protected guard={(!session && !demo) || recovering}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
     </Stack>

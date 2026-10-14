@@ -78,6 +78,8 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const email = useAuthStore((s) => s.session?.user.email);
+  const demo = useAuthStore((s) => s.demo);
+  const exitDemo = useAuthStore((s) => s.exitDemo);
   const initials = useInitials();
   const [settings, setSettings] = useState<NotifySettings>(DEFAULT_SETTINGS);
   const [smsAllowed, setSmsAllowed] = useState<boolean | null>(null);
@@ -126,7 +128,8 @@ export default function SettingsScreen() {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    if (demo) exitDemo();
+    else await supabase.auth.signOut();
     qc.clear();
   };
 
@@ -146,8 +149,8 @@ export default function SettingsScreen() {
               <Text className="font-inter-sb text-headline-md text-on-primary-fixed">{initials}</Text>
             </View>
             <View className="flex-1">
-              <Text className={`font-inter-sb text-headline-sm ${ink}`} numberOfLines={1}>{(email ?? '').split('@')[0] || 'Your account'}</Text>
-              <Text className={`text-body-sm ${muted}`} numberOfLines={1}>{email ?? '—'}</Text>
+              <Text className={`font-inter-sb text-headline-sm ${ink}`} numberOfLines={1}>{demo ? 'Demo account' : (email ?? '').split('@')[0] || 'Your account'}</Text>
+              <Text className={`text-body-sm ${muted}`} numberOfLines={1}>{demo ? 'Sample data, nothing is saved' : (email ?? '—')}</Text>
             </View>
           </View>
           <View className="flex-row items-center justify-between rounded-lg bg-surface-container-low p-2">
@@ -188,7 +191,7 @@ export default function SettingsScreen() {
 
         <Pressable onPress={signOut} className="h-14 flex-row items-center justify-center gap-2 rounded-xl bg-error-container active:opacity-70">
           <Icon name="logout" size={20} color="#ba1a1a" />
-          <Text className="font-inter-sb text-label-lg text-error">Sign out</Text>
+          <Text className="font-inter-sb text-label-lg text-error">{demo ? 'Exit demo' : 'Sign out'}</Text>
         </Pressable>
         <Text className="text-center text-label-sm text-outline">Ledgerly • your SMS stay on your phone</Text>
       </ScrollView>

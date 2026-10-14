@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '../constants/categories';
 import { addCategory, applyPredefined, confirmBatch, deleteRule, listCategories, listRules, listTxns, reviewTxn, saveRule } from './api';
-import { useAuthStore } from '../store/auth';
+import { useUserId } from '../store/auth';
 import { Alert } from 'react-native';
 import type { TxnRow, TxnStatus } from './types';
 
@@ -22,7 +22,7 @@ function reportFailure(title: string, error: unknown) {
  */
 export function useReview() {
   const qc = useQueryClient();
-  const userId = useAuthStore((s) => s.session?.user.id);
+  const userId = useUserId();
   return useMutation({
     mutationFn: async (input: ReviewInput) => {
       const { remember, ...review } = input;
@@ -80,7 +80,7 @@ export function useCategoryNames() {
 
 export function useAddCategory() {
   const qc = useQueryClient();
-  const userId = useAuthStore((s) => s.session?.user.id);
+  const userId = useUserId();
   return useMutation({
     mutationFn: async (name: string) => {
       if (!userId) throw new Error('Not signed in');
@@ -126,7 +126,7 @@ export function useConfirmBatch() {
 /** Creates a "payee -> category" rule by hand and pre-fills matching pending payments. */
 export function useAddRule() {
   const qc = useQueryClient();
-  const userId = useAuthStore((s) => s.session?.user.id);
+  const userId = useUserId();
   return useMutation({
     mutationFn: async ({ payeeKey, category }: { payeeKey: string; category: string }) => {
       if (!userId) throw new Error('Not signed in');

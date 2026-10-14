@@ -1,5 +1,7 @@
 import type { ParsedTxn, RawSms } from '../parser';
+import * as demo from '../demo/db';
 import { supabase } from '../lib/supabase';
+import { isDemo } from '../store/auth';
 import { buildHistory, buildRows, predefinedCategory } from './rows';
 import type { CategoryRow, RuleRow, TxnRow, TxnStatus } from './types';
 
@@ -7,6 +9,7 @@ const TXN_COLUMNS =
   'id, amount, type, merchant, category, bank_ref, occurred_at, status, note, payee_key, payee_kind';
 
 export async function listTxns(status: TxnStatus): Promise<TxnRow[]> {
+  if (isDemo()) return demo.demoListTxns(status);
   const { data, error } = await supabase
     .from('transactions')
     .select(TXN_COLUMNS)
@@ -17,17 +20,20 @@ export async function listTxns(status: TxnStatus): Promise<TxnRow[]> {
 }
 
 export async function listRules(): Promise<RuleRow[]> {
+  if (isDemo()) return demo.demoListRules();
   const { data, error } = await supabase.from('merchant_rules').select('id, payee_key, category').order('payee_key');
   if (error) throw error;
   return data as RuleRow[];
 }
 
 export async function deleteRule(id: string): Promise<void> {
+  if (isDemo()) return demo.demoDeleteRule(id);
   const { error } = await supabase.from('merchant_rules').delete().eq('id', id);
   if (error) throw error;
 }
 
 export async function saveRule(userId: string, payeeKey: string, category: string): Promise<void> {
+  if (isDemo()) return demo.demoSaveRule(payeeKey, category);
   const { error } = await supabase
     .from('merchant_rules')
     .upsert({ user_id: userId, payee_key: payeeKey, category }, { onConflict: 'user_id,payee_key' });
@@ -47,6 +53,7 @@ export async function importParsed(
   items: { sms: RawSms; txn: ParsedTxn }[],
 ): Promise<{ added: number; payments: NewPayment[] }> {
   if (items.length === 0) return { added: 0, payments: [] };
+  if (isDemo()) return demo.demoImport(items);
   const [ruleRows, confirmed] = await Promise.all([listRules(), listTxns('confirmed')]);
   const rules = new Map(ruleRows.map((r) => [r.payee_key, r.category]));
   const history = buildHistory(confirmed);
@@ -71,18 +78,22 @@ export async function reviewTxn(input: {
   category: string | null;
   note: string | null;
 }): Promise<void> {
+  if (isDemo()) return demo.demoReview(input);
   const { id, ...patch } = input;
+  
   const { error } = await supabase.from('transactions').update(patch).eq('id', id);
   if (error) throw error;
 }
 
 export async function listCategories(): Promise<CategoryRow[]> {
+  if (isDemo()) return demo.demoListCategories();
   const { data, error } = await supabase.from('categories').select('id, name').order('name');
   if (error) throw error;
   return data as CategoryRow[];
 }
 
 export async function addCategory(userId: string, name: string): Promise<void> {
+  if (isDemo()) return demo.demoAddCategory(name);
   const { error } = await supabase.from('categories').insert({ user_id: userId, name: name.trim() });
   if (error) throw error;
 }
@@ -92,6 +103,7 @@ export async function addCategory(userId: string, name: string): Promise<void> {
  * confirmed before, and well-known brands. Never confirms anything. Returns rows updated.
  */
 export async function applyPredefined(): Promise<number> {
+  if (isDemo()) return demo.demoApplyPredefined();
   const [pending, confirmed, ruleRows] = await Promise.all([listTxns('pending'), listTxns('confirmed'), listRules()]);
   const rules = new Map(ruleRows.map((r) => [r.payee_key, r.category]));
   const history = buildHistory(confirmed);
@@ -115,6 +127,7 @@ export async function applyPredefined(): Promise<number> {
 
 /** Confirms the given pending payments, each with its final category. Returns how many were saved. */
 export async function confirmBatch(updates: { id: string; category: string }[]): Promise<number> {
+  if (isDemo()) return demo.demoConfirmBatch(updates);
   const byCategory = new Map<string, string[]>();
   for (const u of updates) byCategory.set(u.category, [...(byCategory.get(u.category) ?? []), u.id]);
 
@@ -135,6 +148,7 @@ export async function confirmBatch(updates: { id: string; category: string }[]):
 }
 
 export async function countPending(): Promise<number> {
+  if (isDemo()) return demo.demoCountPending();
   const { count, error } = await supabase
     .from('transactions')
     .select('id', { count: 'exact', head: true })

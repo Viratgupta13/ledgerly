@@ -7,7 +7,7 @@ import { PendingCard } from '../components/PendingCard';
 import { useCategoryNames, useNoteSuggestions, useTxns } from '../data/hooks';
 import { hasSmsPermission } from '../sms/reader';
 import { scanAndImport } from '../sms/scan';
-import { useAuthStore } from '../store/auth';
+import { useUserId } from '../store/auth';
 import { Button, Card, Chip, Empty, Icon, Pill, SHADOW_SM, Screen, Text, ink, muted } from '../ui/components';
 
 const RANGES = [
@@ -17,7 +17,7 @@ const RANGES = [
 ];
 
 export default function InboxScreen() {
-  const userId = useAuthStore((s) => s.session?.user.id);
+  const userId = useUserId();
   const qc = useQueryClient();
   const router = useRouter();
   const pending = useTxns('pending');

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scanAndImport } from '../src/sms/scan';
-import { useAuthStore } from '../src/store/auth';
+import { useUserId } from '../src/store/auth';
 import { Button, Icon, SHADOW_SM, Text, ink, muted, type IconName } from '../src/ui/components';
 
 const POINTS: { icon: IconName; box: string; color: string; title: string; body: string }[] = [
@@ -18,7 +18,7 @@ export default function SmsPermission() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const qc = useQueryClient();
-  const userId = useAuthStore((s) => s.session?.user.id);
+  const userId = useUserId();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

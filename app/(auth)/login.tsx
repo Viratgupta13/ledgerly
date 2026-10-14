@@ -27,6 +27,7 @@ function strength(p: string): number {
 export default function Login() {
   const insets = useSafeAreaInsets();
   const setRecovering = useAuthStore((s) => s.setRecovering);
+  const enterDemo = useAuthStore((s) => s.enterDemo);
   const [step, setStep] = useState<Step>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -256,6 +257,9 @@ export default function Login() {
               </View>
             )}
             <Button size="lg" className="bg-primary-container" label={signup ? 'Create account' : 'Sign in'} iconRight="arrow-forward" loading={busy} onPress={submitCredentials} />
+            {!signup && (
+              <Button variant="secondary" size="md" icon="play-circle-outline" label="Try demo with sample data" onPress={enterDemo} />
+            )}
             <View className="flex-row items-center justify-center">
               <Text className={`text-body-md ${muted}`}>{signup ? 'Have an account?' : 'New here?'}</Text>
               <Pressable onPress={() => go(signup ? 'signin' : 'signup')} hitSlop={10} className="ml-1 min-h-11 justify-center">
