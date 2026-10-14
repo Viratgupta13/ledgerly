@@ -29,7 +29,8 @@
         {
           "color": "#4f46e5"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "scheme": "expensefy",
     "platforms": [

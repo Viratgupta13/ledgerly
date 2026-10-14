@@ -117,3 +117,20 @@ export function useConfirmBatch() {
     onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
   });
 }
+
+/** Creates a "payee -> category" rule by hand and pre-fills matching pending payments. */
+export function useAddRule() {
+  const qc = useQueryClient();
+  const userId = useAuthStore((s) => s.session?.user.id);
+  return useMutation({
+    mutationFn: async ({ payeeKey, category }: { payeeKey: string; category: string }) => {
+      if (!userId) throw new Error('Not signed in');
+      await saveRule(userId, payeeKey, category);
+      await applyPredefined().catch(() => undefined);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['rules'] });
+      qc.invalidateQueries({ queryKey: ['txns'] });
+    },
+  });
+}

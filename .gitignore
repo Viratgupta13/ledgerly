@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Design exports (large, kept locally)
+docs/design/*.zip

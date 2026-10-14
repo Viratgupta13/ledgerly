@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {"darkMode":"class","theme":{"extend":{"colors":{"secondary-container":"#6cf8bb","surface-container-high":"#e2e7ff","primary":"#3525cd","secondary-fixed-dim":"#4edea3","on-tertiary-container":"#ffd0d2","on-tertiary-fixed-variant":"#920028","error-container":"#ffdad6","on-tertiary":"#ffffff","outline-variant":"#c7c4d8","surface-container-highest":"#dae2fd","surface-dim":"#d2d9f4","surface-bright":"#faf8ff","primary-container":"#4f46e5","on-primary-fixed-variant":"#3323cc","on-surface-variant":"#464555","inverse-primary":"#c3c0ff","on-background":"#131b2e","on-primary-container":"#dad7ff","on-secondary-fixed-variant":"#005236","primary-fixed-dim":"#c3c0ff","tertiary":"#950029","surface-variant":"#dae2fd","tertiary-fixed-dim":"#ffb3b6","on-tertiary-fixed":"#40000c","on-primary":"#ffffff","secondary":"#006c49","primary-fixed":"#e2dfff","secondary-fixed":"#6ffbbe","surface-container":"#eaedff","tertiary-fixed":"#ffdada","on-secondary-container":"#00714d","outline":"#777587","surface":"#faf8ff","on-primary-fixed":"#0f0069","surface-container-lowest":"#ffffff","surface-tint":"#4d44e3","background":"#faf8ff","inverse-on-surface":"#eef0ff","tertiary-container":"#c20038","on-error":"#ffffff","inverse-surface":"#283044","on-surface":"#131b2e","on-error-container":"#93000a","surface-container-low":"#f2f3ff","on-secondary":"#ffffff","error":"#ba1a1a","on-secondary-fixed":"#002113"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1rem","space-sm":"0.5rem","space-xl":"2rem","gutter-sm":"0.75rem","margin-lg":"1.5rem","space-lg":"1.5rem","space-xs":"0.25rem","margin-sm":"0.75rem","space-md":"1rem","gutter":"1rem"},"fontFamily":{"headline-lg":["Inter"],"label-sm":["Inter"],"display-currency-mobile":["Inter"],"title-md":["Inter"],"body-lg":["Inter"],"label-md":["Inter"],"display-currency":["Inter"],"body-md":["Inter"],"headline-md":["Inter"],"headline-sm":["Inter"],"body-sm":["Inter"],"label-lg":["Inter"]},"fontSize":{"headline-lg":["26px",{"lineHeight":"34px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"display-currency-mobile":["30px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"title-md":["16px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"display-currency":["36px",{"lineHeight":"44px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0.005em","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.005em","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.01em","fontWeight":"400"}],"label-lg":["14px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"600"}]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold shadow-sm">E</div><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Home</span></div><a class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors" data-path="settings" href="#"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></a></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Screen Context / Title Banner -->
+<div class="px-margin pt-space-md pb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        INBOX SYSTEM ANATOMY
+      </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">touch_app</span> Tap to inspect
+      </span>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">Payment Card States</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+      Core triage components for automated Indian bank SMS &amp; UPI telemetry feeds.
+    </p>
+</div>
+<!-- Filter Pill Navigation -->
+<div class="w-full overflow-x-auto px-margin py-space-xs no-scrollbar flex items-center gap-space-xs">
+<button class="filter-pill shrink-0 h-9 px-3.5 rounded-full bg-primary text-on-primary font-label-md text-label-md transition-all flex items-center gap-1.5 shadow-sm" id="btn-all" onclick="filterCards('all')">
+<span>All Variants</span>
+<span class="px-1.5 py-0.2 bg-on-primary/20 rounded-full text-[10px] font-bold">5</span>
+</button>
+<button class="filter-pill shrink-0 h-9 px-3.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all flex items-center gap-1" id="btn-collapsed" onclick="filterCards('collapsed')">
+<span>Collapsed</span>
+</button>
+<button class="filter-pill shrink-0 h-9 px-3.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all flex items-center gap-1" id="btn-expanded" onclick="filterCards('expanded')">
+<span>Expanded Debit</span>
+</button>
+<button class="filter-pill shrink-0 h-9 px-3.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all flex items-center gap-1" id="btn-person" onclick="filterCards('person')">
+<span>Person (P2P)</span>
+</button>
+<button class="filter-pill shrink-0 h-9 px-3.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all flex items-center gap-1" id="btn-credit" onclick="filterCards('credit')">
+<span>Credit Inflow</span>
+</button>
+</div>
+<!-- Cards Presentation Container -->
+<div class="px-margin pt-space-md pb-space-xl flex flex-col gap-space-lg">
+<!-- VARIANT 1: Collapsed Debit (Pre-Sorted) -->
+<section class="card-variant-wrapper flex flex-col gap-space-xs" data-category="collapsed">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Variant 1 • Collapsed • High Confidence Rule</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">verified</span> Auto-tagged
+        </span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_1px_4px_rgba(15,23,42,0.06)] p-3.5 flex flex-col gap-2.5 transition-all active:scale-[0.99] cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<!-- Merchant Category Glyph -->
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]">local_mall</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate font-semibold">BLINKIT</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant shrink-0">14 Oct, 6:42 pm</span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span class="font-label-md text-label-md text-on-surface-variant">Food &amp; Groceries</span>
+<span class="px-1.5 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm font-semibold tracking-tight">
+                  ✨ 98% pre-sorted
+                </span>
+</div>
+</div>
+</div>
+<!-- Price & Chevron -->
+<div class="flex items-center gap-2 shrink-0 text-right">
+<span class="font-title-md text-title-md text-tertiary font-bold tracking-tight">-₹349.00</span>
+<div class="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VARIANT 2: Collapsed Debit (Needs Category) -->
+<section class="card-variant-wrapper flex flex-col gap-space-xs" data-category="collapsed">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Variant 2 • Collapsed • Needs Category</span>
+<span class="font-label-sm text-label-sm text-tertiary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">schedule</span> Pending action
+        </span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_1px_4px_rgba(15,23,42,0.06)] p-3.5 flex flex-col gap-2.5 transition-all active:scale-[0.99] cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<!-- UPI Generic Avatar -->
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[22px]">account_balance_wallet</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-title-md text-title-md text-on-surface truncate font-semibold">Rinku Singh (UPI)</span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant">13 Oct, 9:15 am</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                  Needs a category
+                </span>
+</div>
+</div>
+</div>
+<!-- Price & Chevron -->
+<div class="flex items-center gap-2 shrink-0 text-right">
+<span class="font-title-md text-title-md text-tertiary font-bold tracking-tight">-₹80.00</span>
+<div class="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VARIANT 3: Expanded Debit (Interactive Full Blueprint) -->
+<section class="card-variant-wrapper flex flex-col gap-space-xs" data-category="expanded">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Variant 3 • Expanded Debit • Full Interaction</span>
+<span class="px-2 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Standard Flow</span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(15,23,42,0.08)] flex flex-col overflow-hidden">
+<!-- Header -->
+<div class="p-4 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[24px]">restaurant</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">ZOMATO</span>
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-on-surface-variant rounded font-label-sm text-[9px] font-semibold uppercase">HDFC 4912</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">12 Oct, 9:30 pm • Card POS</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-headline-sm text-headline-sm text-tertiary font-bold tracking-tight">-₹612.50</span>
+<div class="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
+</div>
+</div>
+</div>
+<!-- Subtle separator -->
+<div class="h-px w-full bg-surface-container-high"></div>
+<!-- Expanded Drawer Content -->
+<div class="p-4 flex flex-col gap-space-md bg-surface-container-lowest">
+<!-- Category Section -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Select Category</span>
+<span class="font-label-sm text-label-sm text-primary font-medium">8 Available</span>
+</div>
+<!-- Chips Container -->
+<div class="flex flex-wrap gap-1.5" id="v3-chips">
+<!-- Food (Active Selected) -->
+<button class="category-chip h-9 px-3 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>Food</span>
+</button>
+<!-- Transport -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Transport</span>
+</button>
+<!-- Shopping -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Shopping</span>
+</button>
+<!-- Bills -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Bills</span>
+</button>
+<!-- Rent -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span>Rent</span>
+</button>
+<!-- Friends -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Friends</span>
+</button>
+<!-- Other -->
+<button class="category-chip h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 hover:bg-surface-container-high transition-colors" type="button">
+<span class="w-2 h-2 rounded-full bg-surface-variant"></span>
+<span>Other</span>
+</button>
+<!-- + New inline trigger -->
+<button class="h-9 px-3 rounded-full bg-surface-container text-primary font-label-md text-label-md flex items-center gap-1 hover:bg-primary-fixed transition-colors" onclick="toggleNewCategoryField()" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>New</span>
+</button>
+</div>
+<!-- Inline Demo: Add New Category Input (collapsible) -->
+<div class="mt-1 flex items-center gap-2 p-2 rounded-xl bg-surface-container-low" id="inline-category-field">
+<input class="flex-1 bg-surface-container-lowest px-3 py-2 rounded-lg text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="New category name (e.g. Pet Care)" type="text"/>
+<button class="h-9 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md shrink-0 flex items-center gap-1 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Add</span>
+</button>
+</div>
+</div>
+<!-- Recent Note Chips -->
+<div class="flex flex-col gap-1.5">
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Recent quick tags</span>
+<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+<button class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-colors" onclick="setNote('Dinner with team')" type="button">
+                + Dinner with team
+              </button>
+<button class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-colors" onclick="setNote('Rapido ride')" type="button">
+                + Rapido ride
+              </button>
+<button class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-colors" onclick="setNote('Groceries')" type="button">
+                + Groceries
+              </button>
+<button class="h-7 px-2.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-colors" onclick="setNote('Rent')" type="button">
+                + Rent
+              </button>
+</div>
+</div>
+<!-- Note Input Field -->
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Add Note / Context</label>
+<div class="relative w-full flex items-center">
+<span class="absolute left-3 material-symbols-outlined text-outline-variant text-[20px]">edit_note</span>
+<input class="w-full h-12 pl-10 pr-3 rounded-xl bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" id="v3-note-input" placeholder="Note (e.g. Dinner with Ananya &amp; Rohan)" type="text"/>
+</div>
+</div>
+<!-- Automation Rule Row with Material 3 Toggle -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[18px]">auto_mode</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Always use Food for ZOMATO</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Creates custom sorting rule for all future UPI &amp; SMS</span>
+</div>
+</div>
+<!-- Material 3 Toggle Switch (ON) -->
+<button class="w-13 h-8 w-12 rounded-full bg-primary p-1 flex items-center transition-colors relative shrink-0" data-active="true" onclick="toggleSwitch(this)" type="button">
+<span class="w-6 h-6 rounded-full bg-on-primary shadow-sm transform translate-x-4 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</span>
+</button>
+</div>
+<!-- Actions -->
+<div class="grid grid-cols-2 gap-space-sm pt-1">
+<button class="h-12 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-1.5 hover:bg-surface-dim transition-colors active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+<span>Ignore</span>
+</button>
+<button class="h-12 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-md hover:bg-primary-container transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Confirm</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- VARIANT 4: Person Payment (Expanded with Context Prompt) -->
+<section class="card-variant-wrapper flex flex-col gap-space-xs" data-category="person">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Variant 4 • Person Payment (P2P) • Prompt Trigger</span>
+<span class="px-2 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold">P2P Telemetry</span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(15,23,42,0.08)] flex flex-col overflow-hidden">
+<!-- Header -->
+<div class="p-4 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[24px]">person</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Ramesh Kumar (UPI)</span>
+<span class="px-1.5 py-0.2 bg-secondary-container text-on-secondary-container rounded font-label-sm text-[9px] font-bold uppercase">GPay UPI</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">11 Oct, 11:20 am • Axis Bank</span>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<span class="font-headline-sm text-headline-sm text-tertiary font-bold tracking-tight">-₹15,000.00</span>
+<div class="w-7 h-7 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_up</span>
+</div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-container-high"></div>
+<!-- Person Content -->
+<div class="p-4 flex flex-col gap-space-md bg-surface-container-lowest">
+<!-- Contextual Hint Banner for Person Payments -->
+<div class="p-3 rounded-xl bg-surface-container-high flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">contact_support</span>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Paid to a person. What was this for?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-snug">
+                Person-to-person UPI payments vary widely. Select a category and note so monthly analytics reflect actual spending.
+              </p>
+</div>
+</div>
+<!-- Categories with Rent pre-selected -->
+<div class="flex flex-col gap-2">
+<span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Select Category</span>
+<div class="flex flex-wrap gap-1.5">
+<!-- Rent (Selected) -->
+<button class="h-9 px-3.5 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span>Rent</span>
+</button>
+<button class="h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5" type="button">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Friends</span>
+</button>
+<button class="h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Services</span>
+</button>
+<button class="h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5" type="button">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Transport</span>
+</button>
+<button class="h-9 px-3 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5" type="button">
+<span class="w-2 h-2 rounded-full bg-surface-variant"></span>
+<span>Other</span>
+</button>
+</div>
+</div>
+<!-- Note input pre-filled with "October flat rent" -->
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Custom Purpose / Note</label>
+<div class="relative w-full flex items-center">
+<span class="absolute left-3 material-symbols-outlined text-primary text-[20px]">description</span>
+<input class="w-full h-12 pl-10 pr-3 rounded-xl bg-surface-container-low text-body-md font-body-md text-on-surface font-medium focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest" type="text" value="October flat rent"/>
+</div>
+</div>
+<!-- Toggle switch (OFF by default for personal payments) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-outline shrink-0">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Always use Rent for Ramesh Kumar</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Default is OFF to avoid miscategorizing casual split bills</span>
+</div>
+</div>
+<!-- Material 3 Toggle Switch (OFF) -->
+<button class="w-12 h-8 rounded-full bg-surface-container-highest p-1 flex items-center transition-colors relative shrink-0" data-active="false" onclick="toggleSwitch(this)" type="button">
+<span class="w-6 h-6 rounded-full bg-surface-container-lowest shadow-sm transform translate-x-0 transition-transform"></span>
+</button>
+</div>
+<!-- Actions -->
+<div class="grid grid-cols-2 gap-space-sm pt-1">
+<button class="h-12 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-1.5 hover:bg-surface-dim transition-colors active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility_off</span>
+<span>Ignore</span>
+</button>
+<button class="h-12 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-md hover:bg-primary-container transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Confirm</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- VARIANT 5: Credit (Money Coming In) -->
+<section class="card-variant-wrapper flex flex-col gap-space-xs" data-category="credit">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Variant 5 • Inflow Credit • Direct Triage</span>
+<span class="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> Income Detected
+        </span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(15,23,42,0.08)] flex flex-col overflow-hidden">
+<!-- Credit Header with Inflow Accent Styling -->
+<div class="p-4 bg-secondary-fixed/30 flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-secondary text-[24px]">payments</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Acme Corp / Tech Solutions</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">01 Oct, 10:00 am • ICICI Sal-Direct</span>
+</div>
+</div>
+<!-- Bold Green Inflow -->
+<div class="flex flex-col items-end shrink-0">
+<span class="font-headline-sm text-headline-sm text-secondary font-bold tracking-tight">+₹52,000.00</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary text-on-secondary font-label-sm text-[10px] font-bold uppercase tracking-wider">
+              Inflow
+            </span>
+</div>
+</div>
+<!-- Informational Banner -->
+<div class="p-4 flex flex-col gap-space-md bg-surface-container-lowest">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-semibold">Salary credit detected via Bank SMS</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Auto-assigned to Salary / Primary Income stream. No manual categorization needed.
+              </span>
+</div>
+</div>
+<!-- Streamlined One-Tap Actions -->
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="h-12 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-1.5 hover:bg-surface-dim transition-colors active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+<span>Ignore</span>
+</button>
+<button class="h-12 rounded-xl bg-secondary text-on-secondary font-label-lg text-label-lg flex items-center justify-center gap-1.5 shadow-md hover:bg-on-secondary-container transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span>Confirm Income</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Empty/Guide Summary Footnote -->
+<div class="p-4 rounded-xl bg-surface-container-high flex items-center gap-3 mt-space-xs">
+<span class="material-symbols-outlined text-primary text-[24px] shrink-0">tips_and_updates</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<strong>Inbox Triage Pattern:</strong> Unreviewed items stay in Inbox until Confirmed or Ignored. Swiping right confirms automatically with default rules.
+      </p>
+</div>
+</div>
+</div>
+<script>
+  function filterCards(type) {
+    const wrappers = document.querySelectorAll('.card-variant-wrapper');
+    const pills = document.querySelectorAll('.filter-pill');
+
+    pills.forEach(p => {
+      p.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+      p.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+    });
+
+    const activeBtn = document.getElementById('btn-' + type);
+    if (activeBtn) {
+      activeBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      activeBtn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+    }
+
+    wrappers.forEach(wrap => {
+      const cat = wrap.getAttribute('data-category');
+      if (type === 'all' || cat === type) {
+        wrap.style.display = 'flex';
+      } else {
+        wrap.style.display = 'none';
+      }
+    });
+  }
+
+  function toggleNewCategoryField() {
+    const el = document.getElementById('inline-category-field');
+    if (el) {
+      el.classList.toggle('hidden');
+    }
+  }
+
+  function setNote(text) {
+    const input = document.getElementById('v3-note-input');
+    if (input) {
+      input.value = text;
+      input.focus();
+    }
+  }
+
+  function toggleSwitch(btn) {
+    const isActive = btn.getAttribute('data-active') === 'true';
+    const thumb = btn.querySelector('span');
+
+    if (isActive) {
+      btn.setAttribute('data-active', 'false');
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-surface-container-highest');
+      thumb.classList.remove('translate-x-4');
+      thumb.classList.add('translate-x-0');
+      thumb.classList.remove('bg-on-primary');
+      thumb.classList.add('bg-surface-container-lowest');
+      thumb.innerHTML = '';
+    } else {
+      btn.setAttribute('data-active', 'true');
+      btn.classList.add('bg-primary');
+      btn.classList.remove('bg-surface-container-highest');
+      thumb.classList.add('translate-x-4');
+      thumb.classList.remove('translate-x-0');
+      thumb.classList.add('bg-on-primary');
+      thumb.classList.remove('bg-surface-container-lowest');
+      thumb.innerHTML = '<span class="material-symbols-outlined text-primary text-[14px]">check</span>';
+    }
+  }
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_12px_rgba(15,23,42,0.05)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="relative flex flex-col items-center justify-center w-16 h-12 gap-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-sm text-label-sm">Home</span></a><a class="relative flex flex-col items-center justify-center w-16 h-12 gap-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="inbox" href="#"><div class="relative flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">inbox</span><span class="absolute -top-1 -right-3.5 px-1.5 py-0.2 bg-tertiary text-on-tertiary rounded-full font-label-sm text-[9px] leading-tight font-bold">38</span></div><span class="font-label-sm text-label-sm">Inbox</span></a><a class="flex flex-col items-center justify-center w-16 h-12 gap-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="transactions" href="#"><span class="material-symbols-outlined text-[24px]">receipt_long</span><span class="font-label-sm text-label-sm">Transactions</span></a><a class="flex flex-col items-center justify-center w-16 h-12 gap-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="rules" href="#"><span class="material-symbols-outlined text-[24px]">tune</span><span class="font-label-sm text-label-sm">Rules</span></a></div></nav></body></html>

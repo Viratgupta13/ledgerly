@@ -1,13 +1,17 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, Switch, Text, View } from 'react-native';
-import { checkForNewPayments } from '../../src/background/check';
-import { syncBackgroundTask } from '../../src/background/task';
-import { supabase } from '../../src/lib/supabase';
-import { requestNotificationPermission, showNotification } from '../../src/notifications/notify';
-import { DEFAULT_SETTINGS, loadSettings, saveSettings, type NotifySettings } from '../../src/notifications/settings';
-import { useAuthStore } from '../../src/store/auth';
-import { Button, Card, Chip, Screen, ink, muted } from '../../src/ui/components';
+import { Alert, Linking, Pressable, ScrollView, Switch, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { checkForNewPayments } from '../src/background/check';
+import { syncBackgroundTask } from '../src/background/task';
+import { supabase } from '../src/lib/supabase';
+import { requestNotificationPermission, showNotification } from '../src/notifications/notify';
+import { DEFAULT_SETTINGS, loadSettings, saveSettings, type NotifySettings } from '../src/notifications/settings';
+import { hasSmsPermission } from '../src/sms/reader';
+import { useAuthStore } from '../src/store/auth';
+import { Button, Card, Chip, Pill, SectionLabel, Text, ink, muted, useInitials } from '../src/ui/components';
 
 const HOURS = [
   { label: '9 am', hour: 9 },
@@ -20,23 +24,28 @@ function ToggleRow({ title, hint, value, onChange }: { title: string; hint?: str
   return (
     <View className="min-h-14 flex-row items-center justify-between py-2">
       <View className="flex-1 pr-4">
-        <Text className={`text-base font-medium ${ink}`}>{title}</Text>
+        <Text className={`font-inter-md text-base ${ink}`}>{title}</Text>
         {hint ? <Text className={`text-xs ${muted}`}>{hint}</Text> : null}
       </View>
-      <Switch value={value} onValueChange={onChange} />
+      <Switch value={value} onValueChange={onChange} trackColor={{ true: '#4f46e5' }} />
     </View>
   );
 }
 
 export default function SettingsScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const qc = useQueryClient();
   const email = useAuthStore((s) => s.session?.user.email);
+  const initials = useInitials();
   const [settings, setSettings] = useState<NotifySettings>(DEFAULT_SETTINGS);
+  const [smsAllowed, setSmsAllowed] = useState<boolean | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     loadSettings().then(setSettings);
+    hasSmsPermission().then(setSmsAllowed);
   }, []);
 
   const update = async (patch: Partial<NotifySettings>) => {
@@ -81,28 +90,48 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Screen title="Settings">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24 }}>
-        <Card className="mb-4 p-4">
-          <Text className={`text-xs uppercase ${muted}`}>Account</Text>
-          <Text className={`mb-3 mt-1 text-base ${ink}`}>{email ?? '—'}</Text>
-          <Button variant="secondary" icon="log-out-outline" label="Sign out" onPress={signOut} />
+    <View className="flex-1 bg-slate-50 dark:bg-slate-950" style={{ paddingTop: insets.top }}>
+      <View className="h-14 flex-row items-center gap-2 px-2">
+        <Pressable onPress={() => router.back()} hitSlop={10} className="h-11 w-11 items-center justify-center rounded-full active:opacity-50">
+          <Ionicons name="arrow-back" size={24} color="#64748b" />
+        </Pressable>
+        <Text className={`font-inter-sb text-xl ${ink}`}>Settings</Text>
+      </View>
+
+      <ScrollView className="px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
+        <Card className="mb-4 flex-row items-center gap-4 p-4">
+          <View className="h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-slate-800">
+            <Text className="font-inter-b text-xl text-indigo-600">{initials}</Text>
+          </View>
+          <View className="flex-1">
+            <Text className={`font-inter-sb text-base ${ink}`} numberOfLines={1}>{email ?? '—'}</Text>
+            <View className="mt-1">
+              <Pill label={smsAllowed ? 'SMS access on' : 'SMS access off'} tone={smsAllowed ? 'emerald' : 'amber'} />
+            </View>
+          </View>
         </Card>
 
+        <View className="mb-1 px-1"><SectionLabel>SMS access</SectionLabel></View>
+        <Card className="mb-4 flex-row items-center gap-3 p-4">
+          <Ionicons name="chatbox-ellipses-outline" size={22} color="#4f46e5" />
+          <View className="flex-1">
+            <Text className={`font-inter-md ${ink}`}>Read bank & UPI SMS</Text>
+            <Text className={`text-xs ${muted}`}>Processed on this phone. Only amount, payee, date, category and note are saved.</Text>
+          </View>
+          <Pressable onPress={() => Linking.openSettings()} hitSlop={10} className="min-h-11 justify-center">
+            <Text className="font-inter-sb text-sm text-indigo-600">Manage</Text>
+          </Pressable>
+        </Card>
+
+        <View className="mb-1 px-1"><SectionLabel>Notifications</SectionLabel></View>
         <Card className="mb-4 px-4 py-2">
-          <Text className={`mt-2 text-xs uppercase ${muted}`}>Notifications</Text>
           <ToggleRow
             title="New payments"
             hint="We check for new bank SMS about every 15 minutes, even when the app is closed."
             value={settings.newPayments}
             onChange={(v) => update({ newPayments: v })}
           />
-          <ToggleRow
-            title="Daily reminder"
-            hint="Once a day, only if payments are waiting for review."
-            value={settings.dailyReminder}
-            onChange={(v) => update({ dailyReminder: v })}
-          />
+          <ToggleRow title="Daily reminder" hint="Once a day, only if payments are waiting for review." value={settings.dailyReminder} onChange={(v) => update({ dailyReminder: v })} />
           {settings.dailyReminder && (
             <View className="flex-row flex-wrap gap-2 pb-2">
               {HOURS.map((h) => (
@@ -124,10 +153,9 @@ export default function SettingsScreen() {
           {status ? <Text className={muted}>{status}</Text> : null}
         </Card>
 
-        <Text className={`px-1 text-xs ${muted}`}>
-          Your SMS are read and processed on this phone. Only the amount, payee, date, category and note are saved.
-        </Text>
+        <Button variant="danger" icon="log-out-outline" label="Sign out" onPress={signOut} />
+        <Text className={`mt-4 text-center text-xs ${muted}`}>Expensefy · your SMS stay on your phone.</Text>
       </ScrollView>
-    </Screen>
+    </View>
   );
 }

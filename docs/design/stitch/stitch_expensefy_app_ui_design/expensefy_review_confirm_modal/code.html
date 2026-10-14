@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-fixed-dim": "#c3c0ff", "on-tertiary-container": "#ffd0d2", "tertiary-fixed": "#ffdada", "secondary": "#006c49", "tertiary-container": "#c20038", "surface-container-highest": "#dae2fd", "error-container": "#ffdad6", "on-surface-variant": "#464555", "on-background": "#131b2e", "on-secondary": "#ffffff", "primary": "#3525cd", "background": "#faf8ff", "secondary-fixed": "#6ffbbe", "surface-dim": "#d2d9f4", "surface-container-low": "#f2f3ff", "surface-container-high": "#e2e7ff", "inverse-surface": "#283044", "on-tertiary-fixed": "#40000c", "on-error": "#ffffff", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-bright": "#faf8ff", "tertiary": "#950029", "inverse-on-surface": "#eef0ff", "primary-container": "#4f46e5", "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "primary-fixed": "#e2dfff", "on-secondary-container": "#00714d", "tertiary-fixed-dim": "#ffb3b6", "secondary-fixed-dim": "#4edea3", "on-secondary-fixed": "#002113", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#005236", "surface": "#faf8ff", "on-primary-fixed": "#0f0069", "surface-tint": "#4d44e3", "surface-container": "#eaedff", "inverse-primary": "#c3c0ff", "surface-variant": "#dae2fd", "on-primary-fixed-variant": "#3323cc", "secondary-container": "#6cf8bb", "on-tertiary-fixed-variant": "#920028", "outline": "#777587", "on-primary-container": "#dad7ff", "outline-variant": "#c7c4d8", "on-surface": "#131b2e" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-sm": "0.75rem", "gutter-sm": "0.75rem", "space-lg": "1.5rem", "space-md": "1rem", "margin-lg": "1.5rem", "space-xs": "0.25rem", "space-xl": "2rem", "gutter": "1rem", "space-sm": "0.5rem", "margin": "1rem" }, "fontFamily": { "headline-sm": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "label-lg": ["Inter"], "label-md": ["Inter"], "body-lg": ["Inter"], "display-currency-mobile": ["Inter"], "label-sm": ["Inter"], "headline-md": ["Inter"], "display-currency": ["Inter"], "headline-lg": ["Inter"], "title-md": ["Inter"] }, "fontSize": { "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.005em", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "display-currency-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-currency": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "headline-lg": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }] } } } }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex justify-center pt-2 pb-1"><div class="w-9 h-1 rounded-full bg-outline-variant/60"></div></div><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><button aria-label="Dismiss modal" class="w-11 h-11 -ml-space-xs rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container active:scale-95 transition-all" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">close</span></button><div class="flex items-center gap-space-xs"><h1 class="font-headline-sm text-headline-sm text-on-surface">Review &amp; Confirm</h1><span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">24 items</span></div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="flex-1 flex flex-col relative w-full px-margin pt-16 pb-36 bg-surface"><div class="flex flex-col w-full gap-space-md">
+<!-- Top Triage Banner & Reassurance -->
+<div class="flex flex-col gap-space-sm">
+<!-- AI Precision Banner -->
+<div class="bg-surface-container-high rounded-xl p-space-md flex items-start gap-space-sm shadow-sm relative overflow-hidden">
+<div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-md text-label-md text-primary font-semibold">95%+ Precision Match</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Instant Triage</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          AI pre-classified merchant descriptions and tax tags. Uncheck any item to keep it in your Inbox for later manual entry.
+        </p>
+</div>
+</div>
+<!-- Quick Filter & Bulk Selector Controls -->
+<div class="flex items-center justify-between gap-space-xs pt-1">
+<!-- Filter Chips -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-1" id="filter-pill-group">
+<button class="h-8 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1 shrink-0 shadow-sm transition-all" onclick="filterTransactions('all', this)" type="button">
+<span>All (24)</span>
+</button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1 shrink-0 transition-colors hover:bg-surface-container-high" onclick="filterTransactions('high', this)" type="button">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>High Match (20)</span>
+</button>
+<button class="h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1 shrink-0 transition-colors hover:bg-surface-container-high" onclick="filterTransactions('review', this)" type="button">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+<span>Review (4)</span>
+</button>
+</div>
+<!-- Bulk Selection Toggle Pill -->
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary font-label-md text-label-md shrink-0 flex items-center gap-1 hover:bg-surface-container transition-all active:scale-95" id="bulk-toggle-btn" onclick="toggleSelectAll()" type="button">
+<span class="material-symbols-outlined text-[16px]" id="bulk-icon">done_all</span>
+<span id="bulk-label">Select All</span>
+</button>
+</div>
+</div>
+<!-- GROUP 1: Food & Dining (Expanded) -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden transition-all duration-300" id="group-food">
+<!-- Group Header Accordion Trigger -->
+<button class="w-full px-space-md py-3.5 flex items-center justify-between bg-surface-container-low text-left" onclick="toggleAccordion('group-food-content', 'food-chevron')" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Food &amp; Dining</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">11 items</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Subtotal: ₹4,210.00</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[22px] transition-transform duration-200" id="food-chevron">expand_less</span>
+</div>
+</button>
+<!-- Group Items List -->
+<div class="flex flex-col" id="group-food-content">
+<!-- Item 1: Blinkit -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="349.00" data-confidence="99">
+<!-- Checkbox -->
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<!-- Merchant Avatar -->
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+</div>
+<!-- Info -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Blinkit Commerce</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹349.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">14 Oct, 6:42 pm • HDFC UPI</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm shrink-0 hover:brightness-95 transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Food (99%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Separator line -->
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<!-- Item 2: Zomato -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="612.50" data-confidence="98">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">lunch_dining</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Zomato Delivery</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹612.50</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">12 Oct, 9:30 pm • ICICI CC</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm shrink-0 hover:brightness-95 transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Food (98%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Separator line -->
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<!-- Item 3: Swiggy Instamart -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="458.00" data-confidence="96">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[20px]">local_mall</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Swiggy Instamart</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹458.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">10 Oct, 2:15 pm • GPay UPI</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm shrink-0 hover:brightness-95 transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Food (96%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Separator line -->
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<!-- Item 4: Blue Tokai Coffee -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="280.00" data-confidence="94">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">coffee</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Blue Tokai Roasters</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹280.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">09 Oct, 11:30 am • Axis Bank</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Dining (94%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Summary Expand Row for Remaining 7 items -->
+<div class="px-space-md py-3 bg-surface-container-low/50 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="flex -space-x-1.5">
+<div class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center text-[10px] text-on-primary-fixed font-bold">7+</div>
+<div class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px] text-on-secondary-fixed font-bold">₹</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">+ 7 more verified Food items (₹2,510.50)</span>
+</div>
+<button class="font-label-sm text-label-sm text-primary font-semibold hover:underline" onclick="toastNotify('Expanded 7 food transactions')" type="button">
+          View All
+        </button>
+</div>
+</div>
+</div>
+<!-- GROUP 2: Shopping & Retail (Expanded) -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden transition-all duration-300" id="group-shopping">
+<button class="w-full px-space-md py-3.5 flex items-center justify-between bg-surface-container-low text-left" onclick="toggleAccordion('group-shopping-content', 'shopping-chevron')" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed-dim flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">storefront</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Shopping &amp; Retail</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">5 items</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Subtotal: ₹4,890.00</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[22px] transition-transform duration-200" id="shopping-chevron">expand_less</span>
+</div>
+</button>
+<div class="flex flex-col" id="group-shopping-content">
+<!-- Item 1: Amazon India -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="1499.00" data-confidence="97">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[20px]">package_2</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Amazon India Pay</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹1,499.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">11 Oct, 4:10 pm • Amazon Pay ICICI</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm shrink-0 hover:brightness-95 transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Shopping (97%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<!-- Item 2: Myntra -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="2140.00" data-confidence="95">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined text-[20px]">checkroom</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Myntra Fashion</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹2,140.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">08 Oct, 7:20 pm • HDFC Regalia</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm shrink-0 hover:brightness-95 transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Apparel (95%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<!-- Item 3: Decathlon -->
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest hover:bg-surface-container-low/40 transition-colors" data-amount="1251.00" data-confidence="93">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer select-none active:scale-95 shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[20px]">fitness_center</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<span class="font-title-md text-title-md text-on-surface truncate">Decathlon Sports</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold shrink-0">-₹1,251.00</span>
+</div>
+<div class="flex items-center justify-between gap-space-xs mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">05 Oct, 6:00 pm • UPI QR</span>
+<button class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm shrink-0 hover:bg-surface-container-high transition-all" onclick="cycleCategory(this)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Sports (93%)</span>
+<span class="material-symbols-outlined text-[12px]">edit</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- GROUP 3: Bills & Utilities (Collapsed Preview) -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden transition-all duration-300" id="group-bills">
+<button class="w-full px-space-md py-3.5 flex items-center justify-between bg-surface-container-low text-left" onclick="toggleAccordion('group-bills-content', 'bills-chevron')" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-xl bg-secondary-fixed flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Bills &amp; Utilities</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">4 items</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Jio, Bescom Electricity, Airtel WiFi, Gas</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold">₹1,860.00</span>
+<span class="material-symbols-outlined text-[22px] text-on-surface-variant transition-transform duration-200" id="bills-chevron">expand_more</span>
+</div>
+</button>
+<!-- Collapsed by default -->
+<div class="hidden flex-col" id="group-bills-content">
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest" data-amount="749.00" data-confidence="98">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface truncate">Bescom Bangalore Power</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">-₹749.00</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">04 Oct, 10:00 am • Auto-debit</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest" data-amount="1111.00" data-confidence="99">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface truncate">Airtel Xstream Fiber</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">-₹1,111.00</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">02 Oct, 11:20 am • Recurring Mandate</span>
+</div>
+</div>
+</div>
+</div>
+<!-- GROUP 4: Transport & Rides (Collapsed Preview) -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm overflow-hidden transition-all duration-300" id="group-transport">
+<button class="w-full px-space-md py-3.5 flex items-center justify-between bg-surface-container-low text-left" onclick="toggleAccordion('group-transport-content', 'transport-chevron')" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">directions_car</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Transport &amp; Rides</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">4 items</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Uber (3 rides), Fastag Toll</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs shrink-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold">₹1,880.00</span>
+<span class="material-symbols-outlined text-[22px] text-on-surface-variant transition-transform duration-200" id="transport-chevron">expand_more</span>
+</div>
+</button>
+<div class="hidden flex-col" id="group-transport-content">
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest" data-amount="420.00" data-confidence="96">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface truncate">Uber India Premier</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">-₹420.00</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">07 Oct, 8:45 am • Airport Drop</span>
+</div>
+</div>
+<div class="h-[1px] bg-surface-container ml-16 mr-space-md"></div>
+<div class="transaction-item flex items-center gap-space-sm p-space-md bg-surface-container-lowest" data-amount="500.00" data-confidence="98">
+<label class="w-11 h-11 -ml-2 rounded-full flex items-center justify-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" onchange="handleItemCheck(this)" type="checkbox"/>
+<div class="w-5 h-5 rounded-md bg-surface-container flex items-center justify-center text-on-primary peer-checked:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-[16px] peer-checked:opacity-100 opacity-0 transition-opacity">check</span>
+</div>
+</label>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-title-md text-title-md text-on-surface truncate">NETC FASTag Recharge</span>
+<span class="font-title-md text-title-md text-on-surface font-semibold">-₹500.00</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">01 Oct, 2:10 pm • Auto-topup</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Toast Feedback Target -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 font-label-md text-label-md flex items-center gap-2 z-50" id="toast-pill">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">check_circle</span>
+<span id="toast-text">Updated</span>
+</div>
+</div>
+<script>
+  function toggleAccordion(contentId, chevronId) {
+    const el = document.getElementById(contentId);
+    const chevron = document.getElementById(chevronId);
+    if (!el || !chevron) return;
+    
+    if (el.classList.contains('hidden')) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      chevron.textContent = 'expand_less';
+    } else {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+      chevron.textContent = 'expand_more';
+    }
+  }
+
+  function handleItemCheck(checkbox) {
+    const itemContainer = checkbox.closest('.transaction-item');
+    if (!itemContainer) return;
+    if (!checkbox.checked) {
+      itemContainer.classList.add('opacity-40');
+    } else {
+      itemContainer.classList.remove('opacity-40');
+    }
+    updateSelectionCounter();
+  }
+
+  function toggleSelectAll() {
+    const checkboxes = document.querySelectorAll('.transaction-item input[type="checkbox"]');
+    const bulkLabel = document.getElementById('bulk-label');
+    const isAllChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    checkboxes.forEach(cb => {
+      cb.checked = !isAllChecked;
+      handleItemCheck(cb);
+    });
+
+    if (bulkLabel) {
+      bulkLabel.textContent = !isAllChecked ? 'Deselect All' : 'Select All';
+    }
+  }
+
+  function updateSelectionCounter() {
+    const all = document.querySelectorAll('.transaction-item input[type="checkbox"]');
+    const checked = document.querySelectorAll('.transaction-item input[type="checkbox"]:checked');
+    toastNotify(`${checked.length} of ${all.length} items selected`);
+  }
+
+  function cycleCategory(chipButton) {
+    const categories = ['Food (99%)', 'Groceries (96%)', 'Personal (92%)', 'Work Meal'];
+    const currentText = chipButton.querySelector('span:nth-child(2)').textContent;
+    const currentIndex = categories.indexOf(currentText);
+    const nextCategory = categories[(currentIndex + 1) % categories.length];
+    
+    chipButton.querySelector('span:nth-child(2)').textContent = nextCategory;
+    chipButton.classList.add('scale-105');
+    setTimeout(() => chipButton.classList.remove('scale-105'), 180);
+    toastNotify(`Changed tag to "${nextCategory}"`);
+  }
+
+  function filterTransactions(type, btn) {
+    const pillGroup = document.getElementById('filter-pill-group');
+    if (pillGroup) {
+      const buttons = pillGroup.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.className = 'h-8 px-3 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1 shrink-0 transition-colors hover:bg-surface-container-high';
+      });
+      btn.className = 'h-8 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1 shrink-0 shadow-sm transition-all';
+    }
+
+    const items = document.querySelectorAll('.transaction-item');
+    items.forEach(item => {
+      const confidence = parseInt(item.getAttribute('data-confidence') || '95', 10);
+      if (type === 'all') {
+        item.style.display = 'flex';
+      } else if (type === 'high') {
+        item.style.display = confidence >= 96 ? 'flex' : 'none';
+      } else if (type === 'review') {
+        item.style.display = confidence < 96 ? 'flex' : 'none';
+      }
+    });
+  }
+
+  function toastNotify(message) {
+    const toast = document.getElementById('toast-pill');
+    const label = document.getElementById('toast-text');
+    if (!toast || !label) return;
+
+    label.textContent = message;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100', 'translate-y-2');
+
+    clearTimeout(window._toastTimeout);
+    window._toastTimeout = setTimeout(() => {
+      toast.classList.add('opacity-0');
+      toast.classList.remove('opacity-100', 'translate-y-2');
+    }, 2000);
+  }
+</script></main><div class="fixed bottom-0 w-full z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-8px_24px_rgba(15,23,42,0.08)]"><div class="px-margin pt-space-md pb-space-sm flex flex-col gap-space-sm"><button class="w-full h-[52px] rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-lg shadow-primary-container/30 active:scale-[0.99] transition-all hover:bg-primary"><span>Confirm all 24 • ₹12,840</span><span class="material-symbols-outlined text-[20px]">arrow_forward</span></button><div class="flex items-center justify-between gap-space-sm"><button class="flex-1 h-11 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center justify-center hover:bg-surface-container-high transition-colors" onclick="history.back()">Edit Selection</button><button class="h-11 px-space-md rounded-lg text-tertiary font-label-md text-label-md flex items-center justify-center hover:bg-error-container/30 transition-colors">Reject All</button></div></div></div></body></html>

@@ -16,7 +16,6 @@ const screens: { name: string; title: string; icon: IconName; iconActive: IconNa
   { name: 'inbox', title: 'Inbox', icon: 'mail-outline', iconActive: 'mail' },
   { name: 'transactions', title: 'Transactions', icon: 'list-outline', iconActive: 'list' },
   { name: 'rules', title: 'Rules', icon: 'funnel-outline', iconActive: 'funnel' },
-  { name: 'settings', title: 'Settings', icon: 'settings-outline', iconActive: 'settings' },
 ];
 
 export default function TabsLayout() {
@@ -51,7 +50,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: dark ? '#818cf8' : '#4f46e5',
         tabBarInactiveTintColor: '#94a3b8',
         tabBarStyle: { backgroundColor: dark ? '#0f172a' : '#ffffff', borderTopColor: dark ? '#1e293b' : '#e2e8f0' },
-        tabBarLabelStyle: { fontWeight: '600' },
+        tabBarLabelStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
+        tabBarBadgeStyle: { backgroundColor: '#be123c', color: '#fff', fontFamily: 'Inter_600SemiBold', fontSize: 10 },
       }}
     >
       {screens.map(({ name, title, icon, iconActive }) => (

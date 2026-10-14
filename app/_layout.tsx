@@ -6,6 +6,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter } from 'expo-r
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/auth';
 
@@ -32,6 +33,8 @@ function Routes() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="settings" />
+        <Stack.Screen name="sms-permission" options={{ presentation: 'modal' }} />
       </Stack.Protected>
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" />
@@ -43,6 +46,8 @@ function Routes() {
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
   const scheme = useColorScheme();
+  const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
+  if (!fontsLoaded) return null;
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
