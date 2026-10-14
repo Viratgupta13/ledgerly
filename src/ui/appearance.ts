@@ -16,7 +16,7 @@ export async function loadThemeMode(): Promise<ThemeMode> {
 
 /** Applies the mode app-wide. 'system' hands control back to the phone's setting. */
 export function applyThemeMode(mode: ThemeMode): void {
-  Appearance.setColorScheme(mode === 'system' ? null : mode);
+  Appearance.setColorScheme(mode === 'system' ? 'unspecified' : mode);
 }
 
 export async function saveThemeMode(mode: ThemeMode): Promise<void> {
