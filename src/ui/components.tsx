@@ -14,8 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '../store/auth';
 import { categoryMeta, tint } from './theme';
 
-export const INK = 'text-slate-900 dark:text-slate-50';
-export const MUTED = 'text-slate-500 dark:text-slate-400';
+export const INK = 'text-on-surface dark:text-dk-on-surface';
+export const MUTED = 'text-on-surface-variant dark:text-dk-on-surface-variant';
 export const ink = INK;
 export const muted = MUTED;
 
@@ -28,9 +28,12 @@ export function Text({ className, ...props }: TextProps & { className?: string }
 
 export const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+const SHADOW = { shadowColor: '#0f172a', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 1 } as const;
+
+/** White surface with a soft shadow and no border, as in the design. */
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <View className={`rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 ${className}`}>
+    <View style={SHADOW} className={`rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest ${className}`}>
       {children}
     </View>
   );
@@ -51,7 +54,7 @@ export function AppHeader() {
   return (
     <View className="h-14 flex-row items-center justify-between">
       <View className="flex-row items-center gap-3">
-        <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
+        <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary">
           <Text className="font-inter-b text-lg text-white">E</Text>
         </View>
         <Text className={`font-inter-sb text-xl ${INK}`}>Expensefy</Text>
@@ -59,7 +62,7 @@ export function AppHeader() {
       <Pressable
         onPress={() => router.push('/settings')}
         hitSlop={8}
-        className="h-10 w-10 items-center justify-center rounded-full bg-indigo-600 active:opacity-70"
+        className="h-10 w-10 items-center justify-center rounded-full bg-primary active:opacity-70"
       >
         <Text className="font-inter-sb text-sm text-white">{initials}</Text>
       </Pressable>
@@ -83,7 +86,7 @@ export function Screen({
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <View className="flex-1 bg-slate-50 px-4 dark:bg-slate-950" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-surface-container-low px-4 dark:bg-dk-low" style={{ paddingTop: insets.top }}>
       {header && <AppHeader />}
       {title ? (
         <View className="mb-3 mt-2 flex-row items-end justify-between">
@@ -111,10 +114,10 @@ type ButtonProps = {
 };
 
 const BUTTON = {
-  primary: { box: 'bg-indigo-600', text: 'text-white', icon: '#ffffff' },
-  secondary: { box: 'border border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900', text: INK, icon: '#4f46e5' },
-  soft: { box: 'bg-indigo-50 dark:bg-slate-800', text: 'text-indigo-700 dark:text-indigo-300', icon: '#4f46e5' },
-  danger: { box: 'bg-rose-50 dark:bg-rose-950', text: 'text-rose-600', icon: '#e11d48' },
+  primary: { box: 'bg-primary', text: 'text-on-primary', icon: '#ffffff' },
+  secondary: { box: 'bg-surface-container dark:bg-dk-container', text: INK, icon: '#3525cd' },
+  soft: { box: 'bg-primary-fixed dark:bg-dk-container', text: 'text-primary dark:text-dk-primary', icon: '#3525cd' },
+  danger: { box: 'bg-error-container dark:bg-dk-error-container', text: 'text-on-error-container dark:text-dk-tertiary', icon: '#ba1a1a' },
 } as const;
 
 /** 52px tall, 14px radius, dims while pressed so every tap visibly registers. */
@@ -139,7 +142,7 @@ export function Button({ label, onPress, variant = 'primary', loading, disabled,
 export function LinkButton({ label, onPress, tone = 'brand' }: { label: string; onPress: () => void; tone?: 'brand' | 'danger' }) {
   return (
     <Pressable onPress={onPress} hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }} className="min-h-9 justify-center active:opacity-50">
-      <Text className={`font-inter-md text-sm ${tone === 'danger' ? 'text-rose-600' : 'text-indigo-600 dark:text-indigo-400'}`}>{label}</Text>
+      <Text className={`font-inter-md text-sm ${tone === 'danger' ? 'text-error' : 'text-primary dark:text-dk-primary'}`}>{label}</Text>
     </Pressable>
   );
 }
@@ -163,14 +166,14 @@ export function Chip({
     <Pressable
       onPress={onPress}
       hitSlop={4}
-      className={`min-h-10 flex-row items-center gap-2 rounded-full border px-4 active:opacity-60 ${
+      className={`min-h-10 flex-row items-center gap-2 rounded-full px-4 active:opacity-60 ${
         selected
-          ? 'border-indigo-600 bg-indigo-600'
-          : `${dashed ? 'border-dashed' : ''} border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900`
+          ? 'bg-primary'
+          : `${dashed ? 'border border-dashed border-outline-variant' : ''} bg-surface-container dark:bg-dk-container`
       }`}
     >
       {selected && check ? <Ionicons name="checkmark" size={14} color="#fff" /> : dot ? <View className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} /> : null}
-      <Text className={selected ? 'font-inter-md text-white' : `font-inter-md ${INK}`}>{label}</Text>
+      <Text className={selected ? 'font-inter-md text-on-primary' : `font-inter-md ${INK}`}>{label}</Text>
     </Pressable>
   );
 }
@@ -186,21 +189,20 @@ export function Input({
   return (
     <View>
       {label ? <Text className={`mb-1.5 font-inter-md text-sm ${INK}`}>{label}</Text> : null}
-      <View className={`min-h-[52px] flex-row items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-900 ${className}`}>
-        {icon ? <Ionicons name={icon} size={20} color="#64748b" /> : null}
-        <TextInput placeholderTextColor="#94a3b8" {...props} className={`font-inter flex-1 py-3 text-base ${INK}`} />
+      <View style={SHADOW} className={`min-h-[52px] flex-row items-center gap-3 rounded-xl bg-surface-container-lowest px-4 dark:bg-dk-lowest ${className}`}>
+        {icon ? <Ionicons name={icon} size={20} color="#777587" /> : null}
+        <TextInput placeholderTextColor="#777587" {...props} className={`font-inter flex-1 py-3 text-base ${INK}`} />
         {right}
       </View>
     </View>
   );
 }
 
-export function Amount({ value, type, className = '' }: { value: number; type: 'debit' | 'credit'; className?: string }) {
+export function Amount({ value, type, plain, className = '' }: { value: number; type: 'debit' | 'credit'; plain?: boolean; className?: string }) {
+  const tone =
+    type === 'credit' ? 'text-secondary dark:text-dk-secondary' : plain ? INK : 'text-tertiary dark:text-dk-tertiary';
   return (
-    <Text
-      style={{ fontVariant: ['tabular-nums'] }}
-      className={`font-inter-sb ${type === 'debit' ? INK : 'text-emerald-600 dark:text-emerald-400'} ${className}`}
-    >
+    <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb ${tone} ${className}`}>
       {type === 'debit' ? '-' : '+'}{rupees(value)}
     </Text>
   );
@@ -218,23 +220,23 @@ export function CategoryTile({ category, size = 40 }: { category: string | null 
 
 export function Pill({ label, tone = 'brand' }: { label: string; tone?: 'brand' | 'rose' | 'emerald' | 'amber' | 'slate' }) {
   const tones = {
-    brand: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300',
-    rose: 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
-    emerald: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
-    amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
-    slate: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+    brand: ['bg-primary-fixed dark:bg-dk-container', 'text-on-primary-fixed dark:text-dk-primary'],
+    rose: ['bg-error-container dark:bg-dk-error-container', 'text-on-error-container dark:text-dk-tertiary'],
+    emerald: ['bg-secondary-container dark:bg-dk-container', 'text-on-secondary-container dark:text-dk-secondary'],
+    amber: ['bg-amber-100 dark:bg-amber-950', 'text-amber-800 dark:text-amber-300'],
+    slate: ['bg-surface-container dark:bg-dk-container', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
   } as const;
-  const [bg, fg, dbg, dfg] = tones[tone].split(' ');
+  const [box, fg] = tones[tone];
   return (
-    <View className={`self-start rounded-full px-2.5 py-0.5 ${bg} ${dbg}`}>
-      <Text className={`font-inter-md text-xs ${fg} ${dfg}`}>{label}</Text>
+    <View className={`self-start rounded-full px-2.5 py-0.5 ${box}`}>
+      <Text className={`font-inter-md text-xs ${fg}`}>{label}</Text>
     </View>
   );
 }
 
 export function ProgressBar({ share, color }: { share: number; color: string }) {
   return (
-    <View className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+    <View className="h-1.5 overflow-hidden rounded-full bg-surface-container dark:bg-dk-container">
       <View className="h-1.5 rounded-full" style={{ width: `${Math.min(1, Math.max(0, share)) * 100}%`, backgroundColor: color }} />
     </View>
   );
@@ -247,7 +249,7 @@ export function SectionLabel({ children }: { children: ReactNode }) {
 export function Empty({ icon, title, hint }: { icon: ComponentProps<typeof Ionicons>['name']; title: string; hint?: string }) {
   return (
     <View className="items-center px-6 py-12">
-      <Ionicons name={icon} size={40} color="#94a3b8" />
+      <Ionicons name={icon} size={40} color="#c7c4d8" />
       <Text className={`mt-3 font-inter-sb text-base ${INK}`}>{title}</Text>
       {hint ? <Text className={`mt-1 text-center ${MUTED}`}>{hint}</Text> : null}
     </View>

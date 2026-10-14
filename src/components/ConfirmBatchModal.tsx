@@ -65,9 +65,9 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
     const open = expanded === id;
     const many = p.items.length > 1;
     return (
-      <View key={id} className="border-t border-slate-100 dark:border-slate-800">
+      <View key={id} className="border-t border-surface-container dark:border-dk-container">
         <Pressable className="flex-row items-center gap-3 px-4 py-3 active:opacity-60" onPress={() => setExpanded(open ? null : id)}>
-          <View className="h-9 w-9 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+          <View className="h-9 w-9 items-center justify-center rounded-lg bg-surface-container dark:bg-dk-container">
             <Text className={`font-inter-sb ${ink}`}>{p.label.trim().charAt(0).toUpperCase()}</Text>
           </View>
           <View className="flex-1">
@@ -75,7 +75,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
             <Text className={`text-xs ${muted}`}>{p.items.length} {many ? 'payments' : 'payment'}</Text>
           </View>
           <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb ${ink}`}>{rupees(p.total)}</Text>
-          <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color="#94a3b8" />
+          <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color="#777587" />
         </Pressable>
         <View className="flex-row gap-5 px-4 pb-1 pl-16">
           <LinkButton label={`Change category${many ? ' (all)' : ''}`} onPress={() => setChanging(changing === `p:${id}` ? null : `p:${id}`)} />
@@ -88,7 +88,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
         )}
 
         {open && p.items.map((i) => (
-          <View key={i.id} className="bg-slate-50 px-6 py-2 dark:bg-slate-950">
+          <View key={i.id} className="bg-surface-container-low px-6 py-2 dark:bg-dk-low">
             <View className="flex-row items-center justify-between">
               <Text className={`text-sm ${ink}`}>{new Date(i.occurred_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</Text>
               <Text style={{ fontVariant: ['tabular-nums'] }} className={`text-sm ${ink}`}>{rupees(i.amount)}</Text>
@@ -106,21 +106,21 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={close}>
-      <View className="flex-1 bg-slate-50 dark:bg-slate-950" style={{ paddingTop: insets.top + 8 }}>
+      <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top + 8 }}>
         <View className="items-center pb-2">
-          <View className="h-1 w-9 rounded-full bg-slate-300" />
+          <View className="h-1 w-9 rounded-full bg-outline-variant" />
         </View>
         <View className="flex-row items-center gap-3 px-4 pb-3">
           <Pressable onPress={close} hitSlop={10} className="h-10 w-10 items-center justify-center rounded-full active:opacity-50">
-            <Ionicons name="close" size={24} color="#64748b" />
+            <Ionicons name="close" size={24} color="#777587" />
           </Pressable>
           <Text className={`font-inter-sb text-xl ${ink}`}>Review & confirm</Text>
           <Pill label={`${count} items`} />
         </View>
 
         <ScrollView className="flex-1 px-4" keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          <View className="mb-4 flex-row gap-3 rounded-2xl bg-indigo-50 p-4 dark:bg-slate-900">
-            <Ionicons name="sparkles-outline" size={22} color="#4f46e5" />
+          <View className="mb-4 flex-row gap-3 rounded-2xl bg-surface-container p-4 dark:bg-dk-lowest">
+            <Ionicons name="sparkles-outline" size={22} color="#3525cd" />
             <Text className={`flex-1 text-sm ${muted}`}>
               These payments already have a category, learned from your past choices or a well-known brand. Fix anything wrong, then confirm.
             </Text>
@@ -144,7 +144,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
         </ScrollView>
 
         <View
-          className="rounded-t-3xl border-t border-slate-100 bg-white px-4 pt-4 dark:border-slate-800 dark:bg-slate-900"
+          className="rounded-t-3xl border-t border-surface-container bg-surface-container-lowest px-4 pt-4 dark:border-dk-container dark:bg-dk-lowest"
           style={{ paddingBottom: insets.bottom + 12 }}
         >
           <Button label={`Confirm all ${count} • ${rupees(total)}`} iconRight="arrow-forward" disabled={count === 0} onPress={submit} />

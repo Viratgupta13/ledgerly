@@ -57,7 +57,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
   };
 
   return (
-    <Card className={`mb-3 overflow-hidden ${!isDebit ? 'border-emerald-200 dark:border-emerald-900' : ''}`}>
+    <Card className={`mb-3 overflow-hidden`}>
       <Pressable
         className="flex-row items-center gap-3 p-4 active:opacity-60"
         disabled={mode === 'edit' || !isDebit}
@@ -66,8 +66,8 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
         {isDebit ? (
           <CategoryTile category={category} />
         ) : (
-          <View className="h-10 w-10 items-center justify-center rounded-[10px]" style={{ backgroundColor: tint('#10B981', 0.15) }}>
-            <MaterialIcons name="payments" size={20} color="#10B981" />
+          <View className="h-10 w-10 items-center justify-center rounded-[10px] bg-secondary-container">
+            <MaterialIcons name="payments" size={20} color="#00714d" />
           </View>
         )}
         <View className="flex-1">
@@ -76,7 +76,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
             <Text className={`text-xs ${muted}`}>{when(txn.occurred_at)}</Text>
             {isDebit && category ? (
               <>
-                <View className="h-1 w-1 rounded-full bg-slate-300" />
+                <View className="h-1 w-1 rounded-full bg-outline-variant" />
                 <View className="h-2 w-2 rounded-full" style={{ backgroundColor: categoryColor(category) }} />
                 <Text className={`text-xs ${ink}`}>{category}</Text>
               </>
@@ -86,15 +86,15 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
         </View>
         <View className="items-end gap-1">
           <Amount value={txn.amount} type={txn.type} className="text-base" />
-          {!isDebit ? <Pill label="Inflow" tone="emerald" /> : category ? <Text className="text-[11px] text-emerald-600">Pre-sorted</Text> : <Pill label="Needs category" tone="rose" />}
+          {!isDebit ? <Pill label="Inflow" tone="emerald" /> : category ? <Text className="text-[11px] text-secondary">Pre-sorted</Text> : <Pill label="Needs category" tone="rose" />}
         </View>
       </Pressable>
 
       {open && (
-        <View className="border-t border-slate-100 px-4 pb-4 pt-3 dark:border-slate-800">
+        <View className="border-t border-surface-container px-4 pb-4 pt-3 dark:border-dk-container">
           {isPerson && (
-            <View className="mb-4 flex-row gap-3 rounded-xl bg-indigo-50 p-3 dark:bg-slate-800">
-              <Ionicons name="help-circle-outline" size={20} color="#4f46e5" />
+            <View className="mb-4 flex-row gap-3 rounded-xl bg-surface-container p-3 dark:bg-dk-container">
+              <Ionicons name="help-circle-outline" size={20} color="#3525cd" />
               <View className="flex-1">
                 <Text className={`font-inter-sb ${ink}`}>Paid to a person. What was this for?</Text>
                 <Text className={`mt-0.5 text-xs ${muted}`}>Payments to people vary a lot. Pick a category and add a note so your monthly totals stay accurate.</Text>
@@ -118,7 +118,7 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
                   <Button label="Add" onPress={createCategory} loading={addCategory.isPending} />
                 </View>
               )}
-              {addCategory.error && <Text className="mt-2 text-rose-600">{addCategory.error.message}</Text>}
+              {addCategory.error && <Text className="mt-2 text-error">{addCategory.error.message}</Text>}
 
               {suggestions.length > 0 && (
                 <View className="mt-4">
@@ -136,14 +136,14 @@ function PendingCardImpl({ txn, categories, suggestions, mode = 'review', onDone
               </View>
 
               {txn.payee_key && category && (
-                <View className="mt-3 flex-row items-center gap-3 rounded-xl bg-indigo-50 p-3 dark:bg-slate-800">
+                <View className="mt-3 flex-row items-center gap-3 rounded-xl bg-surface-container p-3 dark:bg-dk-container">
                   <View className="flex-1">
                     <Text className={`font-inter-sb ${ink}`}>Always use {category} for {txn.merchant}</Text>
                     <Text className={`text-xs ${muted}`}>
                       {isPerson ? 'Off by default so casual payments are not miscategorised.' : 'Pre-fills this category on every future payment to this payee.'}
                     </Text>
                   </View>
-                  <Switch value={remember} onValueChange={setRemember} trackColor={{ true: '#4f46e5' }} />
+                  <Switch value={remember} onValueChange={setRemember} trackColor={{ true: '#3525cd' }} />
                 </View>
               )}
             </>

@@ -64,24 +64,24 @@ export default function HomeScreen() {
         <View className="mb-3 mt-1 flex-row items-center justify-between">
           <View className="flex-row items-center">
             <Pressable onPress={() => shift(-1)} disabled={allTime} hitSlop={10} className="h-11 w-9 items-center justify-center active:opacity-50">
-              <Ionicons name="chevron-back" size={22} color={allTime ? '#cbd5e1' : '#4f46e5'} />
+              <Ionicons name="chevron-back" size={22} color={allTime ? '#c7c4d8' : '#3525cd'} />
             </Pressable>
             <View>
               <Text className={`font-inter-sb text-lg ${ink}`}>{allTime ? 'All time' : MONTHS[period.month]}</Text>
               {!allTime && <Text className={`text-xs ${muted}`}>{period.year}</Text>}
             </View>
             <Pressable onPress={() => shift(1)} disabled={allTime} hitSlop={10} className="h-11 w-9 items-center justify-center active:opacity-50">
-              <Ionicons name="chevron-forward" size={22} color={allTime ? '#cbd5e1' : '#4f46e5'} />
+              <Ionicons name="chevron-forward" size={22} color={allTime ? '#c7c4d8' : '#3525cd'} />
             </Pressable>
           </View>
-          <View className="flex-row rounded-full bg-indigo-50 p-1 dark:bg-slate-800">
+          <View className="flex-row rounded-full bg-surface-container p-1 dark:bg-dk-container">
             {(['month', 'all'] as const).map((k) => {
               const active = (k === 'all') === allTime;
               return (
                 <Pressable
                   key={k}
                   onPress={() => setPeriod(k === 'all' ? 'all' : { year: now.getFullYear(), month: now.getMonth() })}
-                  className={`min-h-9 justify-center rounded-full px-4 ${active ? 'bg-indigo-600' : ''}`}
+                  className={`min-h-9 justify-center rounded-full px-4 ${active ? 'bg-primary' : ''}`}
                 >
                   <Text className={`font-inter-sb text-xs ${active ? 'text-white' : ink}`}>{k === 'month' ? 'By month' : 'All time'}</Text>
                 </Pressable>
@@ -90,9 +90,10 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <View className="mb-4 rounded-[20px] bg-indigo-600 p-5">
+        <View className="mb-4 overflow-hidden rounded-[20px] bg-primary p-5">
+          <View className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary-container opacity-60" />
           <View className="flex-row items-center justify-between">
-            <Text className="font-inter-md text-xs uppercase tracking-wider text-indigo-200">{allTime ? 'Total spent' : `Spent in ${MONTHS[period.month]}`}</Text>
+            <Text className="font-inter-md text-xs uppercase tracking-wider text-on-primary-container">{allTime ? 'Total spent' : `Spent in ${MONTHS[period.month]}`}</Text>
             {delta !== null && (
               <View className="flex-row items-center gap-1 rounded-full bg-white/15 px-2.5 py-1">
                 <Ionicons name={delta <= 0 ? 'trending-down' : 'trending-up'} size={14} color="#fff" />
@@ -101,23 +102,23 @@ export default function HomeScreen() {
             )}
           </View>
           <Money value={report.total} className="mt-2 text-4xl text-white" />
-          <Text className="mt-1 text-sm text-indigo-200">Across {txnCount} confirmed {txnCount === 1 ? 'payment' : 'payments'}</Text>
+          <Text className="mt-1 text-sm text-on-primary-container">Across {txnCount} confirmed {txnCount === 1 ? 'payment' : 'payments'}</Text>
           <View className="mt-4 flex-row gap-3">
             <View className="flex-1 rounded-xl bg-white/15 p-3">
-              <Text className="font-inter-md text-[10px] uppercase tracking-wider text-indigo-200">{dailyAverage === null ? 'Payments' : 'Daily average'}</Text>
+              <Text className="font-inter-md text-[10px] uppercase tracking-wider text-on-primary-container">{dailyAverage === null ? 'Payments' : 'Daily average'}</Text>
               <Text style={{ fontVariant: ['tabular-nums'] }} className="mt-0.5 font-inter-sb text-base text-white">
                 {dailyAverage === null ? txnCount : rupees(dailyAverage)}
               </Text>
             </View>
             <Pressable onPress={() => router.navigate('/inbox')} className="flex-1 rounded-xl bg-white/15 p-3 active:opacity-70">
-              <Text className="font-inter-md text-[10px] uppercase tracking-wider text-indigo-200">To review</Text>
+              <Text className="font-inter-md text-[10px] uppercase tracking-wider text-on-primary-container">To review</Text>
               <Text className="mt-0.5 font-inter-sb text-base text-white">{toReview} {toReview === 1 ? 'payment' : 'payments'}</Text>
             </Pressable>
           </View>
         </View>
 
         {isLoading && <ActivityIndicator className="mt-6" />}
-        {error && <Text className="mb-2 text-rose-600">{error.message}</Text>}
+        {error && <Text className="mb-2 text-error">{error.message}</Text>}
         {!isLoading && report.categories.length === 0 && (
           <Empty icon="pie-chart-outline" title="No spending to show" hint={allTime ? 'Confirm payments in the Inbox to see them here.' : 'Nothing confirmed this month. Try "All time".'} />
         )}
@@ -128,11 +129,11 @@ export default function HomeScreen() {
               <Text className={`font-inter-sb text-base ${ink}`}>Spending distribution</Text>
               <Text className={`text-xs ${muted}`}>{report.categories.length} categories</Text>
             </View>
-            <View className="mt-3 h-2.5 flex-row overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+            <View className="mt-3 h-2.5 flex-row overflow-hidden rounded-full bg-surface-container dark:bg-dk-container">
               {top.map((c) => (
                 <View key={c.name} style={{ flex: c.total, backgroundColor: categoryColor(c.name) }} />
               ))}
-              {rest > 0 && <View style={{ flex: rest, backgroundColor: '#94a3b8' }} />}
+              {rest > 0 && <View style={{ flex: rest, backgroundColor: '#777587' }} />}
             </View>
             <View className="mt-3 flex-row flex-wrap gap-x-4 gap-y-1.5">
               {top.map((c) => (
@@ -168,7 +169,7 @@ export default function HomeScreen() {
                     <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb text-base ${ink}`}>{rupees(c.total)}</Text>
                     <Text className={`text-xs ${muted}`}>{Math.round((c.total / report.total) * 100)}% of total</Text>
                   </View>
-                  <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color="#94a3b8" />
+                  <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={18} color="#777587" />
                 </View>
                 <View className="mt-3">
                   <ProgressBar share={c.total / report.total} color={color} />
@@ -182,9 +183,9 @@ export default function HomeScreen() {
                     const id = `${c.name}:${m.key}`;
                     const expanded = openGroup === id;
                     return (
-                      <View key={m.key} className="mt-2 overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-950">
+                      <View key={m.key} className="mt-2 overflow-hidden rounded-xl bg-surface dark:bg-dk-surface">
                         <Pressable className="min-h-14 flex-row items-center gap-3 px-3 py-2 active:opacity-60" onPress={() => setOpenGroup(expanded ? null : id)}>
-                          <View className="h-9 w-9 items-center justify-center rounded-lg bg-white dark:bg-slate-800">
+                          <View className="h-9 w-9 items-center justify-center rounded-lg bg-surface-container-lowest dark:bg-dk-container">
                             <Text className={`font-inter-sb ${ink}`}>{m.label.trim().charAt(0).toUpperCase()}</Text>
                           </View>
                           <View className="flex-1">
@@ -192,10 +193,10 @@ export default function HomeScreen() {
                             <Text className={`text-xs ${muted}`}>{m.count} {m.count === 1 ? 'payment' : 'payments'}</Text>
                           </View>
                           <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb ${ink}`}>{rupees(m.total)}</Text>
-                          <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={16} color="#94a3b8" />
+                          <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={16} color="#777587" />
                         </Pressable>
                         {expanded && m.items.map((i) => (
-                          <View key={i.id} className="flex-row items-center justify-between border-t border-slate-200 px-3 py-2.5 dark:border-slate-800">
+                          <View key={i.id} className="flex-row items-center justify-between border-t border-surface-container-high px-3 py-2.5 dark:border-dk-container">
                             <View className="flex-1 pr-3">
                               <Text className={`text-sm ${ink}`} numberOfLines={1}>{i.who}</Text>
                               <Text className={`text-xs ${muted}`} numberOfLines={1}>

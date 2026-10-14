@@ -28,7 +28,7 @@ function ToggleRow({ title, hint, value, onChange }: { title: string; hint?: str
         <Text className={`font-inter-md text-base ${ink}`}>{title}</Text>
         {hint ? <Text className={`text-xs ${muted}`}>{hint}</Text> : null}
       </View>
-      <Switch value={value} onValueChange={onChange} trackColor={{ true: '#4f46e5' }} />
+      <Switch value={value} onValueChange={onChange} trackColor={{ true: '#3525cd' }} />
     </View>
   );
 }
@@ -93,18 +93,18 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-slate-50 dark:bg-slate-950" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
       <View className="h-14 flex-row items-center gap-2 px-2">
         <Pressable onPress={() => router.back()} hitSlop={10} className="h-11 w-11 items-center justify-center rounded-full active:opacity-50">
-          <Ionicons name="arrow-back" size={24} color="#64748b" />
+          <Ionicons name="arrow-back" size={24} color="#777587" />
         </Pressable>
         <Text className={`font-inter-sb text-xl ${ink}`}>Settings</Text>
       </View>
 
       <ScrollView className="px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
         <Card className="mb-4 flex-row items-center gap-4 p-4">
-          <View className="h-16 w-16 items-center justify-center rounded-full bg-indigo-50 dark:bg-slate-800">
-            <Text className="font-inter-b text-xl text-indigo-600">{initials}</Text>
+          <View className="h-16 w-16 items-center justify-center rounded-full bg-surface-container dark:bg-dk-container">
+            <Text className="font-inter-b text-xl text-primary">{initials}</Text>
           </View>
           <View className="flex-1">
             <Text className={`font-inter-sb text-base ${ink}`} numberOfLines={1}>{email ?? '—'}</Text>
@@ -126,13 +126,13 @@ export default function SettingsScreen() {
 
         <View className="mb-1 px-1"><SectionLabel>SMS access</SectionLabel></View>
         <Card className="mb-4 flex-row items-center gap-3 p-4">
-          <Ionicons name="chatbox-ellipses-outline" size={22} color="#4f46e5" />
+          <Ionicons name="chatbox-ellipses-outline" size={22} color="#3525cd" />
           <View className="flex-1">
             <Text className={`font-inter-md ${ink}`}>Read bank & UPI SMS</Text>
             <Text className={`text-xs ${muted}`}>Processed on this phone. Only amount, payee, date, category and note are saved.</Text>
           </View>
           <Pressable onPress={() => Linking.openSettings()} hitSlop={10} className="min-h-11 justify-center">
-            <Text className="font-inter-sb text-sm text-indigo-600">Manage</Text>
+            <Text className="font-inter-sb text-sm text-primary">Manage</Text>
           </Pressable>
         </Card>
 

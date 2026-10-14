@@ -32,7 +32,7 @@ export default function RulesScreen() {
     <View className="mb-3 gap-3">
       <Card className="p-4">
         <View className="flex-row items-center gap-2">
-          <Ionicons name="flash-outline" size={18} color="#4f46e5" />
+          <Ionicons name="flash-outline" size={18} color="#3525cd" />
           <Text className={`font-inter-sb text-base ${ink}`}>Quick add rule</Text>
         </View>
         <View className="mt-3">
@@ -46,7 +46,7 @@ export default function RulesScreen() {
             ))}
           </View>
         </View>
-        {add.error && <Text className="mt-2 text-rose-600">{add.error.message}</Text>}
+        {add.error && <Text className="mt-2 text-error">{add.error.message}</Text>}
         <Button className="mt-4" icon="add-circle-outline" label="Create rule" disabled={!canCreate} loading={add.isPending} onPress={create} />
       </Card>
       {(data ?? []).length > 0 && <Text className={`font-inter-sb text-lg ${ink}`}>Your rules</Text>}
@@ -55,7 +55,7 @@ export default function RulesScreen() {
 
   return (
     <Screen title="Rules" subtitle="Payees that always go to the same category" right={<Pill label={`${(data ?? []).length} active`} tone="emerald" />}>
-      {error && <Text className="mb-2 text-rose-600">{error.message}</Text>}
+      {error && <Text className="mb-2 text-error">{error.message}</Text>}
       <FlatList
         data={data ?? []}
         keyExtractor={(r) => r.id}
@@ -65,8 +65,8 @@ export default function RulesScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
         ListEmptyComponent={isLoading ? <ActivityIndicator className="mt-8" /> : <Empty icon="funnel-outline" title="No rules yet" hint={'Add one above, or turn on "Always use…" while confirming a payment.'} />}
         ListFooterComponent={
-          <View className="mt-2 flex-row gap-3 rounded-2xl bg-indigo-50 p-4 dark:bg-slate-900">
-            <Ionicons name="bulb-outline" size={20} color="#4f46e5" />
+          <View className="mt-2 flex-row gap-3 rounded-2xl bg-surface-container p-4 dark:bg-dk-lowest">
+            <Ionicons name="bulb-outline" size={20} color="#3525cd" />
             <Text className={`flex-1 text-sm ${muted}`}>
               Rules only pre-fill the category. You still get one look in the Inbox before anything is confirmed, and you can change any payment later in Transactions.
             </Text>
@@ -80,7 +80,7 @@ export default function RulesScreen() {
               <Text className={`text-xs ${muted}`}>Always → {item.category}</Text>
             </View>
             <Pressable onPress={() => confirmDelete(item.id, item.payee_key)} hitSlop={10} className="h-11 w-11 items-center justify-center rounded-full active:opacity-50">
-              <Ionicons name="trash-outline" size={20} color="#e11d48" />
+              <Ionicons name="trash-outline" size={20} color="#ba1a1a" />
             </Pressable>
           </Card>
         )}

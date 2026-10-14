@@ -75,18 +75,18 @@ export default function TransactionsScreen() {
 
   const header = (
     <View className="mb-2 gap-3">
-      <View className="min-h-[52px] flex-row items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-900">
-        <Ionicons name="search" size={20} color="#64748b" />
+      <View style={{ shadowColor: "#0f172a", shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 1 }} className="min-h-[52px] flex-row items-center gap-3 rounded-xl bg-surface-container-lowest px-4 dark:bg-dk-lowest">
+        <Ionicons name="search" size={20} color="#777587" />
         <TextInput
           value={query}
           onChangeText={setQuery}
           placeholder="Search payee, note, or amount…"
-          placeholderTextColor="#94a3b8"
+          placeholderTextColor="#777587"
           className={`font-inter flex-1 py-3 text-base ${ink}`}
         />
         {query ? (
           <Pressable onPress={() => setQuery('')} hitSlop={10}>
-            <Ionicons name="close-circle" size={20} color="#94a3b8" />
+            <Ionicons name="close-circle" size={20} color="#777587" />
           </Pressable>
         ) : null}
       </View>
@@ -95,7 +95,7 @@ export default function TransactionsScreen() {
         {(['month', 'last', 'all'] as const).map((r) => (
           <Chip key={r} label={r === 'month' ? 'This month' : r === 'last' ? 'Last month' : 'All time'} selected={range === r} onPress={() => setRange(r)} />
         ))}
-        <View className="mx-1 w-px self-stretch bg-slate-200 dark:bg-slate-700" />
+        <View className="mx-1 w-px self-stretch bg-outline-variant dark:bg-dk-high" />
         <Chip label="All" selected={!category} onPress={() => setCategory(null)} />
         {usedCategories.map((c) => (
           <Chip key={c} label={c} dot={categoryColor(c)} selected={category === c} onPress={() => setCategory(category === c ? null : c)} />
@@ -111,7 +111,7 @@ export default function TransactionsScreen() {
           </View>
           <View className="items-end">
             <Text className={`text-xs ${muted}`}>Total inflow</Text>
-            <Text style={{ fontVariant: ['tabular-nums'] }} className="font-inter-b text-xl text-emerald-600">+{rupees(inflow)}</Text>
+            <Text style={{ fontVariant: ['tabular-nums'] }} className="font-inter-b text-xl text-secondary">+{rupees(inflow)}</Text>
           </View>
         </View>
       </Card>
@@ -120,7 +120,7 @@ export default function TransactionsScreen() {
 
   return (
     <Screen title="Transactions" right={<Pill label={`${(data ?? []).length} verified`} />}>
-      {error && <Text className="mb-2 text-rose-600">{error.message}</Text>}
+      {error && <Text className="mb-2 text-error">{error.message}</Text>}
       <FlatList
         data={rows}
         keyExtractor={(r) => r.key}
@@ -153,8 +153,8 @@ export default function TransactionsScreen() {
                 {isDebit ? (
                   <CategoryTile category={t.category} />
                 ) : (
-                  <View className="h-10 w-10 items-center justify-center rounded-[10px]" style={{ backgroundColor: tint('#10B981', 0.15) }}>
-                    <Ionicons name="cash-outline" size={20} color="#10B981" />
+                  <View className="h-10 w-10 items-center justify-center rounded-[10px] bg-secondary-container">
+                    <Ionicons name="cash-outline" size={20} color="#00714d" />
                   </View>
                 )}
                 <View className="flex-1">
@@ -170,7 +170,7 @@ export default function TransactionsScreen() {
                     {[t.note, new Date(t.occurred_at).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })].filter(Boolean).join(' · ')}
                   </Text>
                 </View>
-                <Amount value={t.amount} type={t.type} className="text-base" />
+                <Amount plain value={t.amount} type={t.type} className="text-base" />
               </Card>
             </Pressable>
           );

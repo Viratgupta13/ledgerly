@@ -45,8 +45,8 @@ export default function InboxScreen() {
     <View className="mb-3 gap-3">
       <Card className="p-4">
         <View className="flex-row items-center gap-3">
-          <View className="h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-slate-800">
-            <Ionicons name="chatbox-ellipses-outline" size={20} color="#4f46e5" />
+          <View className="h-10 w-10 items-center justify-center rounded-xl bg-surface-container dark:bg-dk-container">
+            <Ionicons name="chatbox-ellipses-outline" size={20} color="#3525cd" />
           </View>
           <View className="flex-1">
             <Text className={`font-inter-sb text-base ${ink}`}>Scan bank & UPI SMS</Text>
@@ -59,10 +59,10 @@ export default function InboxScreen() {
           ))}
         </View>
         <Button className="mt-3" icon="scan-outline" label={scan.isPending ? 'Scanning…' : 'Scan SMS inbox'} loading={scan.isPending} disabled={!userId} onPress={startScan} />
-        {scan.error && <Text className="mt-3 text-rose-600">{scan.error.message}</Text>}
+        {scan.error && <Text className="mt-3 text-error">{scan.error.message}</Text>}
         {scan.data && (
-          <View className="mt-3 flex-row items-center gap-2 rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-            <Ionicons name="checkmark-circle-outline" size={18} color="#059669" />
+          <View className="mt-3 flex-row items-center gap-2 rounded-xl bg-surface-container-low p-3 dark:bg-dk-container">
+            <Ionicons name="checkmark-circle-outline" size={18} color="#006c49" />
             <Text className={`flex-1 text-sm ${muted}`}>
               Read {scan.data.scanned} SMS, found {scan.data.found} payments ({scan.data.added} new).
             </Text>
@@ -71,17 +71,17 @@ export default function InboxScreen() {
       </Card>
 
       {ready.length > 0 && (
-        <View className="rounded-2xl bg-indigo-50 p-4 dark:bg-slate-900">
+        <View className="rounded-2xl bg-primary-fixed p-4 dark:bg-dk-low">
           <View className="flex-row items-center gap-2">
-            <Ionicons name="sparkles-outline" size={16} color="#4f46e5" />
-            <Text className="font-inter-sb text-xs uppercase tracking-wider text-indigo-600">Pre-sorted</Text>
+            <Ionicons name="sparkles-outline" size={16} color="#3525cd" />
+            <Text className="font-inter-sb text-xs uppercase tracking-wider text-primary">Pre-sorted</Text>
           </View>
           <Text className={`mt-1 font-inter-sb text-lg ${ink}`}>Review {ready.length} sorted payments</Text>
           <Text className={`mt-0.5 text-sm ${muted}`}>Categorised from your past choices. Check them once, confirm together.</Text>
           <Button className="mt-3" label={`Review & confirm ${ready.length}`} iconRight="arrow-forward" onPress={() => setPreviewing(true)} />
         </View>
       )}
-      {pending.error && <Text className="text-rose-600">{pending.error.message}</Text>}
+      {pending.error && <Text className="text-error">{pending.error.message}</Text>}
       {all.length > 0 && <Text className={`mt-1 font-inter-sb text-lg ${ink}`}>Pending transactions</Text>}
     </View>
   );

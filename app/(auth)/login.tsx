@@ -38,13 +38,13 @@ export default function Login() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-slate-50 dark:bg-slate-950">
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="flex-1 bg-surface dark:bg-dk-surface">
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }}
       >
         <View className="items-center">
-          <View className="h-20 w-20 items-center justify-center rounded-3xl bg-indigo-600">
+          <View className="h-20 w-20 items-center justify-center rounded-3xl bg-primary">
             <Text className="font-inter-b text-4xl text-white">₹</Text>
           </View>
           <Text className={`mt-5 font-inter-b text-3xl ${ink}`}>{signup ? 'Create your account' : 'Expensefy'}</Text>
@@ -65,22 +65,22 @@ export default function Login() {
               onChangeText={setPassword}
               right={
                 <Pressable onPress={() => setShow(!show)} hitSlop={10}>
-                  <Ionicons name={show ? 'eye-off-outline' : 'eye-outline'} size={20} color="#64748b" />
+                  <Ionicons name={show ? 'eye-off-outline' : 'eye-outline'} size={20} color="#777587" />
                 </Pressable>
               }
             />
             {signup && <Text className={`mt-1.5 text-xs ${muted}`}>At least 6 characters</Text>}
           </View>
 
-          {error && <Text className="text-rose-600">{error}</Text>}
-          {notice && <Text className="text-emerald-600">{notice}</Text>}
+          {error && <Text className="text-error">{error}</Text>}
+          {notice && <Text className="text-secondary">{notice}</Text>}
 
           <Button label={signup ? 'Create account' : 'Sign in'} iconRight="arrow-forward" loading={busy} onPress={submit} />
         </View>
 
         {signup && (
-          <View className="mt-5 flex-row gap-3 rounded-2xl bg-indigo-50 p-4 dark:bg-slate-900">
-            <Ionicons name="shield-checkmark" size={26} color="#059669" />
+          <View className="mt-5 flex-row gap-3 rounded-2xl bg-surface-container p-4 dark:bg-dk-lowest">
+            <Ionicons name="shield-checkmark" size={26} color="#006c49" />
             <View className="flex-1">
               <Text className={`font-inter-sb ${ink}`}>Your SMS never leave your phone.</Text>
               <Text className={`mt-0.5 text-sm ${muted}`}>Messages are read and sorted on this phone. Only the amount, payee, date, category and note are saved to your account.</Text>
@@ -91,7 +91,7 @@ export default function Login() {
         <View className="mt-6 flex-row items-center justify-center">
           <Text className={muted}>{signup ? 'Have an account? ' : 'New here? '}</Text>
           <Pressable onPress={() => { setMode(signup ? 'signin' : 'signup'); setError(null); setNotice(null); }} hitSlop={10} className="min-h-11 justify-center">
-            <Text className="font-inter-sb text-indigo-600">{signup ? 'Sign in' : 'Create an account'}</Text>
+            <Text className="font-inter-sb text-primary">{signup ? 'Sign in' : 'Create an account'}</Text>
           </Pressable>
         </View>
 
