@@ -154,4 +154,5 @@ Bump `version` and `android.versionCode` in `app.json` for each release. The rel
 - Ideas: CSV export, crash reporting, in-app feedback.
 
 ## License
-See [LICENSE](LICENSE).
+
+© 2026 Virat Gupta. **All rights reserved.** The code is public for viewing and evaluation only. Copying, modifying or reusing it (including the design and the Ledgerly name) needs written permission. See [LICENSE](LICENSE).

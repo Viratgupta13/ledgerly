@@ -56,5 +56,6 @@
     "testMatch": [
       "<rootDir>/src/**/*.test.ts"
     ]
-  }
+  },
+  "license": "UNLICENSED"
 }
