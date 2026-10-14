@@ -3,6 +3,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
 import { AppState, useColorScheme } from 'react-native';
+import { syncBackgroundTask } from '../../src/background/task';
+import { useTxns } from '../../src/data/hooks';
+import { loadSettings } from '../../src/notifications/settings';
 import { autoScan } from '../../src/sms/scan';
 import { useAuthStore } from '../../src/store/auth';
 
@@ -13,12 +16,19 @@ const screens: { name: string; title: string; icon: IconName; iconActive: IconNa
   { name: 'inbox', title: 'Inbox', icon: 'mail-outline', iconActive: 'mail' },
   { name: 'transactions', title: 'Transactions', icon: 'list-outline', iconActive: 'list' },
   { name: 'rules', title: 'Rules', icon: 'funnel-outline', iconActive: 'funnel' },
+  { name: 'settings', title: 'Settings', icon: 'settings-outline', iconActive: 'settings' },
 ];
 
 export default function TabsLayout() {
   const userId = useAuthStore((s) => s.session?.user.id);
   const qc = useQueryClient();
   const dark = useColorScheme() === 'dark';
+  const pendingCount = useTxns('pending').data?.length ?? 0;
+
+  // Make sure the periodic check is registered whenever a notification is switched on.
+  useEffect(() => {
+    loadSettings().then((s) => syncBackgroundTask(s)).catch(() => undefined);
+  }, []);
 
   // Pick up new SMS whenever the app opens or comes back to the foreground.
   useEffect(() => {
@@ -50,6 +60,7 @@ export default function TabsLayout() {
           name={name}
           options={{
             title,
+            tabBarBadge: name === 'inbox' && pendingCount > 0 ? pendingCount : undefined,
             tabBarIcon: ({ color, size, focused }) => <Ionicons name={focused ? iconActive : icon} color={color} size={size} />,
           }}
         />

@@ -38,26 +38,31 @@ export async function saveRule(userId: string, payeeKey: string, category: strin
  * Saves parsed SMS as `pending` transactions. Rows that already exist (same user + bank_ref)
  * are left untouched, so re-scanning never resets a confirmed transaction.
  * The SMS text itself is never uploaded; only the extracted fields are.
- * Returns how many rows were new.
+ * Returns the rows that were new.
  */
-export async function importParsed(userId: string, items: { sms: RawSms; txn: ParsedTxn }[]): Promise<number> {
-  if (items.length === 0) return 0;
+export type NewPayment = Pick<TxnRow, 'amount' | 'type' | 'merchant' | 'category'>;
+
+export async function importParsed(
+  userId: string,
+  items: { sms: RawSms; txn: ParsedTxn }[],
+): Promise<{ added: number; payments: NewPayment[] }> {
+  if (items.length === 0) return { added: 0, payments: [] };
   const [ruleRows, confirmed] = await Promise.all([listRules(), listTxns('confirmed')]);
   const rules = new Map(ruleRows.map((r) => [r.payee_key, r.category]));
   const history = buildHistory(confirmed);
 
   const rows = buildRows(userId, items, rules, history);
 
-  let inserted = 0;
+  const payments: NewPayment[] = [];
   for (let i = 0; i < rows.length; i += 100) {
     const { data, error } = await supabase
       .from('transactions')
       .upsert(rows.slice(i, i + 100), { onConflict: 'user_id,bank_ref', ignoreDuplicates: true })
-      .select('id');
+      .select('amount, type, merchant, category');
     if (error) throw error;
-    inserted += data?.length ?? 0;
+    payments.push(...((data ?? []) as NewPayment[]));
   }
-  return inserted;
+  return { added: payments.length, payments };
 }
 
 export async function reviewTxn(input: {
@@ -127,4 +132,13 @@ export async function confirmBatch(updates: { id: string; category: string }[]):
     }
   }
   return saved;
+}
+
+export async function countPending(): Promise<number> {
+  const { count, error } = await supabase
+    .from('transactions')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+  if (error) throw error;
+  return count ?? 0;
 }

@@ -1,6 +1,8 @@
 import '../global.css';
+import '../src/background/task';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
@@ -15,6 +17,14 @@ function Routes() {
     const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
     return () => data.subscription.unsubscribe();
   }, [setSession]);
+
+  // Tapping a notification opens the Inbox.
+  const router = useRouter();
+  const response = Notifications.useLastNotificationResponse();
+  useEffect(() => {
+    if (!initialized || !session) return;
+    if (response?.notification.request.content.data?.screen === 'inbox') router.navigate('/inbox');
+  }, [response, initialized, session, router]);
 
   if (!initialized) return null;
 

@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { applyPredefined, importParsed } from '../data/api';
+import { applyPredefined, importParsed, type NewPayment } from '../data/api';
 import { parseSms, type ParsedTxn, type RawSms } from '../parser';
 import { hasSmsPermission, readInbox, requestSmsPermission } from './reader';
 
 const LAST_SCAN_KEY = 'expensefy:lastScanAt';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export type ScanSummary = { scanned: number; found: number; added: number };
+export type ScanSummary = { scanned: number; found: number; added: number; payments: NewPayment[] };
 
 /** Reads the last `days` days of SMS, parses them and saves new ones. Returns null if SMS access is missing. */
 export async function scanAndImport(
@@ -26,10 +26,10 @@ export async function scanAndImport(
     const result = parseSms(sms);
     if (result.ok) items.push({ sms, txn: result.txn });
   }
-  const added = await importParsed(userId, items);
+  const { added, payments } = await importParsed(userId, items);
   await applyPredefined();
   await AsyncStorage.setItem(LAST_SCAN_KEY, String(Date.now())).catch(() => undefined);
-  return { scanned: messages.length, found: items.length, added };
+  return { scanned: messages.length, found: items.length, added, payments };
 }
 
 /**
