@@ -25,8 +25,7 @@ export default function InboxScreen() {
     onSettled: () => qc.invalidateQueries({ queryKey: ['txns'] }),
   });
 
-  const debits = (pending.data ?? []).filter((t) => t.type === 'debit');
-  const withCategory = debits.filter((t) => t.category).length;
+  const ready = (pending.data ?? []).filter((t) => t.type === 'debit' && t.category);
 
   return (
     <View className="flex-1 bg-white px-4 pt-4 dark:bg-black">
@@ -56,12 +55,12 @@ export default function InboxScreen() {
         </Text>
       )}
 
-      {debits.length > 0 && (
+      {ready.length > 0 && (
         <Pressable className="mt-3 items-center rounded-lg border border-blue-600 py-3" onPress={() => setPreviewing(true)}>
-          <Text className="font-semibold text-blue-600">Review & confirm {debits.length} payments{withCategory > 0 ? ` (${withCategory} with a category)` : ''}</Text>
+          <Text className="font-semibold text-blue-600">Review & confirm {ready.length} with a category</Text>
         </Pressable>
       )}
-      <ConfirmBatchModal visible={previewing} txns={debits} onClose={() => setPreviewing(false)} />
+      <ConfirmBatchModal visible={previewing} txns={ready} onClose={() => setPreviewing(false)} />
 
       {pending.isLoading && <ActivityIndicator className="mt-6" />}
       {pending.error && <Text className="mt-3 text-red-600">{pending.error.message}</Text>}
