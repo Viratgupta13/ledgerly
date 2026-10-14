@@ -11,6 +11,7 @@ import {
   type TextProps,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRef } from 'react';
 import { useAuthStore } from '../store/auth';
 import { categoryMeta, tint } from './theme';
 
@@ -320,4 +321,35 @@ export function useInitials(): string {
   const email = useAuthStore((s) => s.session?.user.email) ?? '';
   const parts = email.split('@')[0].replace(/[^a-zA-Z]+/g, ' ').trim().split(' ').filter(Boolean);
   return ((parts[0]?.[0] ?? 'E') + (parts[1]?.[0] ?? '')).toUpperCase();
+}
+
+/** Six boxes for a one-time code; one hidden numeric input does the typing. */
+export function CodeInput({ value, onChange, length = 6 }: { value: string; onChange: (v: string) => void; length?: number }) {
+  const ref = useRef<TextInput>(null);
+  return (
+    <Pressable onPress={() => ref.current?.focus()}>
+      <View className="flex-row gap-2">
+        {Array.from({ length }).map((_, i) => (
+          <View
+            key={i}
+            style={SHADOW_SM}
+            className={`h-14 flex-1 items-center justify-center rounded-xl bg-surface-container-lowest ${value.length === i ? 'border-2 border-primary' : ''}`}
+          >
+            <Text className={`font-inter-b text-headline-md ${INK}`}>{value[i] ?? ''}</Text>
+          </View>
+        ))}
+      </View>
+      <TextInput
+        ref={ref}
+        value={value}
+        onChangeText={(t) => onChange(t.replace(/\D/g, '').slice(0, length))}
+        keyboardType="number-pad"
+        maxLength={length}
+        autoFocus
+        textContentType="oneTimeCode"
+        autoComplete="sms-otp"
+        style={{ position: 'absolute', opacity: 0, height: 1, width: 1 }}
+      />
+    </Pressable>
+  );
 }

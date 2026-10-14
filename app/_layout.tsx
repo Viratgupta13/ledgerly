@@ -12,7 +12,7 @@ import { lockLightMode } from '../src/ui/appearance';
 import { useAuthStore } from '../src/store/auth';
 
 function Routes() {
-  const { session, initialized, setSession } = useAuthStore();
+  const { session, initialized, recovering, setSession } = useAuthStore();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -31,12 +31,12 @@ function Routes() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!!session}>
+      <Stack.Protected guard={!!session && !recovering}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="settings" />
         <Stack.Screen name="sms-permission" options={{ presentation: 'modal' }} />
       </Stack.Protected>
-      <Stack.Protected guard={!session}>
+      <Stack.Protected guard={!session || recovering}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
     </Stack>
