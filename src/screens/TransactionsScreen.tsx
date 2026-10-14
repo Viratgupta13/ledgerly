@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, TextInput, View } from 'react-native';
-import { PendingCard } from '../../src/components/PendingCard';
-import { useCategoryNames, useNoteSuggestions, useTxns } from '../../src/data/hooks';
-import type { TxnRow } from '../../src/data/types';
-import { Empty, Icon, NoSwipe, Pill, SHADOW_SM, Screen, Text, ink, muted, rupees } from '../../src/ui/components';
-import { categoryMeta, tint } from '../../src/ui/theme';
+import { PendingCard } from '../components/PendingCard';
+import { useCategoryNames, useNoteSuggestions, useTxns } from '../data/hooks';
+import type { TxnRow } from '../data/types';
+import { Empty, Icon, Pill, SHADOW_SM, Screen, Text, ink, muted, rupees } from '../ui/components';
+import { categoryMeta, tint } from '../ui/theme';
 
 type Range = 'month' | 'last' | 'all';
 type Day = { key: string; label: string; subtotal: number; txns: TxnRow[] };
@@ -93,8 +93,7 @@ export default function TransactionsScreen() {
         ) : null}
       </View>
 
-      <NoSwipe>
-      <FlatList
+            <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         data={['__all', ...usedCategories]}
@@ -120,8 +119,7 @@ export default function TransactionsScreen() {
           )
         }
       />
-      </NoSwipe>
-
+      
       <View style={SHADOW_SM} className="mt-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-lowest p-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
@@ -153,7 +151,7 @@ export default function TransactionsScreen() {
   );
 
   return (
-    <Screen tab={2}>
+    <Screen>
       {error && <Text className="mb-2 text-error">{error.message}</Text>}
       <FlatList
         data={days}

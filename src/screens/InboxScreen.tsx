@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
-import { ConfirmBatchModal } from '../../src/components/ConfirmBatchModal';
-import { PendingCard } from '../../src/components/PendingCard';
-import { useCategoryNames, useNoteSuggestions, useTxns } from '../../src/data/hooks';
-import { hasSmsPermission } from '../../src/sms/reader';
-import { scanAndImport } from '../../src/sms/scan';
-import { useAuthStore } from '../../src/store/auth';
-import { Button, Card, Chip, Empty, Icon, Pill, SHADOW_SM, Screen, Text, ink, muted } from '../../src/ui/components';
+import { ConfirmBatchModal } from '../components/ConfirmBatchModal';
+import { PendingCard } from '../components/PendingCard';
+import { useCategoryNames, useNoteSuggestions, useTxns } from '../data/hooks';
+import { hasSmsPermission } from '../sms/reader';
+import { scanAndImport } from '../sms/scan';
+import { useAuthStore } from '../store/auth';
+import { Button, Card, Chip, Empty, Icon, Pill, SHADOW_SM, Screen, Text, ink, muted } from '../ui/components';
 
 const RANGES = [
   { label: '30 days', days: 30 },
@@ -102,7 +102,7 @@ export default function InboxScreen() {
   );
 
   return (
-    <Screen tab={1}>
+    <Screen>
       <FlatList
         data={all}
         keyExtractor={(t) => t.id}

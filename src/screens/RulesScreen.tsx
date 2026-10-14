@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, TextInput, View } from 'react-native';
-import { useAddRule, useCategoryNames, useDeleteRule, useRules, useTxns } from '../../src/data/hooks';
-import { toPayeeKey } from '../../src/parser/extract';
-import { Empty, Icon, Input, NoSwipe, Pill, SHADOW_SM, Screen, Text, ink, muted } from '../../src/ui/components';
-import { categoryMeta } from '../../src/ui/theme';
+import { useAddRule, useCategoryNames, useDeleteRule, useRules, useTxns } from '../data/hooks';
+import { toPayeeKey } from '../parser/extract';
+import { Empty, Icon, Input, Pill, SHADOW_SM, Screen, Text, ink, muted } from '../ui/components';
+import { categoryMeta } from '../ui/theme';
 
 export default function RulesScreen() {
   const { data, isLoading, error } = useRules();
@@ -75,7 +75,7 @@ export default function RulesScreen() {
         <TextInput value={search} onChangeText={setSearch} placeholder="Search rules or keywords..." placeholderTextColor="#777587" className={`font-inter flex-1 py-0 text-body-md ${ink}`} />
       </View>
       {filterCats.length > 0 && (
-        <NoSwipe><FlatList
+        <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
           data={[null, ...filterCats]}
@@ -90,8 +90,7 @@ export default function RulesScreen() {
               </Pressable>
             );
           }}
-        /></NoSwipe>
-      )}
+        />      )}
 
       <View style={SHADOW_SM} className="gap-2 rounded-xl bg-surface-container-lowest p-4">
         <View className="flex-row items-center justify-between">
@@ -145,7 +144,7 @@ export default function RulesScreen() {
   );
 
   return (
-    <Screen tab={3}>
+    <Screen>
       {error && <Text className="mb-2 text-error">{error.message}</Text>}
       <FlatList
         data={shown}

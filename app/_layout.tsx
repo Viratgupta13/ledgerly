@@ -2,11 +2,12 @@ import '../global.css';
 import '../src/background/task';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
-import { DefaultTheme, Stack, ThemeProvider, useRouter } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
 import { supabase } from '../src/lib/supabase';
+import { TAB, useTabStore } from '../src/store/tabs';
 import { lockLightMode } from '../src/ui/appearance';
 import { useAuthStore } from '../src/store/auth';
 
@@ -20,12 +21,11 @@ function Routes() {
   }, [setSession]);
 
   // Tapping a notification opens the Inbox.
-  const router = useRouter();
   const response = Notifications.useLastNotificationResponse();
   useEffect(() => {
     if (!initialized || !session) return;
-    if (response?.notification.request.content.data?.screen === 'inbox') router.navigate('/inbox');
-  }, [response, initialized, session, router]);
+    if (response?.notification.request.content.data?.screen === 'inbox') useTabStore.getState().go(TAB.inbox);
+  }, [response, initialized, session]);
 
   if (!initialized) return null;
 

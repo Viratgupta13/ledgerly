@@ -1,6 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useRef } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import {
   ActivityIndicator,
@@ -9,7 +8,6 @@ import {
   TextInput,
   View,
   type TextInputProps,
-  type GestureResponderEvent,
   type TextProps,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -75,45 +73,6 @@ export function AppHeader({ title = 'Ledgerly' }: { title?: string }) {
   );
 }
 
-const TAB_ROUTES = ['/', '/inbox', '/transactions', '/rules'] as const;
-
-// Horizontal scrollers (chip rows) mark their touches so scrolling them never changes the tab.
-let swipeBlocked = false;
-export function NoSwipe({ children }: { children: ReactNode }) {
-  return <View onTouchStart={() => { swipeBlocked = true; }}>{children}</View>;
-}
-
-/**
- * Swiping left/right on a tab screen jumps to the next/previous tab. Uses plain touch events,
- * which every ancestor receives, so it never fights scroll views or buttons for the gesture.
- */
-function useTabSwipe(tab: number | undefined) {
-  const router = useRouter();
-  const start = useRef<{ x: number; y: number } | null>(null);
-  if (tab === undefined) return {};
-  return {
-    onTouchStart: (e: GestureResponderEvent) => {
-      start.current = { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY };
-    },
-    onTouchCancel: () => {
-      start.current = null;
-      swipeBlocked = false;
-    },
-    onTouchEnd: (e: GestureResponderEvent) => {
-      const s = start.current;
-      const blocked = swipeBlocked;
-      start.current = null;
-      swipeBlocked = false;
-      if (!s || blocked) return;
-      const dx = e.nativeEvent.pageX - s.x;
-      const dy = e.nativeEvent.pageY - s.y;
-      if (Math.abs(dx) < 80 || Math.abs(dx) < Math.abs(dy) * 2.5) return;
-      if (dx < 0 && tab < TAB_ROUTES.length - 1) router.navigate(TAB_ROUTES[tab + 1]);
-      else if (dx > 0 && tab > 0) router.navigate(TAB_ROUTES[tab - 1]);
-    },
-  };
-}
-
 /** Page wrapper: safe area, app header, 16px side margins and an optional page title. */
 export function Screen({
   title,
@@ -121,7 +80,6 @@ export function Screen({
   right,
   headerTitle,
   header = true,
-  tab,
   children,
 }: {
   title?: string;
@@ -129,14 +87,11 @@ export function Screen({
   right?: ReactNode;
   headerTitle?: string;
   header?: boolean;
-  /** Position in the tab bar (0 Home, 1 Inbox, 2 Transactions, 3 Rules); enables swiping between tabs. */
-  tab?: number;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
-  const swipe = useTabSwipe(tab);
   return (
-    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }} {...swipe}>
+    <View className="flex-1 bg-surface" style={{ paddingTop: insets.top }}>
       {header && <AppHeader title={headerTitle} />}
       <View className="flex-1 px-4">
         {title ? (
