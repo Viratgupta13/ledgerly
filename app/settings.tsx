@@ -11,6 +11,7 @@ import { requestNotificationPermission, showNotification } from '../src/notifica
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type NotifySettings } from '../src/notifications/settings';
 import { hasSmsPermission } from '../src/sms/reader';
 import { useAuthStore } from '../src/store/auth';
+import { loadThemeMode, saveThemeMode, type ThemeMode } from '../src/ui/appearance';
 import { Button, Card, Chip, Pill, SectionLabel, Text, ink, muted, useInitials } from '../src/ui/components';
 
 const HOURS = [
@@ -42,10 +43,12 @@ export default function SettingsScreen() {
   const [smsAllowed, setSmsAllowed] = useState<boolean | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>('system');
 
   useEffect(() => {
     loadSettings().then(setSettings);
     hasSmsPermission().then(setSmsAllowed);
+    loadThemeMode().then(setTheme);
   }, []);
 
   const update = async (patch: Partial<NotifySettings>) => {
@@ -109,6 +112,16 @@ export default function SettingsScreen() {
               <Pill label={smsAllowed ? 'SMS access on' : 'SMS access off'} tone={smsAllowed ? 'emerald' : 'amber'} />
             </View>
           </View>
+        </Card>
+
+        <View className="mb-1 px-1"><SectionLabel>Appearance</SectionLabel></View>
+        <Card className="mb-4 p-4">
+          <View className="flex-row gap-2">
+            {([['system', 'System'], ['light', 'Light'], ['dark', 'Dark']] as const).map(([mode, label]) => (
+              <Chip key={mode} label={label} selected={theme === mode} onPress={() => { setTheme(mode); saveThemeMode(mode); }} />
+            ))}
+          </View>
+          <Text className={`mt-2 text-xs ${muted}`}>System follows your phone's dark mode setting.</Text>
         </Card>
 
         <View className="mb-1 px-1"><SectionLabel>SMS access</SectionLabel></View>

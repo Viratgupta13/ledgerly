@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, useFonts } from '@expo-google-fonts/inter';
 import { supabase } from '../src/lib/supabase';
+import { applyThemeMode, loadThemeMode } from '../src/ui/appearance';
 import { useAuthStore } from '../src/store/auth';
 
 function Routes() {
@@ -46,12 +47,17 @@ function Routes() {
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
   const scheme = useColorScheme();
+
+  // Restore the user's Light / Dark / System choice.
+  useEffect(() => {
+    loadThemeMode().then(applyThemeMode);
+  }, []);
   const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
   if (!fontsLoaded) return null;
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <StatusBar style="auto" />
+        <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         <Routes />
       </ThemeProvider>
     </QueryClientProvider>
