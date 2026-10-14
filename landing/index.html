@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ledgerly: your bank SMS, turned into a clean expense log</title>
+  <meta name="description" content="Ledgerly is an Android expense tracker that reads bank and UPI SMS on your phone, pre-sorts payments into categories and asks you to review them once." />
+  <meta property="og:title" content="Ledgerly" />
+  <meta property="og:description" content="Your bank SMS, turned into a clean expense log. SMS are parsed on your phone." />
+  <meta property="og:image" content="assets/02-home.png" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%233525cd'/><text x='32' y='47' font-size='40' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='white'>₹</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --surface: #faf8ff; --card: #ffffff; --low: #f2f3ff; --container: #eaedff; --high: #e2e7ff;
+      --ink: #131b2e; --muted: #464555; --outline: #777587;
+      --primary: #3525cd; --primary-2: #4f46e5; --on-primary: #ffffff;
+      --green: #006c49; --green-bg: #6cf8bb; --crimson: #950029;
+      --shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--ink); background: var(--surface); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; }
+    .logo { width: 38px; height: 38px; border-radius: 11px; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 22px; box-shadow: var(--shadow); }
+    nav a { margin-left: 22px; color: var(--muted); font-weight: 500; font-size: 15px; }
+    nav a:hover { color: var(--primary); }
+
+    .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; padding: 36px 0 70px; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--high); color: var(--primary); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 13px; }
+    h1 { font-size: clamp(36px, 5.4vw, 58px); line-height: 1.06; letter-spacing: -0.03em; margin: 18px 0 16px; }
+    h1 em { font-style: normal; color: var(--primary); }
+    .lead { font-size: 19px; color: var(--muted); max-width: 520px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border-radius: 14px; font-weight: 600; font-size: 16px; }
+    .btn.primary { background: var(--primary); color: #fff; box-shadow: 0 8px 18px rgba(53, 37, 205, 0.25); }
+    .btn.primary:hover { background: var(--primary-2); }
+    .btn.ghost { background: var(--container); color: var(--ink); }
+    .btn.ghost:hover { background: var(--high); }
+    .note { margin-top: 14px; font-size: 13px; color: var(--outline); }
+
+    .phone { position: relative; width: min(100%, 300px); margin: 0 auto; border-radius: 38px; background: #0f172a; padding: 9px; box-shadow: 0 28px 60px rgba(53, 37, 205, 0.28); }
+    .phone img { display: block; width: 100%; border-radius: 30px; background: #fff; }
+    .hero .phone { transform: rotate(2.5deg); }
+
+    section { padding: 64px 0; }
+    h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 12px; }
+    .sub { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 0 36px; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { background: var(--card); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); }
+    .num { width: 34px; height: 34px; border-radius: 10px; background: var(--high); color: var(--primary); display: grid; place-items: center; font-weight: 700; margin-bottom: 14px; }
+    .card h3 { margin: 0 0 6px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .tag { display: inline-block; background: var(--low); color: var(--primary); border-radius: 8px; padding: 3px 10px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+
+    .shots { display: flex; gap: 22px; overflow-x: auto; padding: 8px 4px 28px; scroll-snap-type: x mandatory; }
+    .shots figure { margin: 0; flex: 0 0 auto; width: 240px; scroll-snap-align: start; }
+    .shots figcaption { text-align: center; color: var(--muted); font-size: 14px; margin-top: 12px; font-weight: 500; }
+    .shots .phone { width: 100%; border-radius: 30px; padding: 7px; box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18); }
+    .shots .phone img { border-radius: 24px; }
+
+    .privacy { background: var(--primary); color: #fff; border-radius: 28px; padding: 44px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; box-shadow: 0 14px 34px rgba(53, 37, 205, 0.28); }
+    .privacy h2 { color: #fff; }
+    .privacy p { color: #dad7ff; font-size: 17px; margin: 0; }
+    .privacy ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .privacy li { background: rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 12px 16px; font-weight: 500; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip { background: var(--card); border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow); }
+
+    footer { padding: 36px 0 54px; color: var(--outline); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--high); margin-top: 24px; }
+
+    @media (max-width: 820px) {
+      .hero { grid-template-columns: 1fr; text-align: left; }
+      .hero .phone { transform: none; }
+      .steps, .grid { grid-template-columns: 1fr; }
+      .privacy { grid-template-columns: 1fr; padding: 28px; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#top"><span class="logo">₹</span> Ledgerly</a>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="#features">Features</a>
+        <a href="#screens">Screens</a>
+        <a href="#privacy">Privacy</a>
+        <a href="https://github.com/Viratgupta13/ledgerly" rel="noopener">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <div class="hero">
+        <div>
+          <span class="pill">● Android · built for UPI</span>
+          <h1>Your bank SMS, turned into a <em>clean expense log</em>.</h1>
+          <p class="lead">Ledgerly reads payment SMS on your phone, pre-sorts each one into the category you used before, and asks you to review them once. No manual entry, no uploading your messages.</p>
+          <div class="cta">
+            <a class="btn primary" href="https://github.com/Viratgupta13/ledgerly/releases/latest" rel="noopener">⬇ Download the APK</a>
+            <a class="btn ghost" href="https://github.com/Viratgupta13/ledgerly" rel="noopener">View the code</a>
+          </div>
+          <p class="note">Tap <b>Try demo</b> on the sign-in screen to explore with sample data. No account needed.</p>
+        </div>
+        <div class="phone"><img src="assets/04-inbox-scanned.png" alt="Ledgerly Inbox with Smart Auto-Match" /></div>
+      </div>
+
+      <section id="how">
+        <h2>Three steps, one review</h2>
+        <p class="sub">Most payments are sorted before you even open the app.</p>
+        <div class="steps">
+          <div class="card"><div class="num">1</div><h3>Scan</h3><p>Ledgerly finds payment SMS and ignores OTPs, promos, recharge offers and failed payments.</p></div>
+          <div class="card"><div class="num">2</div><h3>Pre-sort</h3><p>Known payees get their category automatically, learned from what you confirmed before.</p></div>
+          <div class="card"><div class="num">3</div><h3>Review once</h3><p>Glance at the sorted list, fix anything wrong, and confirm the whole batch in one tap.</p></div>
+        </div>
+      </section>
+
+      <section id="features">
+        <h2>Made for how India pays</h2>
+        <p class="sub">UPI to shops, UPI to people, lakh-style amounts.</p>
+        <div class="grid">
+          <div class="card"><span class="tag">Smart Auto-Match</span><h3>Pre-sorted categories</h3><p>Your rules, your past choices and well-known brands like Zomato and Uber fill the category for you.</p></div>
+          <div class="card"><span class="tag">Payments to people</span><h3>"What was this for?"</h3><p>Auto drivers and landlords only show a name in the SMS. Add a note once; totals group by it.</p></div>
+          <div class="card"><span class="tag">Home</span><h3>See where it goes</h3><p>Monthly spend, change vs last month, and a category → payee → payment drill-down.</p></div>
+          <div class="card"><span class="tag">Notifications</span><h3>Know when new ones land</h3><p>One batched alert about every 15 minutes. Amounts stay hidden on the lock screen by default.</p></div>
+          <div class="card"><span class="tag">Rules</span><h3>Teach it once</h3><p>"Always put Blinkit in Food." Change any category later from Transactions.</p></div>
+          <div class="card"><span class="tag">Accounts</span><h3>Verified sign-up</h3><p>Email code to verify, password reset by code, and every row private to you.</p></div>
+        </div>
+      </section>
+
+      <section id="screens">
+        <h2>A look inside</h2>
+        <p class="sub">Swipe between tabs with your finger, like any modern app.</p>
+        <div class="shots">
+          <figure><div class="phone"><img src="assets/02-home.png" alt="Home" loading="lazy" /></div><figcaption>Home</figcaption></figure>
+          <figure><div class="phone"><img src="assets/03-home-category.png" alt="Category drill-down" loading="lazy" /></div><figcaption>Category drill-down</figcaption></figure>
+          <figure><div class="phone"><img src="assets/04-inbox-scanned.png" alt="Inbox" loading="lazy" /></div><figcaption>Inbox and Smart Auto-Match</figcaption></figure>
+          <figure><div class="phone"><img src="assets/05-card-person.png" alt="Person payment" loading="lazy" /></div><figcaption>Payment to a person</figcaption></figure>
+          <figure><div class="phone"><img src="assets/06-review-confirm.png" alt="Review and Confirm" loading="lazy" /></div><figcaption>Review &amp; Confirm</figcaption></figure>
+          <figure><div class="phone"><img src="assets/08-transactions.png" alt="Transactions" loading="lazy" /></div><figcaption>Transactions</figcaption></figure>
+          <figure><div class="phone"><img src="assets/09-rules.png" alt="Rules" loading="lazy" /></div><figcaption>Rules</figcaption></figure>
+        </div>
+      </section>
+
+      <section id="privacy">
+        <div class="privacy">
+          <div>
+            <h2>Your SMS never leave your phone.</h2>
+            <p>All reading and sorting happens on the device. Only the amount, payee, date, category and your note are saved to your account, protected by per-user Row Level Security. The SMS text is never uploaded.</p>
+          </div>
+          <ul>
+            <li>✓ Parsed on-device</li>
+            <li>✓ OTPs and promos are skipped</li>
+            <li>✓ Every row private to your account</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>Built with</h2>
+        <p class="sub">A TypeScript parser with its own test suite, a Supabase backend and a native feel.</p>
+        <div class="chips">
+          <span class="chip">Expo SDK 57</span><span class="chip">React Native</span><span class="chip">TypeScript</span><span class="chip">Expo Router</span>
+          <span class="chip">NativeWind</span><span class="chip">TanStack Query</span><span class="chip">Zustand</span><span class="chip">Zod</span>
+          <span class="chip">Supabase + RLS</span><span class="chip">Jest · 94 tests</span><span class="chip">GitHub Actions</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© <span id="y"></span> Ledgerly. A personal project.</span>
+      <span><a href="https://github.com/Viratgupta13/ledgerly" rel="noopener">Source on GitHub</a></span>
+    </footer>
+  </div>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
