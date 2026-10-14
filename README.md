@@ -20,6 +20,8 @@ Ledgerly is an Android app that reads bank and UPI SMS **on the phone**, turns e
 
 ## Try it
 
+▶ **Watch the 60-second demo:** [`ledgerly-demo.mp4`](https://github.com/Viratgupta13/ledgerly/releases/latest) (attached to the latest release).
+
 1. Download the APK from the [Releases](../../releases) page and install it (allow "unknown apps"; Play Protect may warn because it is not from the Play Store).
 2. Tap **Try demo with sample data** on the sign-in screen. No account or SMS access is needed.
 3. In the Inbox press **Scan SMS Inbox**: ~50 fake bank SMS (including OTPs, promos and a failed payment) run through the real parser. Open **Review & confirm**.
