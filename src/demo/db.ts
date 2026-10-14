@@ -22,6 +22,10 @@ export function resetDemo(now = Date.now()): void {
   txns = [];
   rules = [];
   categories = [];
+  // A few rules the user would already have made, so the Rules tab is not empty.
+  for (const [key, category] of [['blinkit', 'Food'], ['zomato', 'Food'], ['swiggy', 'Food'], ['uber@axisbank', 'Transport'], ['ramesh kumar', 'Rent']]) {
+    rules.push({ id: nid('r'), payee_key: key, category });
+  }
   for (const m of sms.filter((x) => x.daysAgo >= SCAN_CUTOFF_DAYS)) {
     const r = parseSms(m);
     if (!r.ok) continue;

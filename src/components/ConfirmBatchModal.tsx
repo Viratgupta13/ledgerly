@@ -137,7 +137,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
             <Icon name="close" size={24} color="#464555" />
           </Pressable>
           <Text className={`font-inter-sb text-headline-sm ${ink}`}>Review & Confirm</Text>
-          <Pill label={`${count} items`} />
+          <Pill label={`${count} ${count === 1 ? 'item' : 'items'}`} />
         </View>
 
         <ScrollView className="flex-1 px-4" keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 16, paddingBottom: 24 }}>
@@ -181,7 +181,7 @@ export function ConfirmBatchModal({ visible, txns, categories, onClose }: Props)
                     <View className="flex-1">
                       <View className="flex-row items-center gap-2">
                         <Text className={`flex-shrink font-inter-sb text-title-md ${ink}`} numberOfLines={1}>{g.category}</Text>
-                        <Pill label={`${g.count} items`} tone="highest" className="py-0.5" />
+                        <Pill label={`${g.count} ${g.count === 1 ? 'item' : 'items'}`} tone="highest" className="py-0.5" />
                       </View>
                       <Text className={`text-body-sm ${muted}`}>Subtotal: {rupees(sub)}</Text>
                     </View>
