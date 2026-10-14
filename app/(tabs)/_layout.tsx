@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
@@ -9,13 +9,13 @@ import { loadSettings } from '../../src/notifications/settings';
 import { autoScan } from '../../src/sms/scan';
 import { useAuthStore } from '../../src/store/auth';
 
-type IconName = React.ComponentProps<typeof Ionicons>['name'];
+type IconName = React.ComponentProps<typeof MaterialIcons>['name'];
 
-const screens: { name: string; title: string; icon: IconName; iconActive: IconName }[] = [
-  { name: 'index', title: 'Home', icon: 'home-outline', iconActive: 'home' },
-  { name: 'inbox', title: 'Inbox', icon: 'mail-outline', iconActive: 'mail' },
-  { name: 'transactions', title: 'Transactions', icon: 'list-outline', iconActive: 'list' },
-  { name: 'rules', title: 'Rules', icon: 'funnel-outline', iconActive: 'funnel' },
+const screens: { name: string; title: string; icon: IconName }[] = [
+  { name: 'index', title: 'Home', icon: 'home' },
+  { name: 'inbox', title: 'Inbox', icon: 'inbox' },
+  { name: 'transactions', title: 'Transactions', icon: 'receipt-long' },
+  { name: 'rules', title: 'Rules', icon: 'tune' },
 ];
 
 export default function TabsLayout() {
@@ -48,20 +48,20 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: dark ? '#a5a1ff' : '#3525cd',
-        tabBarInactiveTintColor: '#777587',
-        tabBarStyle: { backgroundColor: dark ? '#151b30' : '#ffffff', borderTopColor: dark ? '#232b4d' : '#f2f3ff' },
-        tabBarLabelStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 11 },
-        tabBarBadgeStyle: { backgroundColor: '#950029', color: '#fff', fontFamily: 'Inter_600SemiBold', fontSize: 10 },
+        tabBarInactiveTintColor: dark ? '#a8adc9' : '#464555',
+        tabBarStyle: { backgroundColor: dark ? '#0c1021' : '#faf8ff', borderTopWidth: 0, elevation: 8, height: 64 },
+        tabBarLabelStyle: { fontFamily: 'Inter_600SemiBold', fontSize: 10, marginTop: -2 },
+        tabBarBadgeStyle: { backgroundColor: '#950029', color: '#ffffff', fontFamily: 'Inter_700Bold', fontSize: 9, minWidth: 18, height: 16 },
       }}
     >
-      {screens.map(({ name, title, icon, iconActive }) => (
+      {screens.map(({ name, title, icon }) => (
         <Tabs.Screen
           key={name}
           name={name}
           options={{
             title,
             tabBarBadge: name === 'inbox' && pendingCount > 0 ? pendingCount : undefined,
-            tabBarIcon: ({ color, size, focused }) => <Ionicons name={focused ? iconActive : icon} color={color} size={size} />,
+            tabBarIcon: ({ color }) => <MaterialIcons name={icon} color={color} size={24} />,
           }}
         />
       ))}

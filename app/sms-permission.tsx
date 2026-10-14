@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -6,15 +5,15 @@ import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scanAndImport } from '../src/sms/scan';
 import { useAuthStore } from '../src/store/auth';
-import { Button, Card, LinkButton, Text, ink, muted } from '../src/ui/components';
+import { Button, Icon, SHADOW_SM, Text, ink, muted, type IconName } from '../src/ui/components';
 
-const POINTS = [
-  { icon: 'funnel-outline', color: '#3525cd', title: 'We only look for payment messages', body: 'Debit and credit alerts from banks and UPI apps.' },
-  { icon: 'shield-half-outline', color: '#ba1a1a', title: 'OTPs and promos are ignored', body: 'Security codes and marketing messages are skipped.' },
-  { icon: 'receipt-outline', color: '#006c49', title: 'Only the basics are saved', body: 'Amount, payee, date, category and your note. Never the SMS text.' },
-] as const;
+const POINTS: { icon: IconName; box: string; color: string; title: string; body: string }[] = [
+  { icon: 'filter-alt', box: 'bg-surface-container-high', color: '#3525cd', title: 'We only look for payment messages', body: 'Transactional alerts from banks & UPI apps only.' },
+  { icon: 'security', box: 'bg-tertiary-fixed', color: '#950029', title: 'OTPs and promos are ignored', body: 'Sensitive security codes & marketing spam are never saved.' },
+  { icon: 'receipt-long', box: 'bg-secondary-container', color: '#00714d', title: 'Nothing but the basics is saved', body: 'Amount, payee, date, category and your note. Never the SMS text.' },
+];
 
-/** Shown once before Android's own permission dialog, to explain what SMS access is for. */
+/** Shown before Android's own permission dialog, to explain what SMS access is for. */
 export default function SmsPermission() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -39,58 +38,89 @@ export default function SmsPermission() {
   };
 
   return (
-    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top + 8 }}>
+    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top + 16 }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }} showsVerticalScrollIndicator={false}>
-        <View className="rounded-3xl bg-surface-container p-4 dark:bg-dk-lowest">
-          <Card className="p-3">
-            <Text className={`text-xs ${muted}`}>Example bank SMS</Text>
-            <Text className={`mt-1 text-sm ${ink}`}>A/c XX4092 debited INR 349.00 at BLINKIT on 24-Oct. UPI Ref 4298…</Text>
-          </Card>
-          <View className="my-2 items-center">
-            <Ionicons name="arrow-down" size={18} color="#3525cd" />
+        <View className="pb-2">
+          <View className="flex-row items-center gap-1.5 self-start rounded-full bg-surface-container-low px-3 py-1 dark:bg-dk-low">
+            <View className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary dark:text-dk-primary">Setup • SMS access</Text>
           </View>
-          <Card className="flex-row items-center justify-between p-3">
-            <View className="flex-row items-center gap-3">
-              <View className="h-10 w-10 items-center justify-center rounded-[10px] bg-surface-container">
-                <Ionicons name="restaurant" size={20} color="#F97316" />
-              </View>
-              <View>
-                <Text className={`font-inter-sb ${ink}`}>Blinkit</Text>
-                <Text className={`text-xs ${muted}`}>Food</Text>
-              </View>
-            </View>
-            <Text className={`font-inter-sb ${ink}`}>-₹349.00</Text>
-          </Card>
         </View>
 
-        <Text className={`mt-6 font-inter-b text-3xl ${ink}`}>Let Expensefy read your bank SMS</Text>
-        <Text className={`mt-2 text-base ${muted}`}>To track your expenses with almost no typing, Expensefy needs permission to read your SMS.</Text>
-
-        <View className="mt-5 gap-3">
-          {POINTS.map((p) => (
-            <Card key={p.title} className="flex-row items-center gap-3 p-4">
-              <Ionicons name={p.icon} size={24} color={p.color} />
-              <View className="flex-1">
-                <Text className={`font-inter-sb ${ink}`}>{p.title}</Text>
-                <Text className={`text-sm ${muted}`}>{p.body}</Text>
+        <View style={SHADOW_SM} className="my-2 gap-2 overflow-hidden rounded-2xl bg-surface-container-low p-4 dark:bg-dk-low">
+          <View className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-primary opacity-10" />
+          <View style={{ transform: [{ rotate: '-1deg' }] }} className="rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+            <View className="mb-1.5 flex-row items-center justify-between">
+              <View className="flex-row items-center gap-1.5">
+                <View className="h-5 w-5 items-center justify-center rounded-md bg-surface-container-high">
+                  <Icon name="sms" size={13} color="#3525cd" />
+                </View>
+                <Text className={`font-inter-md text-label-sm ${muted}`}>Example bank SMS • VK-HDFCBK</Text>
               </View>
-            </Card>
+              <Text className="text-label-sm text-outline">Just now</Text>
+            </View>
+            <Text className={`text-body-sm ${ink}`}>
+              A/c XX4092 debited <Text className="font-inter-sb text-tertiary">INR 349.00</Text> at <Text className="font-inter-sb">BLINKIT</Text> on 24-Oct. UPI Ref 429810...
+            </Text>
+          </View>
+          <View className="flex-row items-center justify-center gap-2 py-0.5">
+            <View className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+            <View className="flex-row items-center gap-1 rounded-full bg-surface-container-high px-2.5 py-0.5 dark:bg-dk-container">
+              <Icon name="auto-awesome" size={14} color="#3525cd" />
+              <Text className="font-inter-sb text-label-sm uppercase tracking-wider text-primary dark:text-dk-primary">Auto-parsed</Text>
+            </View>
+            <View className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+          </View>
+          <View style={{ transform: [{ rotate: '1deg' }] }} className="flex-row items-center justify-between rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+            <View className="flex-1 flex-row items-center gap-2.5">
+              <View className="h-9 w-9 items-center justify-center rounded-lg bg-secondary-container">
+                <Icon name="shopping-basket" size={18} color="#00714d" />
+              </View>
+              <View className="flex-1">
+                <Text className={`font-inter-sb text-title-md ${ink}`} numberOfLines={1}>Blinkit Grocery</Text>
+                <View className="flex-row items-center gap-1">
+                  <View className="h-1.5 w-1.5 rounded-full bg-secondary" />
+                  <Text className={`text-body-sm ${muted}`}>HDFC • Groceries</Text>
+                </View>
+              </View>
+            </View>
+            <View className="items-end pl-2">
+              <Text className={`font-inter-sb text-title-md ${ink}`}>-₹349.00</Text>
+              <Text className="font-inter-md text-label-sm text-secondary">Logged instantly</Text>
+            </View>
+          </View>
+        </View>
+
+        <View className="mb-4 mt-2">
+          <Text className={`font-inter-sb text-headline-lg ${ink}`}>Let Expensefy read your bank SMS</Text>
+          <Text className={`mt-1.5 text-body-md ${muted}`}>To track your expenses with almost no typing, Expensefy needs SMS read access.</Text>
+        </View>
+
+        <View className="mb-4 gap-2.5">
+          {POINTS.map((p) => (
+            <View key={p.title} style={SHADOW_SM} className="flex-row items-start gap-3 rounded-xl bg-surface-container-lowest p-3 dark:bg-dk-lowest">
+              <View className={`mt-0.5 h-9 w-9 items-center justify-center rounded-lg ${p.box}`}>
+                <Icon name={p.icon} size={20} color={p.color} />
+              </View>
+              <View className="flex-1">
+                <Text className={`font-inter-sb text-title-md ${ink}`}>{p.title}</Text>
+                <Text className={`mt-0.5 text-body-sm ${muted}`}>{p.body}</Text>
+              </View>
+            </View>
           ))}
         </View>
 
-        <View className="mt-4 flex-row items-center gap-2 rounded-xl bg-surface-container px-4 py-3 dark:bg-dk-lowest">
-          <Ionicons name="lock-closed-outline" size={16} color="#3525cd" />
-          <Text className={`flex-1 text-sm ${ink}`}>SMS are processed on this phone, not uploaded.</Text>
+        <View className="mb-2 flex-row items-center justify-center gap-2 rounded-full bg-surface-container px-3 py-2 dark:bg-dk-container">
+          <Icon name="lock" size={16} color="#3525cd" />
+          <Text className={`font-inter-sb text-label-md ${ink}`}>SMS are processed on this phone, not uploaded</Text>
         </View>
-        {error && <Text className="mt-3 text-error">{error}</Text>}
+        {error && <Text className="mt-2 text-error">{error}</Text>}
       </ScrollView>
 
-      <View className="px-4" style={{ paddingBottom: insets.bottom + 12 }}>
-        <Button label="Allow SMS access" iconRight="arrow-forward" loading={busy} onPress={allow} />
-        <View className="mt-1 items-center">
-          <LinkButton label="Not now" onPress={() => router.back()} />
-        </View>
-        <Text className={`mt-1 text-center text-xs ${muted}`}>You can change this anytime in Android Settings.</Text>
+      <View className="gap-2 px-4" style={{ paddingBottom: insets.bottom + 12 }}>
+        <Button size="lg" className="bg-primary-container" label="Allow SMS access" iconRight="arrow-forward" loading={busy} onPress={allow} />
+        <Button size="sm" variant="secondary" className="bg-transparent" label="Not now" onPress={() => router.back()} />
+        <Text className="mt-1 text-center text-label-sm text-outline">You can change or revoke this permission anytime in Android Settings.</Text>
       </View>
     </View>
   );

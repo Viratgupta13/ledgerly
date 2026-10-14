@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
 import {
@@ -14,6 +14,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthStore } from '../store/auth';
 import { categoryMeta, tint } from './theme';
 
+export type IconName = ComponentProps<typeof MaterialIcons>['name'];
+
 export const INK = 'text-on-surface dark:text-dk-on-surface';
 export const MUTED = 'text-on-surface-variant dark:text-dk-on-surface-variant';
 export const ink = INK;
@@ -26,78 +28,85 @@ export function Text({ className, ...props }: TextProps & { className?: string }
   return <RNText {...props} className={withFont(className)} />;
 }
 
+export function Icon({ name, size = 20, color = '#131b2e' }: { name: IconName; size?: number; color?: string }) {
+  return <MaterialIcons name={name} size={size} color={color} />;
+}
+
 export const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-const SHADOW = { shadowColor: '#0f172a', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 1 } as const;
+export const SHADOW_SM = { shadowColor: '#0f172a', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 1 } as const;
+const SHADOW_MD = { shadowColor: '#3525cd', shadowOpacity: 0.22, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 3 } as const;
 
-/** White surface with a soft shadow and no border, as in the design. */
+/** White surface, 16px radius, soft shadow, no border. */
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <View style={SHADOW} className={`rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest ${className}`}>
+    <View style={SHADOW_SM} className={`rounded-2xl bg-surface-container-lowest dark:bg-dk-lowest ${className}`}>
       {children}
     </View>
   );
 }
 
-/** Initials of the signed-in user's email, used for the profile avatar. */
-export function useInitials(): string {
-  const email = useAuthStore((s) => s.session?.user.email) ?? '';
-  const name = email.split('@')[0].replace(/[^a-zA-Z]+/g, ' ').trim();
-  const parts = name.split(' ').filter(Boolean);
-  return ((parts[0]?.[0] ?? 'E') + (parts[1]?.[0] ?? '')).toUpperCase();
+/** Profile avatar: a 32px primary circle with a person glyph (opens Settings). */
+export function Avatar({ onPress }: { onPress?: () => void }) {
+  const router = useRouter();
+  return (
+    <Pressable onPress={onPress ?? (() => router.push('/settings'))} hitSlop={4} className="h-12 w-12 items-center justify-center rounded-full active:opacity-60">
+      <View className="h-8 w-8 items-center justify-center rounded-full bg-primary">
+        <Icon name="person" size={18} color="#ffffff" />
+      </View>
+    </Pressable>
+  );
 }
 
-/** Top bar: logo tile, wordmark and the profile avatar (opens Settings). */
-export function AppHeader() {
-  const router = useRouter();
-  const initials = useInitials();
+/** Top bar: 36px "E" tile, bold title and the profile avatar. */
+export function AppHeader({ title = 'Expensefy' }: { title?: string }) {
   return (
-    <View className="h-14 flex-row items-center justify-between">
-      <View className="flex-row items-center gap-3">
-        <View className="h-10 w-10 items-center justify-center rounded-xl bg-primary">
-          <Text className="font-inter-b text-lg text-white">E</Text>
+    <View style={{ shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 8, shadowOffset: { width: 0, height: 1 }, elevation: 1 }} className="h-16 flex-row items-center justify-between bg-surface px-4 dark:bg-dk-surface">
+      <View className="flex-row items-center gap-2">
+        <View style={SHADOW_SM} className="h-9 w-9 items-center justify-center rounded-xl bg-primary">
+          <Text className="font-inter-b text-headline-sm text-on-primary">E</Text>
         </View>
-        <Text className={`font-inter-sb text-xl ${INK}`}>Expensefy</Text>
+        <Text className={`font-inter-b text-headline-sm ${INK}`}>{title}</Text>
       </View>
-      <Pressable
-        onPress={() => router.push('/settings')}
-        hitSlop={8}
-        className="h-10 w-10 items-center justify-center rounded-full bg-primary active:opacity-70"
-      >
-        <Text className="font-inter-sb text-sm text-white">{initials}</Text>
-      </Pressable>
+      <Avatar />
     </View>
   );
 }
 
-/** Page wrapper: safe area, app header and an optional large page title. */
+/** Page wrapper: safe area, app header, 16px side margins and an optional page title. */
 export function Screen({
   title,
   subtitle,
   right,
+  headerTitle,
   header = true,
   children,
 }: {
   title?: string;
   subtitle?: string;
   right?: ReactNode;
+  headerTitle?: string;
   header?: boolean;
   children: ReactNode;
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <View className="flex-1 bg-surface-container-low px-4 dark:bg-dk-low" style={{ paddingTop: insets.top }}>
-      {header && <AppHeader />}
-      {title ? (
-        <View className="mb-3 mt-2 flex-row items-end justify-between">
-          <View className="flex-1 pr-3">
-            <Text className={`font-inter-b text-3xl ${INK}`}>{title}</Text>
-            {subtitle ? <Text className={`mt-0.5 ${MUTED}`}>{subtitle}</Text> : null}
+    <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
+      {header && <AppHeader title={headerTitle} />}
+      <View className="flex-1 px-4">
+        {title ? (
+          <View className="mb-4 mt-4 flex-row items-end justify-between">
+            <View className="flex-1 pr-3">
+              <Text className={`font-inter-sb text-headline-lg ${INK}`}>{title}</Text>
+              {subtitle ? <Text className={`mt-0.5 text-body-md ${MUTED}`}>{subtitle}</Text> : null}
+            </View>
+            {right}
           </View>
-          {right}
-        </View>
-      ) : null}
-      {children}
+        ) : (
+          <View className="h-2" />
+        )}
+        {children}
+      </View>
     </View>
   );
 }
@@ -105,35 +114,40 @@ export function Screen({
 type ButtonProps = {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger' | 'soft';
+  variant?: 'primary' | 'secondary' | 'danger' | 'soft' | 'success';
+  size?: 'lg' | 'md' | 'sm';
   loading?: boolean;
   disabled?: boolean;
-  icon?: ComponentProps<typeof Ionicons>['name'];
-  iconRight?: ComponentProps<typeof Ionicons>['name'];
+  icon?: IconName;
+  iconRight?: IconName;
   className?: string;
 };
 
 const BUTTON = {
   primary: { box: 'bg-primary', text: 'text-on-primary', icon: '#ffffff' },
-  secondary: { box: 'bg-surface-container dark:bg-dk-container', text: INK, icon: '#3525cd' },
-  soft: { box: 'bg-primary-fixed dark:bg-dk-container', text: 'text-primary dark:text-dk-primary', icon: '#3525cd' },
-  danger: { box: 'bg-error-container dark:bg-dk-error-container', text: 'text-on-error-container dark:text-dk-tertiary', icon: '#ba1a1a' },
+  success: { box: 'bg-secondary', text: 'text-on-secondary', icon: '#ffffff' },
+  secondary: { box: 'bg-surface-container-high dark:bg-dk-container', text: INK, icon: '#131b2e' },
+  soft: { box: 'bg-surface-container dark:bg-dk-container', text: 'text-primary dark:text-dk-primary', icon: '#3525cd' },
+  danger: { box: 'bg-error-container dark:bg-dk-error-container', text: 'text-error', icon: '#ba1a1a' },
 } as const;
+const HEIGHT = { lg: 'h-[52px]', md: 'h-12', sm: 'h-11' } as const;
 
-/** 52px tall, 14px radius, dims while pressed so every tap visibly registers. */
-export function Button({ label, onPress, variant = 'primary', loading, disabled, icon, iconRight, className = '' }: ButtonProps) {
+/** Rounded-xl button (52 / 48 / 44px). Primary buttons carry the soft indigo shadow. */
+export function Button({ label, onPress, variant = 'primary', size = 'md', loading, disabled, icon, iconRight, className = '' }: ButtonProps) {
   const v = BUTTON[variant];
   const off = disabled || loading;
+  const color = variant === 'secondary' ? (disabled ? '#777587' : '#131b2e') : v.icon;
   return (
     <Pressable
       onPress={onPress}
       disabled={off}
-      hitSlop={6}
-      className={`min-h-[52px] flex-row items-center justify-center gap-2 rounded-[14px] px-4 active:opacity-60 ${v.box} ${off ? 'opacity-50' : ''} ${className}`}
+      hitSlop={4}
+      style={variant === 'primary' || variant === 'success' ? SHADOW_MD : undefined}
+      className={`${HEIGHT[size]} flex-row items-center justify-center gap-2 rounded-xl px-4 active:opacity-70 ${v.box} ${off ? 'opacity-50' : ''} ${className}`}
     >
-      {loading ? <ActivityIndicator color={v.icon} /> : icon ? <Ionicons name={icon} size={18} color={v.icon} /> : null}
-      <Text className={`font-inter-sb text-base ${v.text}`}>{label}</Text>
-      {iconRight && !loading ? <Ionicons name={iconRight} size={18} color={v.icon} /> : null}
+      {loading ? <ActivityIndicator color={color} /> : icon ? <Icon name={icon} size={size === 'lg' || size === 'md' ? 20 : 18} color={color} /> : null}
+      <Text className={`font-inter-sb text-label-lg ${v.text}`}>{label}</Text>
+      {iconRight && !loading ? <Icon name={iconRight} size={18} color={color} /> : null}
     </Pressable>
   );
 }
@@ -142,11 +156,15 @@ export function Button({ label, onPress, variant = 'primary', loading, disabled,
 export function LinkButton({ label, onPress, tone = 'brand' }: { label: string; onPress: () => void; tone?: 'brand' | 'danger' }) {
   return (
     <Pressable onPress={onPress} hitSlop={{ top: 10, bottom: 10, left: 8, right: 8 }} className="min-h-9 justify-center active:opacity-50">
-      <Text className={`font-inter-md text-sm ${tone === 'danger' ? 'text-error' : 'text-primary dark:text-dk-primary'}`}>{label}</Text>
+      <Text className={`font-inter-md text-label-lg ${tone === 'danger' ? 'text-error' : 'text-primary dark:text-dk-primary'}`}>{label}</Text>
     </Pressable>
   );
 }
 
+/**
+ * Pill chip, 36px tall. `tone="range"` is the grey scan-range chip; `tone="category"` is the
+ * lighter chip with a colour dot used when picking a category.
+ */
 export function Chip({
   label,
   selected,
@@ -154,6 +172,8 @@ export function Chip({
   dashed,
   dot,
   check,
+  tone = 'range',
+  small,
 }: {
   label: string;
   selected?: boolean;
@@ -161,97 +181,143 @@ export function Chip({
   dashed?: boolean;
   dot?: string;
   check?: boolean;
+  tone?: 'range' | 'category';
+  small?: boolean;
 }) {
+  const idle = tone === 'category' ? 'bg-surface-container-low dark:bg-dk-container' : 'bg-surface-container dark:bg-dk-container';
   return (
     <Pressable
       onPress={onPress}
-      hitSlop={4}
-      className={`min-h-10 flex-row items-center gap-2 rounded-full px-4 active:opacity-60 ${
-        selected
-          ? 'bg-primary'
-          : `${dashed ? 'border border-dashed border-outline-variant' : ''} bg-surface-container dark:bg-dk-container`
+      hitSlop={small ? 6 : 4}
+      style={selected ? SHADOW_SM : undefined}
+      className={`${small ? 'h-7 px-2.5' : 'h-9 px-4'} flex-row items-center gap-1.5 rounded-full active:opacity-60 ${
+        selected ? 'bg-primary' : `${dashed ? 'border border-dashed border-outline-variant' : ''} ${idle}`
       }`}
     >
-      {selected && check ? <Ionicons name="checkmark" size={14} color="#fff" /> : dot ? <View className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} /> : null}
-      <Text className={selected ? 'font-inter-md text-on-primary' : `font-inter-md ${INK}`}>{label}</Text>
+      {selected && check ? <Icon name="check" size={16} color="#ffffff" /> : null}
+      {dot ? <View className="h-2 w-2 rounded-full" style={{ backgroundColor: selected ? '#6cf8bb' : dot }} /> : null}
+      <Text className={`font-inter-md ${small ? 'text-label-sm' : 'text-label-md'} ${selected ? 'text-on-primary' : tone === 'category' ? INK : MUTED}`}>{label}</Text>
     </Pressable>
   );
 }
 
-/** Text field, 52px tall, with an optional leading icon and trailing element. */
+/** "+ New" chip: lavender with a primary plus. */
+export function NewChip({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} hitSlop={4} className="h-9 flex-row items-center gap-1 rounded-full bg-surface-container px-3 active:opacity-60 dark:bg-dk-container">
+      <Icon name="add" size={16} color="#3525cd" />
+      <Text className="font-inter-md text-label-md text-primary dark:text-dk-primary">New</Text>
+    </Pressable>
+  );
+}
+
+/**
+ * Text field. `variant="auth"` is the white, shadowed 52px field of the sign-in screens;
+ * `variant="field"` is the lavender 48px field used inside cards.
+ */
 export function Input({
   icon,
   right,
   label,
+  variant = 'auth',
   className = '',
   ...props
-}: TextInputProps & { icon?: ComponentProps<typeof Ionicons>['name']; right?: ReactNode; label?: string; className?: string }) {
+}: TextInputProps & { icon?: IconName; right?: ReactNode; label?: string; variant?: 'auth' | 'field'; className?: string }) {
+  const auth = variant === 'auth';
   return (
     <View>
-      {label ? <Text className={`mb-1.5 font-inter-md text-sm ${INK}`}>{label}</Text> : null}
-      <View style={SHADOW} className={`min-h-[52px] flex-row items-center gap-3 rounded-xl bg-surface-container-lowest px-4 dark:bg-dk-lowest ${className}`}>
-        {icon ? <Ionicons name={icon} size={20} color="#777587" /> : null}
-        <TextInput placeholderTextColor="#777587" {...props} className={`font-inter flex-1 py-3 text-base ${INK}`} />
+      {label ? <Text className={`mb-1.5 font-inter-md text-label-lg ${INK}`}>{label}</Text> : null}
+      <View
+        style={auth ? SHADOW_SM : undefined}
+        className={`${auth ? 'h-[52px] bg-surface-container-lowest dark:bg-dk-lowest' : 'h-12 bg-surface-container-low dark:bg-dk-low'} flex-row items-center gap-3 rounded-xl px-3 ${className}`}
+      >
+        {icon ? <Icon name={icon} size={20} color={auth ? '#464555' : '#c7c4d8'} /> : null}
+        <TextInput placeholderTextColor="#777587" {...props} className={`font-inter flex-1 py-0 text-body-lg ${INK}`} />
         {right}
       </View>
     </View>
   );
 }
 
-export function Amount({ value, type, plain, className = '' }: { value: number; type: 'debit' | 'credit'; plain?: boolean; className?: string }) {
-  const tone =
-    type === 'credit' ? 'text-secondary dark:text-dk-secondary' : plain ? INK : 'text-tertiary dark:text-dk-tertiary';
+/** Material-3 switch: 48x32 track, 24px thumb with a check when on. */
+export function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-sb ${tone} ${className}`}>
+    <Pressable onPress={() => onChange(!value)} hitSlop={10} className={`h-8 w-12 justify-center rounded-full p-1 ${value ? 'bg-primary' : 'bg-surface-container-highest dark:bg-dk-high'}`}>
+      <View style={SHADOW_SM} className={`h-6 w-6 items-center justify-center rounded-full ${value ? 'self-end bg-on-primary' : 'self-start bg-surface-container-lowest'}`}>
+        {value ? <Icon name="check" size={14} color="#3525cd" /> : null}
+      </View>
+    </Pressable>
+  );
+}
+
+/** Debit amounts are tertiary crimson in lists; `plain` uses on-surface; credits are secondary green. */
+export function Amount({ value, type, plain, className = '' }: { value: number; type: 'debit' | 'credit'; plain?: boolean; className?: string }) {
+  const tone = type === 'credit' ? 'text-secondary dark:text-dk-secondary' : plain ? INK : 'text-tertiary dark:text-dk-tertiary';
+  return (
+    <Text style={{ fontVariant: ['tabular-nums'] }} className={`font-inter-b text-title-md ${tone} ${className}`}>
       {type === 'debit' ? '-' : '+'}{rupees(value)}
     </Text>
   );
 }
 
-/** 40px rounded tile tinted with the category colour and holding its icon. */
+/** Rounded-xl tile tinted with the category colour (10%) and holding its icon. */
 export function CategoryTile({ category, size = 40 }: { category: string | null | undefined; size?: number }) {
   const meta = categoryMeta(category);
   return (
-    <View className="items-center justify-center rounded-[10px]" style={{ width: size, height: size, backgroundColor: tint(meta.color) }}>
-      <MaterialIcons name={meta.icon} size={size * 0.5} color={meta.color} />
+    <View className="items-center justify-center rounded-xl" style={{ width: size, height: size, backgroundColor: tint(meta.color, 0.1) }}>
+      <Icon name={meta.icon} size={22} color={meta.iconColor} />
     </View>
   );
 }
 
-export function Pill({ label, tone = 'brand' }: { label: string; tone?: 'brand' | 'rose' | 'emerald' | 'amber' | 'slate' }) {
-  const tones = {
-    brand: ['bg-primary-fixed dark:bg-dk-container', 'text-on-primary-fixed dark:text-dk-primary'],
-    rose: ['bg-error-container dark:bg-dk-error-container', 'text-on-error-container dark:text-dk-tertiary'],
-    emerald: ['bg-secondary-container dark:bg-dk-container', 'text-on-secondary-container dark:text-dk-secondary'],
-    amber: ['bg-amber-100 dark:bg-amber-950', 'text-amber-800 dark:text-amber-300'],
-    slate: ['bg-surface-container dark:bg-dk-container', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
-  } as const;
-  const [box, fg] = tones[tone];
+const PILL = {
+  brand: ['bg-primary-fixed dark:bg-dk-container', 'text-on-primary-fixed dark:text-dk-primary'],
+  rose: ['bg-error-container dark:bg-dk-error-container', 'text-on-error-container dark:text-dk-tertiary'],
+  tertiary: ['bg-tertiary-fixed dark:bg-dk-error-container', 'text-on-tertiary-fixed dark:text-dk-tertiary'],
+  emerald: ['bg-secondary-container dark:bg-dk-container', 'text-on-secondary-container dark:text-dk-secondary'],
+  success: ['bg-secondary-fixed dark:bg-dk-container', 'text-on-secondary-fixed-variant dark:text-dk-secondary'],
+  slate: ['bg-surface-container dark:bg-dk-container', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
+  highest: ['bg-surface-container-highest dark:bg-dk-high', 'text-on-surface-variant dark:text-dk-on-surface-variant'],
+} as const;
+
+export function Pill({ label, tone = 'brand', icon, className = '' }: { label: string; tone?: keyof typeof PILL; icon?: IconName; className?: string }) {
+  const [box, fg] = PILL[tone];
+  const iconColor = tone === 'rose' ? '#93000a' : tone === 'tertiary' ? '#40000c' : '#3525cd';
   return (
-    <View className={`self-start rounded-full px-2.5 py-0.5 ${box}`}>
-      <Text className={`font-inter-md text-xs ${fg}`}>{label}</Text>
+    <View className={`flex-row items-center gap-1 self-start rounded-full px-2.5 py-1 ${box} ${className}`}>
+      {icon ? <Icon name={icon} size={14} color={iconColor} /> : null}
+      <Text className={`font-inter-md text-label-md ${fg}`}>{label}</Text>
     </View>
   );
 }
 
-export function ProgressBar({ share, color }: { share: number; color: string }) {
+export function ProgressBar({ share, color, height = 4 }: { share: number; color: string; height?: number }) {
   return (
-    <View className="h-1.5 overflow-hidden rounded-full bg-surface-container dark:bg-dk-container">
-      <View className="h-1.5 rounded-full" style={{ width: `${Math.min(1, Math.max(0, share)) * 100}%`, backgroundColor: color }} />
+    <View className="overflow-hidden rounded-full bg-surface-container dark:bg-dk-container" style={{ height }}>
+      <View className="rounded-full" style={{ height, width: `${Math.min(1, Math.max(0, share)) * 100}%`, backgroundColor: color }} />
     </View>
   );
 }
 
 export function SectionLabel({ children }: { children: ReactNode }) {
-  return <Text className={`font-inter-sb text-xs uppercase tracking-wider ${MUTED}`}>{children}</Text>;
+  return <Text className={`font-inter-b text-label-sm uppercase tracking-wider ${MUTED}`}>{children}</Text>;
 }
 
-export function Empty({ icon, title, hint }: { icon: ComponentProps<typeof Ionicons>['name']; title: string; hint?: string }) {
+export function Empty({ icon, title, hint }: { icon: IconName; title: string; hint?: string }) {
   return (
-    <View className="items-center px-6 py-12">
-      <Ionicons name={icon} size={40} color="#c7c4d8" />
-      <Text className={`mt-3 font-inter-sb text-base ${INK}`}>{title}</Text>
-      {hint ? <Text className={`mt-1 text-center ${MUTED}`}>{hint}</Text> : null}
+    <View className="items-center rounded-3xl bg-surface-container-lowest px-6 py-10 dark:bg-dk-lowest" style={SHADOW_SM}>
+      <View className="h-20 w-20 items-center justify-center rounded-full bg-surface-container dark:bg-dk-container">
+        <Icon name={icon} size={44} color="#4f46e5" />
+      </View>
+      <Text className={`mt-4 font-inter-b text-headline-sm ${INK}`}>{title}</Text>
+      {hint ? <Text className={`mt-1 text-center text-body-md ${MUTED}`}>{hint}</Text> : null}
     </View>
   );
+}
+
+/** Initials of the signed-in user's email, used for the profile avatar in Settings. */
+export function useInitials(): string {
+  const email = useAuthStore((s) => s.session?.user.email) ?? '';
+  const parts = email.split('@')[0].replace(/[^a-zA-Z]+/g, ' ').trim().split(' ').filter(Boolean);
+  return ((parts[0]?.[0] ?? 'E') + (parts[1]?.[0] ?? '')).toUpperCase();
 }

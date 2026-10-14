@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
+import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { Alert, Linking, Pressable, ScrollView, Switch, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { checkForNewPayments } from '../src/background/check';
 import { syncBackgroundTask } from '../src/background/task';
@@ -12,7 +12,7 @@ import { DEFAULT_SETTINGS, loadSettings, saveSettings, type NotifySettings } fro
 import { hasSmsPermission } from '../src/sms/reader';
 import { useAuthStore } from '../src/store/auth';
 import { loadThemeMode, saveThemeMode, type ThemeMode } from '../src/ui/appearance';
-import { Button, Card, Chip, Pill, SectionLabel, Text, ink, muted, useInitials } from '../src/ui/components';
+import { Icon, SHADOW_SM, Text, Toggle, ink, muted, useInitials, type IconName } from '../src/ui/components';
 
 const HOURS = [
   { label: '9 am', hour: 9 },
@@ -21,14 +21,55 @@ const HOURS = [
   { label: '9 pm', hour: 21 },
 ];
 
-function ToggleRow({ title, hint, value, onChange }: { title: string; hint?: string; value: boolean; onChange: (v: boolean) => void }) {
+function SectionTitle({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
-    <View className="min-h-14 flex-row items-center justify-between py-2">
-      <View className="flex-1 pr-4">
-        <Text className={`font-inter-md text-base ${ink}`}>{title}</Text>
-        {hint ? <Text className={`text-xs ${muted}`}>{hint}</Text> : null}
-      </View>
-      <Switch value={value} onValueChange={onChange} trackColor={{ true: '#3525cd' }} />
+    <View className="flex-row items-center justify-between px-1 pb-1">
+      <Text className={`font-inter-sb text-label-md uppercase tracking-wider ${muted}`}>{children}</Text>
+      {right}
+    </View>
+  );
+}
+
+/** White card whose rows are divided by a hairline, like the design's grouped lists. */
+function Group({ children }: { children: ReactNode }) {
+  const rows = Array.isArray(children) ? children : [children];
+  return (
+    <View style={SHADOW_SM} className="overflow-hidden rounded-xl bg-surface-container-lowest dark:bg-dk-lowest">
+      {rows.filter(Boolean).map((c, i) => (
+        <View key={i} className={i > 0 ? 'border-t border-surface-container dark:border-dk-container' : ''}>{c}</View>
+      ))}
+    </View>
+  );
+}
+
+function Row({ icon, tint = 'muted', title, sub, right, onPress, children }: { icon: IconName; tint?: 'brand' | 'muted'; title: string; sub?: string; right?: ReactNode; onPress?: () => void; children?: ReactNode }) {
+  return (
+    <View>
+      <Pressable disabled={!onPress} onPress={onPress} className="min-h-14 flex-row items-center justify-between gap-2 p-4 active:bg-surface-container-low">
+        <View className="flex-1 flex-row items-center gap-4">
+          <View className={`h-10 w-10 items-center justify-center rounded-lg ${tint === 'brand' ? 'bg-primary-fixed dark:bg-dk-container' : 'bg-surface-container dark:bg-dk-container'}`}>
+            <Icon name={icon} size={20} color={tint === 'brand' ? '#0f0069' : '#464555'} />
+          </View>
+          <View className="flex-1">
+            <Text className={`font-inter-sb text-title-md ${ink}`}>{title}</Text>
+            {sub ? <Text className={`text-body-sm ${muted}`}>{sub}</Text> : null}
+          </View>
+        </View>
+        {right}
+      </Pressable>
+      {children}
+    </View>
+  );
+}
+
+function Segmented<T extends string | number>({ options, value, onChange }: { options: { label: string; value: T }[]; value: T; onChange: (v: T) => void }) {
+  return (
+    <View className="flex-row rounded-full bg-surface-container p-1 dark:bg-dk-container">
+      {options.map((o) => (
+        <Pressable key={String(o.value)} onPress={() => onChange(o.value)} className={`rounded-full px-3 py-1.5 ${o.value === value ? 'bg-primary' : ''}`}>
+          <Text className={`font-inter-sb text-label-sm ${o.value === value ? 'text-on-primary' : muted}`}>{o.label}</Text>
+        </Pressable>
+      ))}
     </View>
   );
 }
@@ -94,80 +135,80 @@ export default function SettingsScreen() {
 
   return (
     <View className="flex-1 bg-surface dark:bg-dk-surface" style={{ paddingTop: insets.top }}>
-      <View className="h-14 flex-row items-center gap-2 px-2">
-        <Pressable onPress={() => router.back()} hitSlop={10} className="h-11 w-11 items-center justify-center rounded-full active:opacity-50">
-          <Ionicons name="arrow-back" size={24} color="#777587" />
+      <View className="h-16 flex-row items-center gap-1 px-2">
+        <Pressable onPress={() => router.back()} hitSlop={8} className="h-11 w-11 items-center justify-center rounded-full active:bg-surface-container">
+          <Icon name="arrow-back" size={24} color="#464555" />
         </Pressable>
-        <Text className={`font-inter-sb text-xl ${ink}`}>Settings</Text>
+        <Text className={`font-inter-sb text-headline-sm ${ink}`}>Settings</Text>
       </View>
 
-      <ScrollView className="px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
-        <Card className="mb-4 flex-row items-center gap-4 p-4">
-          <View className="h-16 w-16 items-center justify-center rounded-full bg-surface-container dark:bg-dk-container">
-            <Text className="font-inter-b text-xl text-primary">{initials}</Text>
-          </View>
-          <View className="flex-1">
-            <Text className={`font-inter-sb text-base ${ink}`} numberOfLines={1}>{email ?? '—'}</Text>
-            <View className="mt-1">
-              <Pill label={smsAllowed ? 'SMS access on' : 'SMS access off'} tone={smsAllowed ? 'emerald' : 'amber'} />
+      <ScrollView className="px-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 32, gap: 24 }}>
+        <View style={SHADOW_SM} className="gap-4 rounded-xl bg-surface-container-lowest p-4 dark:bg-dk-lowest">
+          <View className="flex-row items-center gap-4">
+            <View className="h-16 w-16 items-center justify-center rounded-full bg-primary-fixed dark:bg-dk-container">
+              <Text className="font-inter-sb text-headline-md text-on-primary-fixed dark:text-dk-primary">{initials}</Text>
+            </View>
+            <View className="flex-1">
+              <Text className={`font-inter-sb text-headline-sm ${ink}`} numberOfLines={1}>{(email ?? '').split('@')[0] || 'Your account'}</Text>
+              <Text className={`text-body-sm ${muted}`} numberOfLines={1}>{email ?? '—'}</Text>
             </View>
           </View>
-        </Card>
-
-        <View className="mb-1 px-1"><SectionLabel>Appearance</SectionLabel></View>
-        <Card className="mb-4 p-4">
-          <View className="flex-row gap-2">
-            {([['system', 'System'], ['light', 'Light'], ['dark', 'Dark']] as const).map(([mode, label]) => (
-              <Chip key={mode} label={label} selected={theme === mode} onPress={() => { setTheme(mode); saveThemeMode(mode); }} />
-            ))}
-          </View>
-          <Text className={`mt-2 text-xs ${muted}`}>System follows your phone's dark mode setting.</Text>
-        </Card>
-
-        <View className="mb-1 px-1"><SectionLabel>SMS access</SectionLabel></View>
-        <Card className="mb-4 flex-row items-center gap-3 p-4">
-          <Ionicons name="chatbox-ellipses-outline" size={22} color="#3525cd" />
-          <View className="flex-1">
-            <Text className={`font-inter-md ${ink}`}>Read bank & UPI SMS</Text>
-            <Text className={`text-xs ${muted}`}>Processed on this phone. Only amount, payee, date, category and note are saved.</Text>
-          </View>
-          <Pressable onPress={() => Linking.openSettings()} hitSlop={10} className="min-h-11 justify-center">
-            <Text className="font-inter-sb text-sm text-primary">Manage</Text>
-          </Pressable>
-        </Card>
-
-        <View className="mb-1 px-1"><SectionLabel>Notifications</SectionLabel></View>
-        <Card className="mb-4 px-4 py-2">
-          <ToggleRow
-            title="New payments"
-            hint="We check for new bank SMS about every 15 minutes, even when the app is closed."
-            value={settings.newPayments}
-            onChange={(v) => update({ newPayments: v })}
-          />
-          <ToggleRow title="Daily reminder" hint="Once a day, only if payments are waiting for review." value={settings.dailyReminder} onChange={(v) => update({ dailyReminder: v })} />
-          {settings.dailyReminder && (
-            <View className="flex-row flex-wrap gap-2 pb-2">
-              {HOURS.map((h) => (
-                <Chip key={h.hour} label={h.label} selected={settings.reminderHour === h.hour} onPress={() => update({ reminderHour: h.hour })} />
-              ))}
+          <View className="flex-row items-center justify-between rounded-lg bg-surface-container-low p-2 dark:bg-dk-low">
+            <View className="flex-row items-center gap-1 pl-1">
+              <View className={`h-2 w-2 rounded-full ${smsAllowed ? 'bg-secondary' : 'bg-outline'}`} />
+              <Text className={`font-inter-sb text-label-sm uppercase tracking-wider ${smsAllowed ? 'text-secondary' : muted}`}>{smsAllowed ? 'SMS access on' : 'SMS access off'}</Text>
             </View>
-          )}
-          <ToggleRow
-            title="Hide amounts on the lock screen"
-            hint="Notifications show only a count, never a payee or amount."
-            value={settings.hideDetails}
-            onChange={(v) => update({ hideDetails: v })}
-          />
-        </Card>
+            <Pressable onPress={() => Linking.openSettings()} hitSlop={8} className="flex-row items-center pr-1">
+              <Text className="font-inter-sb text-label-sm text-primary dark:text-dk-primary">Manage</Text>
+              <Icon name="chevron-right" size={14} color="#3525cd" />
+            </Pressable>
+          </View>
+        </View>
 
-        <Card className="mb-4 gap-3 p-4">
-          <Button icon="refresh-outline" label="Check for new payments now" loading={checking} onPress={checkNow} />
-          <Button variant="secondary" icon="notifications-outline" label="Send a test notification" onPress={testNotification} />
-          {status ? <Text className={muted}>{status}</Text> : null}
-        </Card>
+        <View>
+          <SectionTitle right={<Text className="font-inter-md text-label-sm text-secondary">Local only</Text>}>Notifications & automation</SectionTitle>
+          <Group>
+            <Row icon="notifications-active" tint="brand" title="New payment alerts" sub="Checks for new bank SMS about every 15 minutes" right={<Toggle value={settings.newPayments} onChange={(v) => update({ newPayments: v })} />} />
+            <Row icon="schedule" title="Daily reminder" sub="Once a day, only if payments are waiting" right={<Toggle value={settings.dailyReminder} onChange={(v) => update({ dailyReminder: v })} />}>
+              {settings.dailyReminder ? (
+                <View className="pb-4 pl-[72px] pr-4">
+                  <Segmented options={HOURS.map((h) => ({ label: h.label, value: h.hour }))} value={settings.reminderHour} onChange={(hour) => update({ reminderHour: hour })} />
+                </View>
+              ) : null}
+            </Row>
+            <Row icon="visibility-off" title="Hide amounts on lock screen" sub="Notifications show only a count" right={<Toggle value={settings.hideDetails} onChange={(v) => update({ hideDetails: v })} />} />
+          </Group>
+        </View>
 
-        <Button variant="danger" icon="log-out-outline" label="Sign out" onPress={signOut} />
-        <Text className={`mt-4 text-center text-xs ${muted}`}>Expensefy · your SMS stay on your phone.</Text>
+        <View>
+          <SectionTitle>Appearance</SectionTitle>
+          <Group>
+            <Row icon="palette" title="Theme" sub="System follows your phone's dark mode">
+              <View className="pb-4 pl-[72px] pr-4">
+                <Segmented
+                  options={[{ label: 'System', value: 'system' as ThemeMode }, { label: 'Light', value: 'light' as ThemeMode }, { label: 'Dark', value: 'dark' as ThemeMode }]}
+                  value={theme}
+                  onChange={(m) => { setTheme(m); saveThemeMode(m); }}
+                />
+              </View>
+            </Row>
+          </Group>
+        </View>
+
+        <View>
+          <SectionTitle>Background check</SectionTitle>
+          <Group>
+            <Row icon="sync" title="Check for new payments now" sub={checking ? 'Checking…' : 'Scan SMS received since the last scan'} onPress={checkNow} right={<Icon name="chevron-right" size={18} color="#464555" />} />
+            <Row icon="notifications-none" title="Send a test notification" sub="Make sure alerts reach you" onPress={testNotification} right={<Icon name="chevron-right" size={18} color="#464555" />} />
+          </Group>
+          {status ? <Text className={`mt-2 px-1 text-body-sm ${muted}`}>{status}</Text> : null}
+        </View>
+
+        <Pressable onPress={signOut} className="h-14 flex-row items-center justify-center gap-2 rounded-xl bg-error-container active:opacity-70 dark:bg-dk-error-container">
+          <Icon name="logout" size={20} color="#ba1a1a" />
+          <Text className="font-inter-sb text-label-lg text-error">Sign out</Text>
+        </Pressable>
+        <Text className="text-center text-label-sm text-outline">Expensefy • your SMS stay on your phone</Text>
       </ScrollView>
     </View>
   );
